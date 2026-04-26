@@ -4,122 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mis Finanzas</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0f172a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Mis Finanzas">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
 <style>
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
-  background:#f4f6f8;
-  color:#111827;
-}
-header{
-  background:#0f172a;
-  color:white;
-  padding:18px;
-  text-align:center;
-  font-size:22px;
-  font-weight:700;
-}
-nav{
-  display:flex;
-  background:white;
-  position:sticky;
-  top:0;
-  z-index:10;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-nav button{
-  flex:1;
-  padding:14px 6px;
-  border:0;
-  background:white;
-  font-weight:700;
-  color:#334155;
-}
-nav button.active{
-  background:#0f172a;
-  color:white;
-}
-section{
-  display:none;
-  padding:16px;
-}
-section.active{
-  display:block;
-}
-.card{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
-}
-label{
-  font-size:13px;
-  font-weight:700;
-  color:#475569;
-}
-input, select{
-  width:100%;
-  padding:12px;
-  margin:6px 0 12px;
-  border:1px solid #cbd5e1;
-  border-radius:10px;
-  font-size:16px;
-  box-sizing:border-box;
-}
-.btn{
-  width:100%;
-  padding:13px;
-  border:0;
-  border-radius:12px;
-  background:#0f172a;
-  color:white;
-  font-size:16px;
-  font-weight:700;
-  margin-top:6px;
-}
-.btn2{
-  background:#2563eb;
-}
-.btnDanger{
-  background:#dc2626;
-}
-.mov{
-  border-bottom:1px solid #e5e7eb;
-  padding:10px 0;
-}
-.mov strong{
-  display:block;
-}
-.small{
-  font-size:13px;
-  color:#64748b;
-}
-.total{
-  font-size:20px;
-  font-weight:800;
-  color:#0f172a;
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-th,td{
-  border-bottom:1px solid #e5e7eb;
-  padding:8px;
-  text-align:right;
-}
-th:first-child,td:first-child{
-  text-align:left;
-}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#f4f6f8;color:#111827}
+header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
+nav{display:flex;background:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+nav button{flex:1;padding:14px 6px;border:0;background:white;font-weight:700;color:#334155}
+nav button.active{background:#0f172a;color:white}
+section{display:none;padding:16px}
+section.active{display:block}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+label{font-size:13px;font-weight:700;color:#475569}
+input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;box-sizing:border-box}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:#0f172a;color:white;font-size:16px;font-weight:700;margin-top:8px}
+.btn2{background:#2563eb}
+.btnDanger{background:#dc2626}
+.mov{border-bottom:1px solid #e5e7eb;padding:10px 0}
+.mov strong{display:block}
+.small{font-size:13px;color:#64748b}
+.total{font-size:18px;font-weight:800;color:#0f172a}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
 </style>
 </head>
 
@@ -128,351 +33,293 @@ th:first-child,td:first-child{
 <header>Mis Finanzas</header>
 
 <nav>
-  <button class="active" onclick="showTab('tc', this)">TC</button>
-  <button onclick="showTab('bancos', this)">Bancos</button>
-  <button onclick="showTab('amortizacion', this)">Amortización</button>
+<button class="active" onclick="showTab('tc',this)">TC</button>
+<button onclick="showTab('bancos',this)">Bancos</button>
+<button onclick="showTab('amortizacion',this)">Amortización</button>
 </nav>
 
 <section id="tc" class="active">
-  <div class="card">
-    <h2>Consumos Tarjeta</h2>
+<div class="card">
+<h2>Consumos Tarjeta</h2>
 
-    <label>Fecha</label>
-    <input type="date" id="tcFecha">
+<label>Fecha</label><input type="date" id="tcFecha">
+<label>Tarjeta</label>
+<select id="tcTarjeta"><option>Visa</option><option>Mastercard</option><option>American Express</option><option>Otra</option></select>
 
-    <label>Tarjeta</label>
-    <select id="tcTarjeta">
-      <option>Visa</option>
-      <option>Mastercard</option>
-      <option>American Express</option>
-      <option>Otra</option>
-    </select>
+<label>Concepto</label>
+<select id="tcConcepto">
+<option>Restaurante</option><option>Supermercado</option><option>Gasolina/Carro</option><option>Medicina</option><option>Doctor</option><option>Peluquería</option><option>Veterinaria</option><option>Tecnologico/Electrico</option><option>Hogar</option><option>Otros</option>
+</select>
 
-    <label>Concepto</label>
-    <select id="tcConcepto">
-      <option>Restaurante</option>
-      <option>Supermercado</option>
-      <option>Gasolina/Carro</option>
-      <option>Medicina</option>
-      <option>Doctor</option>
-      <option>Peluquería</option>
-      <option>Veterinaria</option>
-      <option>Tecnologico/Electrico</option>
-      <option>Hogar</option>
-      <option>Otros</option>
-    </select>
+<label>Detalle</label><input id="tcDetalle">
+<label>Tipo consumo</label><select id="tcTipo"><option>Corriente</option><option>Diferido</option></select>
+<label>Cuotas pagadas</label><input type="number" id="tcPagadas" value="0">
+<label>Cuotas por pagar</label><input type="number" id="tcPorPagar" value="0">
+<label>Valor consumo</label><input type="number" id="tcValor" step="0.01">
+<label>Pago</label><input type="number" id="tcPago" step="0.01" value="0">
 
-    <label>Detalle</label>
-    <input id="tcDetalle" placeholder="Ej: cena, farmacia, gasolina">
+<button class="btn" onclick="guardarTC()">Guardar TC</button>
+<button class="btn btn2" onclick="exportarCSV('tc')">Exportar TC a CSV / Excel</button>
+</div>
 
-    <label>Tipo consumo</label>
-    <select id="tcTipo">
-      <option>Corriente</option>
-      <option>Diferido</option>
-    </select>
-
-    <label>Cuotas pagadas</label>
-    <input type="number" id="tcPagadas" value="0">
-
-    <label>Cuotas por pagar</label>
-    <input type="number" id="tcPorPagar" value="0">
-
-    <label>Valor consumo</label>
-    <input type="number" id="tcValor" step="0.01">
-
-    <label>Pago</label>
-    <input type="number" id="tcPago" step="0.01" value="0">
-
-    <button class="btn" onclick="guardarTC()">Guardar TC</button>
-    <button class="btn btn2" onclick="exportarCSV('tc')">Exportar TC</button>
-  </div>
-
-  <div class="card">
-    <h3>Movimientos TC</h3>
-    <div id="listaTC"></div>
-  </div>
+<div class="card">
+<h3>Movimientos TC</h3>
+<div id="listaTC"></div>
+</div>
 </section>
 
 <section id="bancos">
-  <div class="card">
-    <h2>Movimientos Bancos</h2>
+<div class="card">
+<h2>Movimientos Bancos</h2>
 
-    <label>Fecha</label>
-    <input type="date" id="bFecha">
+<label>Fecha</label><input type="date" id="bFecha">
+<label>Banco</label>
+<select id="bBanco"><option>Guayaquil</option><option>Bolivariano</option><option>Pichincha</option><option>Produbanco</option><option>Otro</option></select>
+<label>Tipo</label><select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
+<label>Concepto</label><input id="bConcepto">
+<label>Valor</label><input type="number" id="bValor" step="0.01">
 
-    <label>Banco</label>
-    <select id="bBanco">
-      <option>Guayaquil</option>
-      <option>Bolivariano</option>
-      <option>Pichincha</option>
-      <option>Produbanco</option>
-      <option>Otro</option>
-    </select>
+<button class="btn" onclick="guardarBanco()">Guardar Banco</button>
+<button class="btn btn2" onclick="exportarCSV('bancos')">Exportar Bancos a CSV / Excel</button>
+</div>
 
-    <label>Tipo</label>
-    <select id="bTipo">
-      <option>Ingreso</option>
-      <option>Egreso</option>
-    </select>
-
-    <label>Concepto</label>
-    <input id="bConcepto" placeholder="Ej: pago, transferencia, retiro">
-
-    <label>Valor</label>
-    <input type="number" id="bValor" step="0.01">
-
-    <button class="btn" onclick="guardarBanco()">Guardar Banco</button>
-    <button class="btn btn2" onclick="exportarCSV('bancos')">Exportar Bancos</button>
-  </div>
-
-  <div class="card">
-    <h3>Movimientos Bancos</h3>
-    <div id="listaBancos"></div>
-  </div>
+<div class="card">
+<h3>Movimientos Bancos</h3>
+<div id="listaBancos"></div>
+</div>
 </section>
 
 <section id="amortizacion">
-  <div class="card">
-    <h2>Calculadora de Amortización</h2>
+<div class="card">
+<h2>Calculadora de Amortización</h2>
 
-    <label>Monto del préstamo</label>
-    <input type="number" id="amoMonto" step="0.01">
+<label>Monto del préstamo</label><input type="number" id="amoMonto" step="0.01">
+<label>Tasa anual %</label><input type="number" id="amoTasa" step="0.01">
+<label>Plazo en meses</label><input type="number" id="amoMeses">
 
-    <label>Tasa anual %</label>
-    <input type="number" id="amoTasa" step="0.01">
+<button class="btn" onclick="calcularAmortizacion()">Calcular</button>
+<button class="btn btn2" onclick="exportarAmortizacion()">Exportar Amortización a CSV / Excel</button>
+</div>
 
-    <label>Plazo en meses</label>
-    <input type="number" id="amoMeses">
-
-    <button class="btn" onclick="calcularAmortizacion()">Calcular</button>
-    <button class="btn btn2" onclick="exportarAmortizacion()">Exportar Amortización</button>
-  </div>
-
-  <div class="card">
-    <div id="resumenAmo"></div>
-    <div style="overflow:auto">
-      <table id="tablaAmo"></table>
-    </div>
-  </div>
+<div class="card">
+<div id="resumenAmo"></div>
+<div style="overflow:auto">
+<table id="tablaAmo"></table>
+</div>
+</div>
 </section>
 
 <script>
-let tc = JSON.parse(localStorage.getItem("tc")) || [];
-let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
-let amortizacion = [];
+let tc=JSON.parse(localStorage.getItem("tc"))||[];
+let bancos=JSON.parse(localStorage.getItem("bancos"))||[];
+let amortizacion=[];
 
-document.getElementById("tcFecha").valueAsDate = new Date();
-document.getElementById("bFecha").valueAsDate = new Date();
+tcFecha.valueAsDate=new Date();
+bFecha.valueAsDate=new Date();
 
-function showTab(id, btn){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
+function showTab(id,btn){
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+btn.classList.add("active");
 }
 
 function formato(n){
-  return Number(n || 0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
+return Number(n||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
 function guardarTC(){
-  const valor = Number(tcValor.value || 0);
-  const pago = Number(tcPago.value || 0);
+let valor=Number(tcValor.value||0);
+let pago=Number(tcPago.value||0);
+let saldoDiferido=tcTipo.value==="Diferido"?valor*Number(tcPorPagar.value||0):0;
 
-  tc.push({
-    fecha:tcFecha.value,
-    tarjeta:tcTarjeta.value,
-    concepto:tcConcepto.value,
-    detalle:tcDetalle.value,
-    tipo:tcTipo.value,
-    cuotasPagadas:Number(tcPagadas.value || 0),
-    cuotasPorPagar:Number(tcPorPagar.value || 0),
-    valor:valor,
-    pago:pago,
-    acumulado:valor-pago,
-    saldoDiferido: tcTipo.value==="Diferido" ? valor * Number(tcPorPagar.value || 0) : 0
-  });
+tc.push({
+fecha:tcFecha.value,
+tarjeta:tcTarjeta.value,
+concepto:tcConcepto.value,
+detalle:tcDetalle.value,
+tipo:tcTipo.value,
+cuotasPagadas:Number(tcPagadas.value||0),
+cuotasPorPagar:Number(tcPorPagar.value||0),
+valor:valor,
+pago:pago,
+acumulado:valor-pago,
+saldoDiferido:saldoDiferido
+});
 
-  localStorage.setItem("tc", JSON.stringify(tc));
-  tcDetalle.value="";
-  tcValor.value="";
-  tcPago.value=0;
-  mostrarTC();
+localStorage.setItem("tc",JSON.stringify(tc));
+tcDetalle.value="";
+tcValor.value="";
+tcPago.value=0;
+mostrarTC();
 }
 
 function mostrarTC(){
-  listaTC.innerHTML="";
-  tc.slice().reverse().forEach((m,i)=>{
-    const realIndex = tc.length-1-i;
-    listaTC.innerHTML += `
-      <div class="mov">
-        <strong>${m.fecha} | ${m.tarjeta} | ${m.concepto}</strong>
-        <div>${m.detalle || ""}</div>
-        <div class="small">${m.tipo} | Valor: $${formato(m.valor)} | Pago: $${formato(m.pago)}</div>
-        <div class="small">Acumulado: $${formato(m.acumulado)} | Saldo diferido: $${formato(m.saldoDiferido)}</div>
-        <button class="btn btnDanger" onclick="eliminarTC(${realIndex})">Eliminar</button>
-      </div>
-    `;
-  });
+listaTC.innerHTML="";
+tc.slice().reverse().forEach((m,i)=>{
+let realIndex=tc.length-1-i;
+listaTC.innerHTML+=`
+<div class="mov">
+<strong>${m.fecha} | ${m.tarjeta} | ${m.concepto}</strong>
+<div>${m.detalle||""}</div>
+<div class="small">${m.tipo} | Valor: $${formato(m.valor)} | Pago: $${formato(m.pago)}</div>
+<div class="small">Acumulado: $${formato(m.acumulado)} | Saldo diferido: $${formato(m.saldoDiferido)}</div>
+<button class="btn btnDanger" onclick="eliminarTC(${realIndex})">Eliminar</button>
+</div>`;
+});
 }
 
 function eliminarTC(i){
-  tc.splice(i,1);
-  localStorage.setItem("tc", JSON.stringify(tc));
-  mostrarTC();
+tc.splice(i,1);
+localStorage.setItem("tc",JSON.stringify(tc));
+mostrarTC();
 }
 
 function guardarBanco(){
-  const valor = Number(bValor.value || 0);
-
-  bancos.push({
-    fecha:bFecha.value,
-    banco:bBanco.value,
-    tipo:bTipo.value,
-    concepto:bConcepto.value,
-    valor:valor
-  });
-
-  localStorage.setItem("bancos", JSON.stringify(bancos));
-  bConcepto.value="";
-  bValor.value="";
-  mostrarBancos();
+let valor=Number(bValor.value||0);
+bancos.push({
+fecha:bFecha.value,
+banco:bBanco.value,
+tipo:bTipo.value,
+concepto:bConcepto.value,
+valor:valor
+});
+localStorage.setItem("bancos",JSON.stringify(bancos));
+bConcepto.value="";
+bValor.value="";
+mostrarBancos();
 }
 
 function mostrarBancos(){
-  listaBancos.innerHTML="";
-  bancos.slice().reverse().forEach((m,i)=>{
-    const realIndex = bancos.length-1-i;
-    listaBancos.innerHTML += `
-      <div class="mov">
-        <strong>${m.fecha} | ${m.banco} | ${m.tipo}</strong>
-        <div>${m.concepto || ""}</div>
-        <div class="small">Valor: $${formato(m.valor)}</div>
-        <button class="btn btnDanger" onclick="eliminarBanco(${realIndex})">Eliminar</button>
-      </div>
-    `;
-  });
+listaBancos.innerHTML="";
+bancos.slice().reverse().forEach((m,i)=>{
+let realIndex=bancos.length-1-i;
+listaBancos.innerHTML+=`
+<div class="mov">
+<strong>${m.fecha} | ${m.banco} | ${m.tipo}</strong>
+<div>${m.concepto||""}</div>
+<div class="small">Valor: $${formato(m.valor)}</div>
+<button class="btn btnDanger" onclick="eliminarBanco(${realIndex})">Eliminar</button>
+</div>`;
+});
 }
 
 function eliminarBanco(i){
-  bancos.splice(i,1);
-  localStorage.setItem("bancos", JSON.stringify(bancos));
-  mostrarBancos();
+bancos.splice(i,1);
+localStorage.setItem("bancos",JSON.stringify(bancos));
+mostrarBancos();
 }
 
 function calcularAmortizacion(){
-  const monto = Number(amoMonto.value || 0);
-  const tasaAnual = Number(amoTasa.value || 0) / 100;
-  const meses = Number(amoMeses.value || 0);
-  const tasaMensual = tasaAnual / 12;
+let monto=Number(amoMonto.value||0);
+let tasaAnual=Number(amoTasa.value||0)/100;
+let meses=Number(amoMeses.value||0);
+let tasaMensual=tasaAnual/12;
 
-  if(monto<=0 || meses<=0){
-    alert("Ingrese monto y plazo válidos");
-    return;
-  }
+if(monto<=0||meses<=0){
+alert("Ingrese monto y plazo válidos");
+return;
+}
 
-  let cuota;
+let cuota;
+if(tasaMensual===0){
+cuota=monto/meses;
+}else{
+cuota=monto*(tasaMensual*Math.pow(1+tasaMensual,meses))/(Math.pow(1+tasaMensual,meses)-1);
+}
 
-  if(tasaMensual === 0){
-    cuota = monto / meses;
-  }else{
-    cuota = monto * (tasaMensual * Math.pow(1+tasaMensual, meses)) / (Math.pow(1+tasaMensual, meses)-1);
-  }
+let saldo=monto;
+let totalInteres=0;
+amortizacion=[];
 
-  let saldo = monto;
-  let totalInteres = 0;
-  amortizacion = [];
+for(let i=1;i<=meses;i++){
+let interes=saldo*tasaMensual;
+let capital=cuota-interes;
 
-  for(let i=1; i<=meses; i++){
-    let interes = saldo * tasaMensual;
-    let capital = cuota - interes;
+if(i===meses){
+capital=saldo;
+cuota=capital+interes;
+}
 
-    if(i === meses){
-      capital = saldo;
-      cuota = capital + interes;
-    }
+saldo-=capital;
+if(saldo<0.01)saldo=0;
+totalInteres+=interes;
 
-    saldo -= capital;
-    if(saldo < 0.01) saldo = 0;
-    totalInteres += interes;
+amortizacion.push({
+mes:i,
+cuota:cuota,
+interes:interes,
+capital:capital,
+saldo:saldo
+});
+}
 
-    amortizacion.push({
-      mes:i,
-      cuota:cuota,
-      interes:interes,
-      capital:capital,
-      saldo:saldo
-    });
-  }
+resumenAmo.innerHTML=`
+<p class="total">Cuota mensual: $${formato(amortizacion[0].cuota)}</p>
+<p class="total">Intereses totales: $${formato(totalInteres)}</p>
+<p class="total">Total pagado: $${formato(monto+totalInteres)}</p>
+`;
 
-  resumenAmo.innerHTML = `
-    <p class="total">Cuota mensual: $${formato(amortizacion[0].cuota)}</p>
-    <p class="total">Intereses totales: $${formato(totalInteres)}</p>
-    <p class="total">Total pagado: $${formato(monto + totalInteres)}</p>
-  `;
+tablaAmo.innerHTML=`
+<tr>
+<th>Mes</th>
+<th>Cuota</th>
+<th>Interés</th>
+<th>Capital</th>
+<th>Saldo</th>
+</tr>`;
 
-  tablaAmo.innerHTML = `
-    <tr>
-      <th>Mes</th>
-      <th>Cuota</th>
-      <th>Interés</th>
-      <th>Capital</th>
-      <th>Saldo</th>
-    </tr>
-  `;
-
-  amortizacion.forEach(r=>{
-    tablaAmo.innerHTML += `
-      <tr>
-        <td>${r.mes}</td>
-        <td>${formato(r.cuota)}</td>
-        <td>${formato(r.interes)}</td>
-        <td>${formato(r.capital)}</td>
-        <td>${formato(r.saldo)}</td>
-      </tr>
-    `;
-  });
+amortizacion.forEach(r=>{
+tablaAmo.innerHTML+=`
+<tr>
+<td>${r.mes}</td>
+<td>${formato(r.cuota)}</td>
+<td>${formato(r.interes)}</td>
+<td>${formato(r.capital)}</td>
+<td>${formato(r.saldo)}</td>
+</tr>`;
+});
 }
 
 function exportarCSV(tipo){
-  let data = tipo==="tc" ? tc : bancos;
+let data=tipo==="tc"?tc:bancos;
+if(data.length===0){
+alert("No hay datos para exportar");
+return;
+}
 
-  if(data.length===0){
-    alert("No hay datos para exportar");
-    return;
-  }
+let headers=Object.keys(data[0]);
+let csv=headers.join(";")+"\n";
 
-  let headers = Object.keys(data[0]);
-  let csv = headers.join(";") + "\n";
+data.forEach(row=>{
+csv+=headers.map(h=>String(row[h]??"").replaceAll(";"," ")).join(";")+"\n";
+});
 
-  data.forEach(row=>{
-    csv += headers.map(h=>row[h]).join(";") + "\n";
-  });
-
-  descargar(csv, tipo + ".csv");
+descargar(csv,tipo+".csv");
 }
 
 function exportarAmortizacion(){
-  if(amortizacion.length===0){
-    alert("Primero calcule la amortización");
-    return;
-  }
-
-  let csv = "Mes;Cuota;Interes;Capital;Saldo\n";
-
-  amortizacion.forEach(r=>{
-    csv += `${r.mes};${r.cuota.toFixed(2)};${r.interes.toFixed(2)};${r.capital.toFixed(2)};${r.saldo.toFixed(2)}\n`;
-  });
-
-  descargar(csv, "amortizacion.csv");
+if(amortizacion.length===0){
+alert("Primero calcule la amortización");
+return;
 }
 
-function descargar(contenido, nombre){
-  const blob = new Blob([contenido], {type:"text/csv;charset=utf-8;"});
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.download = nombre;
-  link.click();
+let csv="Mes;Cuota;Interes;Capital;Saldo\n";
+amortizacion.forEach(r=>{
+csv+=`${r.mes};${r.cuota.toFixed(2)};${r.interes.toFixed(2)};${r.capital.toFixed(2)};${r.saldo.toFixed(2)}\n`;
+});
+
+descargar(csv,"amortizacion.csv");
+}
+
+function descargar(contenido,nombre){
+let blob=new Blob(["\ufeff"+contenido],{type:"text/csv;charset=utf-8;"});
+let link=document.createElement("a");
+link.href=URL.createObjectURL(blob);
+link.download=nombre;
+document.body.appendChild(link);
+link.click();
+document.body.removeChild(link);
 }
 
 mostrarTC();
@@ -481,4 +328,3 @@ mostrarBancos();
 
 </body>
 </html>
-<!-- update -->
