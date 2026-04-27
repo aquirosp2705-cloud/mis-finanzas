@@ -23,6 +23,9 @@ input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
 .mov{border-bottom:1px solid #ccc;padding:10px 0}
 .ok{color:green;font-weight:700}
 .no{color:red;font-weight:700}
+table{width:100%;border-collapse:collapse}
+th,td{padding:6px;border-bottom:1px solid #ccc;text-align:right}
+th:first-child,td:first-child{text-align:left}
 </style>
 </head>
 
@@ -36,18 +39,29 @@ input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
 <button onclick="showTab('amortizacion',this)">Amortización</button>
 </nav>
 
+<!-- TC -->
 <section id="tc" class="active">
 <div class="card">
 
 <input type="date" id="tcFecha">
 <select id="tcTarjeta"><option>Visa</option><option>Mastercard</option></select>
-<select id="tcConcepto"><option>Supermercado</option><option>Gasolina</option><option>Otros</option></select>
+
+<select id="tcConcepto">
+<option>Supermercado</option><option>Gasolina</option><option>Otros</option>
+</select>
+
 <input id="tcDetalle" placeholder="Detalle">
-<select id="tcTipo"><option>Corriente</option><option>Diferido</option></select>
-<input type="number" id="tcPagadas" value="0">
-<input type="number" id="tcPorPagar" value="0">
-<input type="number" id="tcValor">
-<input type="number" id="tcPago" value="0">
+
+<select id="tcTipo">
+<option>Corriente</option>
+<option>Diferido</option>
+</select>
+
+<input type="number" id="tcPagadas" placeholder="Cuotas pagadas" value="0">
+<input type="number" id="tcPorPagar" placeholder="Cuotas por pagar" value="0">
+
+<input type="number" id="tcValor" placeholder="Valor">
+<input type="number" id="tcPago" placeholder="Pago" value="0">
 
 <button class="btn" onclick="guardarTC()">Guardar</button>
 <button class="btn btn2" onclick="exportarExcel('tc')">Exportar Pendientes</button>
@@ -57,14 +71,16 @@ input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
 <div class="card" id="listaTC"></div>
 </section>
 
+<!-- BANCOS -->
 <section id="bancos">
 <div class="card">
 
 <input type="date" id="bFecha">
 <select id="bBanco"><option>Guayaquil</option><option>Pichincha</option></select>
 <select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
-<input id="bConcepto">
-<input type="number" id="bValor">
+
+<input id="bConcepto" placeholder="Concepto">
+<input type="number" id="bValor" placeholder="Valor">
 
 <button class="btn" onclick="guardarBanco()">Guardar</button>
 <button class="btn btn2" onclick="exportarExcel('bancos')">Exportar Pendientes</button>
@@ -74,14 +90,17 @@ input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
 <div class="card" id="listaBancos"></div>
 </section>
 
+<!-- AMORTIZACION -->
 <section id="amortizacion">
 <div class="card">
+
 <input type="number" id="amoMonto" placeholder="Monto">
 <input type="number" id="amoTasa" placeholder="Tasa %">
 <input type="number" id="amoMeses" placeholder="Meses">
 
 <button class="btn" onclick="calcularAmortizacion()">Calcular</button>
 <button class="btn btn2" onclick="exportarAmortizacion()">Exportar Excel</button>
+
 </div>
 
 <div class="card">
@@ -91,6 +110,7 @@ input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
 </section>
 
 <script>
+
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
@@ -106,14 +126,21 @@ function guardarTC(){
 let valor=Number(tcValor.value||0);
 let pago=Number(tcPago.value||0);
 
+let saldoDiferido=tcTipo.value==="Diferido"
+?valor*Number(tcPorPagar.value||0):0;
+
 tc.push({
 Fecha:tcFecha.value,
 Tarjeta:tcTarjeta.value,
 Concepto:tcConcepto.value,
 Detalle:tcDetalle.value,
 Tipo:tcTipo.value,
+CuotasPagadas:Number(tcPagadas.value||0),
+CuotasPorPagar:Number(tcPorPagar.value||0),
 Valor:valor,
 Pago:pago,
+Acumulado:valor-pago,
+SaldoDiferido:saldoDiferido,
 Conciliado:"No"
 });
 
@@ -127,10 +154,14 @@ tc.slice().reverse().forEach((m,i)=>{
 let idx=tc.length-1-i;
 listaTC.innerHTML+=`
 <div class="mov">
-<strong>${m.Fecha} - ${m.Concepto}</strong>
+<strong>${m.Fecha} | ${m.Concepto}</strong>
 <div>${m.Detalle||""}</div>
-<div>$${m.Valor}</div>
-<div class="${m.Conciliado==='Si'?'ok':'no'}">${m.Conciliado}</div>
+<div>Tipo: ${m.Tipo}</div>
+<div>Cuotas: ${m.CuotasPagadas} / ${m.CuotasPorPagar}</div>
+<div>Valor: $${m.Valor}</div>
+<div>Pago: $${m.Pago}</div>
+<div>Saldo diferido: $${m.SaldoDiferido}</div>
+<div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado}</div>
 <button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
 </div>`;
 });
@@ -151,6 +182,7 @@ Concepto:bConcepto.value,
 Valor:Number(bValor.value||0),
 Conciliado:"No"
 });
+
 localStorage.setItem("bancos",JSON.stringify(bancos));
 mostrarBancos();
 }
@@ -161,10 +193,10 @@ bancos.slice().reverse().forEach((m,i)=>{
 let idx=bancos.length-1-i;
 listaBancos.innerHTML+=`
 <div class="mov">
-<strong>${m.Fecha} - ${m.Banco}</strong>
+<strong>${m.Fecha} | ${m.Banco}</strong>
 <div>${m.Concepto}</div>
 <div>$${m.Valor}</div>
-<div class="${m.Conciliado==='Si'?'ok':'no'}">${m.Conciliado}</div>
+<div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado}</div>
 <button class="btn btnDanger" onclick="eliminarBanco(${idx})">Eliminar</button>
 </div>`;
 });
@@ -191,7 +223,6 @@ let wb=XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(wb,ws,"Pendientes");
 XLSX.writeFile(wb,tipo+"_pendientes.xlsx");
 
-// marcar conciliados
 data.forEach(d=>{
 if(d.Conciliado==="No"){d.Conciliado="Si";}
 });
@@ -238,6 +269,7 @@ XLSX.writeFile(wb,"amortizacion.xlsx");
 
 mostrarTC();
 mostrarBancos();
+
 </script>
 
 </body>
