@@ -4,27 +4,103 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mis Finanzas</title>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-body{margin:0;font-family:-apple-system;background:#f4f6f8}
-header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
-nav{display:flex;background:white}
-nav button{flex:1;padding:14px;border:0;font-weight:700}
-nav button.active{background:#0f172a;color:white}
-section{display:none;padding:16px}
-section.active{display:block}
-.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px}
-input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
-.btn{width:100%;padding:12px;border:0;border-radius:10px;background:#0f172a;color:white;margin-top:8px}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
+  background:#f4f6f8;
+  color:#111827;
+}
+header{
+  background:#0f172a;
+  color:white;
+  padding:18px;
+  text-align:center;
+  font-size:22px;
+  font-weight:700;
+}
+nav{
+  display:flex;
+  background:white;
+  position:sticky;
+  top:0;
+  z-index:10;
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+nav button{
+  flex:1;
+  padding:14px 6px;
+  border:0;
+  background:white;
+  font-weight:700;
+  color:#334155;
+}
+nav button.active{
+  background:#0f172a;
+  color:white;
+}
+section{
+  display:none;
+  padding:16px;
+}
+section.active{
+  display:block;
+}
+.card{
+  background:white;
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+label{
+  font-size:13px;
+  font-weight:700;
+  color:#475569;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  margin:6px 0 12px;
+  border:1px solid #cbd5e1;
+  border-radius:10px;
+  font-size:16px;
+  box-sizing:border-box;
+}
+.btn{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:12px;
+  background:#0f172a;
+  color:white;
+  font-size:16px;
+  font-weight:700;
+  margin-top:8px;
+}
 .btn2{background:#2563eb}
 .btnDanger{background:#dc2626}
-.mov{border-bottom:1px solid #ccc;padding:10px 0}
-.ok{color:green;font-weight:700}
-.no{color:red;font-weight:700}
-table{width:100%;border-collapse:collapse}
-th,td{padding:6px;border-bottom:1px solid #ccc;text-align:right}
+.mov{
+  border-bottom:1px solid #e5e7eb;
+  padding:12px 0;
+}
+.mov strong{display:block;font-size:15px}
+.small{font-size:13px;color:#64748b;margin-top:3px}
+.ok{color:#15803d;font-weight:800}
+.no{color:#dc2626;font-weight:800}
+.total{font-size:18px;font-weight:800;color:#0f172a}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:13px;
+}
+th,td{
+  border-bottom:1px solid #e5e7eb;
+  padding:8px;
+  text-align:right;
+}
 th:first-child,td:first-child{text-align:left}
 </style>
 </head>
@@ -39,237 +115,392 @@ th:first-child,td:first-child{text-align:left}
 <button onclick="showTab('amortizacion',this)">Amortización</button>
 </nav>
 
-<!-- TC -->
 <section id="tc" class="active">
 <div class="card">
+<h2>Consumos Tarjeta</h2>
 
+<label>Fecha</label>
 <input type="date" id="tcFecha">
-<select id="tcTarjeta"><option>Visa</option><option>Mastercard</option></select>
 
-<select id="tcConcepto">
-<option>Supermercado</option><option>Gasolina</option><option>Otros</option>
+<label>Tarjeta</label>
+<select id="tcTarjeta">
+<option>Visa</option>
+<option>Mastercard</option>
+<option>American Express</option>
+<option>Diners</option>
+<option>Otra</option>
 </select>
 
-<input id="tcDetalle" placeholder="Detalle">
+<label>Concepto</label>
+<select id="tcConcepto">
+<option>Restaurante</option>
+<option>Supermercado</option>
+<option>Gasolina/Carro</option>
+<option>Medicina</option>
+<option>Doctor</option>
+<option>Peluquería</option>
+<option>Veterinaria</option>
+<option>Tecnologico/Electrico</option>
+<option>Hogar</option>
+<option>Otros</option>
+</select>
 
+<label>Detalle</label>
+<input id="tcDetalle" placeholder="Ej: farmacia, cena, supermercado">
+
+<label>Tipo consumo</label>
 <select id="tcTipo">
 <option>Corriente</option>
 <option>Diferido</option>
 </select>
 
-<input type="number" id="tcPagadas" placeholder="Cuotas pagadas" value="0">
-<input type="number" id="tcPorPagar" placeholder="Cuotas por pagar" value="0">
+<label>Cuotas pagadas</label>
+<input type="number" id="tcPagadas" value="0">
 
-<input type="number" id="tcValor" placeholder="Valor">
-<input type="number" id="tcPago" placeholder="Pago" value="0">
+<label>Cuotas por pagar</label>
+<input type="number" id="tcPorPagar" value="0">
 
-<button class="btn" onclick="guardarTC()">Guardar</button>
-<button class="btn btn2" onclick="exportarExcel('tc')">Exportar Pendientes</button>
+<label>Valor consumo</label>
+<input type="number" id="tcValor" step="0.01">
 
+<label>Pago</label>
+<input type="number" id="tcPago" step="0.01" value="0">
+
+<button class="btn" onclick="guardarTC()">Guardar TC</button>
+<button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC no conciliado a Excel</button>
 </div>
 
-<div class="card" id="listaTC"></div>
+<div class="card">
+<h3>Movimientos TC</h3>
+<div id="listaTC"></div>
+</div>
 </section>
 
-<!-- BANCOS -->
 <section id="bancos">
 <div class="card">
+<h2>Movimientos Bancos</h2>
 
+<label>Fecha</label>
 <input type="date" id="bFecha">
-<select id="bBanco"><option>Guayaquil</option><option>Pichincha</option></select>
-<select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
 
-<input id="bConcepto" placeholder="Concepto">
-<input type="number" id="bValor" placeholder="Valor">
+<label>Banco</label>
+<select id="bBanco">
+<option>Guayaquil</option>
+<option>Bolivariano</option>
+<option>Pichincha</option>
+<option>Produbanco</option>
+<option>Otro</option>
+</select>
 
-<button class="btn" onclick="guardarBanco()">Guardar</button>
-<button class="btn btn2" onclick="exportarExcel('bancos')">Exportar Pendientes</button>
+<label>Tipo</label>
+<select id="bTipo">
+<option>Ingreso</option>
+<option>Egreso</option>
+</select>
 
+<label>Concepto</label>
+<input id="bConcepto" placeholder="Ej: transferencia, pago, retiro">
+
+<label>Valor</label>
+<input type="number" id="bValor" step="0.01">
+
+<button class="btn" onclick="guardarBanco()">Guardar Banco</button>
+<button class="btn btn2" onclick="exportarPendientes('bancos')">Exportar Bancos no conciliado a Excel</button>
 </div>
 
-<div class="card" id="listaBancos"></div>
+<div class="card">
+<h3>Movimientos Bancos</h3>
+<div id="listaBancos"></div>
+</div>
 </section>
 
-<!-- AMORTIZACION -->
 <section id="amortizacion">
 <div class="card">
+<h2>Calculadora de Amortización</h2>
 
-<input type="number" id="amoMonto" placeholder="Monto">
-<input type="number" id="amoTasa" placeholder="Tasa %">
-<input type="number" id="amoMeses" placeholder="Meses">
+<label>Monto del préstamo</label>
+<input type="number" id="amoMonto" step="0.01">
+
+<label>Tasa anual %</label>
+<input type="number" id="amoTasa" step="0.01">
+
+<label>Plazo en meses</label>
+<input type="number" id="amoMeses">
 
 <button class="btn" onclick="calcularAmortizacion()">Calcular</button>
-<button class="btn btn2" onclick="exportarAmortizacion()">Exportar Excel</button>
-
+<button class="btn btn2" onclick="exportarAmortizacion()">Exportar Amortización a Excel</button>
 </div>
 
 <div class="card">
 <div id="resumenAmo"></div>
+<div style="overflow:auto">
 <table id="tablaAmo"></table>
+</div>
 </div>
 </section>
 
 <script>
-
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
 
+document.getElementById("tcFecha").valueAsDate = new Date();
+document.getElementById("bFecha").valueAsDate = new Date();
+
 function showTab(id,btn){
-document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-btn.classList.add("active");
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
 }
 
+function formato(n){
+  return Number(n||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function normalizarTC(m){
+  return {
+    Fecha: m.Fecha || m.fecha || "",
+    Tarjeta: m.Tarjeta || m.tarjeta || "",
+    Concepto: m.Concepto || m.concepto || "",
+    Detalle: m.Detalle || m.detalle || "",
+    Tipo: m.Tipo || m.tipo || "Corriente",
+    CuotasPagadas: Number(m.CuotasPagadas ?? m.cuotasPagadas ?? 0),
+    CuotasPorPagar: Number(m.CuotasPorPagar ?? m.cuotasPorPagar ?? 0),
+    Valor: Number(m.Valor ?? m.valor ?? 0),
+    Pago: Number(m.Pago ?? m.pago ?? 0),
+    Acumulado: Number(m.Acumulado ?? m.acumulado ?? ((m.Valor ?? m.valor ?? 0) - (m.Pago ?? m.pago ?? 0))),
+    SaldoDiferido: Number(m.SaldoDiferido ?? m.saldoDiferido ?? 0),
+    Conciliado: m.Conciliado || m.conciliado || "No"
+  };
+}
+
+function normalizarBanco(m){
+  return {
+    Fecha: m.Fecha || m.fecha || "",
+    Banco: m.Banco || m.banco || "",
+    Tipo: m.Tipo || m.tipo || "",
+    Concepto: m.Concepto || m.concepto || "",
+    Valor: Number(m.Valor ?? m.valor ?? 0),
+    Conciliado: m.Conciliado || m.conciliado || "No"
+  };
+}
+
+tc = tc.map(normalizarTC);
+bancos = bancos.map(normalizarBanco);
+localStorage.setItem("tc", JSON.stringify(tc));
+localStorage.setItem("bancos", JSON.stringify(bancos));
+
 function guardarTC(){
-let valor=Number(tcValor.value||0);
-let pago=Number(tcPago.value||0);
+  let valor = Number(tcValor.value || 0);
+  let pago = Number(tcPago.value || 0);
+  let cuotasPorPagar = Number(tcPorPagar.value || 0);
+  let saldoDiferido = tcTipo.value === "Diferido" ? valor * cuotasPorPagar : 0;
 
-let saldoDiferido=tcTipo.value==="Diferido"
-?valor*Number(tcPorPagar.value||0):0;
+  tc.push({
+    Fecha: tcFecha.value,
+    Tarjeta: tcTarjeta.value,
+    Concepto: tcConcepto.value,
+    Detalle: tcDetalle.value,
+    Tipo: tcTipo.value,
+    CuotasPagadas: Number(tcPagadas.value || 0),
+    CuotasPorPagar: cuotasPorPagar,
+    Valor: valor,
+    Pago: pago,
+    Acumulado: valor - pago,
+    SaldoDiferido: saldoDiferido,
+    Conciliado: "No"
+  });
 
-tc.push({
-Fecha:tcFecha.value,
-Tarjeta:tcTarjeta.value,
-Concepto:tcConcepto.value,
-Detalle:tcDetalle.value,
-Tipo:tcTipo.value,
-CuotasPagadas:Number(tcPagadas.value||0),
-CuotasPorPagar:Number(tcPorPagar.value||0),
-Valor:valor,
-Pago:pago,
-Acumulado:valor-pago,
-SaldoDiferido:saldoDiferido,
-Conciliado:"No"
-});
-
-localStorage.setItem("tc",JSON.stringify(tc));
-mostrarTC();
+  localStorage.setItem("tc",JSON.stringify(tc));
+  tcDetalle.value="";
+  tcValor.value="";
+  tcPago.value=0;
+  tcPagadas.value=0;
+  tcPorPagar.value=0;
+  mostrarTC();
 }
 
 function mostrarTC(){
-listaTC.innerHTML="";
-tc.slice().reverse().forEach((m,i)=>{
-let idx=tc.length-1-i;
-listaTC.innerHTML+=`
-<div class="mov">
-<strong>${m.Fecha} | ${m.Concepto}</strong>
-<div>${m.Detalle||""}</div>
-<div>Tipo: ${m.Tipo}</div>
-<div>Cuotas: ${m.CuotasPagadas} / ${m.CuotasPorPagar}</div>
-<div>Valor: $${m.Valor}</div>
-<div>Pago: $${m.Pago}</div>
-<div>Saldo diferido: $${m.SaldoDiferido}</div>
-<div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado}</div>
-<button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
-</div>`;
-});
+  listaTC.innerHTML="";
+  tc.slice().reverse().forEach((m,i)=>{
+    let idx = tc.length-1-i;
+    listaTC.innerHTML += `
+    <div class="mov">
+      <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
+      <div>${m.Detalle || ""}</div>
+      <div class="small">Tipo: <b>${m.Tipo}</b></div>
+      <div class="small">Cuotas pagadas: <b>${m.CuotasPagadas}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar}</b></div>
+      <div class="small">Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}</div>
+      <div class="small">Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
+      <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
+      <button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
+    </div>`;
+  });
 }
 
 function eliminarTC(i){
-tc.splice(i,1);
-localStorage.setItem("tc",JSON.stringify(tc));
-mostrarTC();
+  tc.splice(i,1);
+  localStorage.setItem("tc",JSON.stringify(tc));
+  mostrarTC();
 }
 
 function guardarBanco(){
-bancos.push({
-Fecha:bFecha.value,
-Banco:bBanco.value,
-Tipo:bTipo.value,
-Concepto:bConcepto.value,
-Valor:Number(bValor.value||0),
-Conciliado:"No"
-});
+  bancos.push({
+    Fecha: bFecha.value,
+    Banco: bBanco.value,
+    Tipo: bTipo.value,
+    Concepto: bConcepto.value,
+    Valor: Number(bValor.value || 0),
+    Conciliado:"No"
+  });
 
-localStorage.setItem("bancos",JSON.stringify(bancos));
-mostrarBancos();
+  localStorage.setItem("bancos",JSON.stringify(bancos));
+  bConcepto.value="";
+  bValor.value="";
+  mostrarBancos();
 }
 
 function mostrarBancos(){
-listaBancos.innerHTML="";
-bancos.slice().reverse().forEach((m,i)=>{
-let idx=bancos.length-1-i;
-listaBancos.innerHTML+=`
-<div class="mov">
-<strong>${m.Fecha} | ${m.Banco}</strong>
-<div>${m.Concepto}</div>
-<div>$${m.Valor}</div>
-<div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado}</div>
-<button class="btn btnDanger" onclick="eliminarBanco(${idx})">Eliminar</button>
-</div>`;
-});
+  listaBancos.innerHTML="";
+  bancos.slice().reverse().forEach((m,i)=>{
+    let idx = bancos.length-1-i;
+    listaBancos.innerHTML += `
+    <div class="mov">
+      <strong>${m.Fecha} | ${m.Banco} | ${m.Tipo}</strong>
+      <div>${m.Concepto || ""}</div>
+      <div class="small">Valor: $${formato(m.Valor)}</div>
+      <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
+      <button class="btn btnDanger" onclick="eliminarBanco(${idx})">Eliminar</button>
+    </div>`;
+  });
 }
 
 function eliminarBanco(i){
-bancos.splice(i,1);
-localStorage.setItem("bancos",JSON.stringify(bancos));
-mostrarBancos();
+  bancos.splice(i,1);
+  localStorage.setItem("bancos",JSON.stringify(bancos));
+  mostrarBancos();
 }
 
-function exportarExcel(tipo){
-let data=tipo==="tc"?tc:bancos;
-let pendientes=data.filter(d=>d.Conciliado==="No");
+function exportarPendientes(tipo){
+  let data = tipo==="tc" ? tc : bancos;
+  let pendientes = data.filter(d => d.Conciliado !== "Si");
 
-if(pendientes.length===0){
-alert("No hay pendientes");
-return;
-}
+  if(pendientes.length===0){
+    alert("No hay registros no conciliados para exportar");
+    return;
+  }
 
-let ws=XLSX.utils.json_to_sheet(pendientes);
-let wb=XLSX.utils.book_new();
+  let wb = XLSX.utils.book_new();
+  let ws = XLSX.utils.json_to_sheet(pendientes);
+  XLSX.utils.book_append_sheet(wb, ws, tipo==="tc" ? "TC" : "Bancos");
+  XLSX.writeFile(wb, tipo==="tc" ? "TC_no_conciliado.xlsx" : "Bancos_no_conciliado.xlsx");
 
-XLSX.utils.book_append_sheet(wb,ws,"Pendientes");
-XLSX.writeFile(wb,tipo+"_pendientes.xlsx");
+  data.forEach(d=>{
+    if(d.Conciliado !== "Si"){
+      d.Conciliado = "Si";
+    }
+  });
 
-data.forEach(d=>{
-if(d.Conciliado==="No"){d.Conciliado="Si";}
-});
-
-localStorage.setItem(tipo,JSON.stringify(data));
-mostrarTC();
-mostrarBancos();
+  if(tipo==="tc"){
+    localStorage.setItem("tc",JSON.stringify(tc));
+    mostrarTC();
+  }else{
+    localStorage.setItem("bancos",JSON.stringify(bancos));
+    mostrarBancos();
+  }
 }
 
 function calcularAmortizacion(){
-let monto=Number(amoMonto.value||0);
-let tasa=Number(amoTasa.value||0)/100/12;
-let meses=Number(amoMeses.value||0);
+  let monto = Number(amoMonto.value || 0);
+  let tasaAnual = Number(amoTasa.value || 0) / 100;
+  let meses = Number(amoMeses.value || 0);
+  let tasaMensual = tasaAnual / 12;
 
-let cuota=monto*(tasa*Math.pow(1+tasa,meses))/(Math.pow(1+tasa,meses)-1);
-let saldo=monto;
+  if(monto<=0 || meses<=0){
+    alert("Ingrese monto y plazo válidos");
+    return;
+  }
 
-amortizacion=[];
-tablaAmo.innerHTML="<tr><th>Mes</th><th>Cuota</th><th>Interes</th><th>Capital</th><th>Saldo</th></tr>";
+  let cuota = tasaMensual===0
+    ? monto/meses
+    : monto*(tasaMensual*Math.pow(1+tasaMensual,meses))/(Math.pow(1+tasaMensual,meses)-1);
 
-for(let i=1;i<=meses;i++){
-let interes=saldo*tasa;
-let capital=cuota-interes;
-saldo-=capital;
+  let saldo = monto;
+  let totalInteres = 0;
+  amortizacion = [];
 
-amortizacion.push({Mes:i,Cuota:cuota,Interes:interes,Capital:capital,Saldo:saldo});
+  for(let i=1;i<=meses;i++){
+    let interes = saldo*tasaMensual;
+    let capital = cuota-interes;
 
-tablaAmo.innerHTML+=`<tr>
-<td>${i}</td>
-<td>${cuota.toFixed(2)}</td>
-<td>${interes.toFixed(2)}</td>
-<td>${capital.toFixed(2)}</td>
-<td>${saldo.toFixed(2)}</td>
-</tr>`;
-}
+    if(i===meses){
+      capital = saldo;
+      cuota = capital+interes;
+    }
+
+    saldo -= capital;
+    if(saldo<0.01) saldo=0;
+    totalInteres += interes;
+
+    amortizacion.push({
+      Mes:i,
+      Cuota:Number(cuota.toFixed(2)),
+      Interes:Number(interes.toFixed(2)),
+      Capital:Number(capital.toFixed(2)),
+      Saldo:Number(saldo.toFixed(2))
+    });
+  }
+
+  resumenAmo.innerHTML = `
+  <p class="total">Cuota mensual: $${formato(amortizacion[0].Cuota)}</p>
+  <p class="total">Intereses totales: $${formato(totalInteres)}</p>
+  <p class="total">Total pagado: $${formato(monto+totalInteres)}</p>`;
+
+  tablaAmo.innerHTML = `
+  <tr>
+    <th>Mes</th>
+    <th>Cuota</th>
+    <th>Interés</th>
+    <th>Capital</th>
+    <th>Saldo</th>
+  </tr>`;
+
+  amortizacion.forEach(r=>{
+    tablaAmo.innerHTML += `
+    <tr>
+      <td>${r.Mes}</td>
+      <td>${formato(r.Cuota)}</td>
+      <td>${formato(r.Interes)}</td>
+      <td>${formato(r.Capital)}</td>
+      <td>${formato(r.Saldo)}</td>
+    </tr>`;
+  });
 }
 
 function exportarAmortizacion(){
-let ws=XLSX.utils.json_to_sheet(amortizacion);
-let wb=XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb,ws,"Amortizacion");
-XLSX.writeFile(wb,"amortizacion.xlsx");
+  if(amortizacion.length===0){
+    alert("Primero calcule la amortización");
+    return;
+  }
+
+  let wb = XLSX.utils.book_new();
+  let resumen = [{
+    Monto:Number(amoMonto.value||0),
+    TasaAnual:Number(amoTasa.value||0),
+    Meses:Number(amoMeses.value||0),
+    CuotaMensual:amortizacion[0].Cuota,
+    InteresesTotales:Number(amortizacion.reduce((a,b)=>a+b.Interes,0).toFixed(2)),
+    TotalPagado:Number(amortizacion.reduce((a,b)=>a+b.Cuota,0).toFixed(2))
+  }];
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen), "Resumen");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(amortizacion), "Tabla");
+  XLSX.writeFile(wb,"Amortizacion.xlsx");
 }
 
 mostrarTC();
 mostrarBancos();
-
 </script>
 
 </body>
