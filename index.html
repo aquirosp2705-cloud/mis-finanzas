@@ -4,103 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mis Finanzas</title>
+
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;
-  background:#f4f6f8;
-  color:#111827;
-}
-header{
-  background:#0f172a;
-  color:white;
-  padding:18px;
-  text-align:center;
-  font-size:22px;
-  font-weight:700;
-}
-nav{
-  display:flex;
-  background:white;
-  position:sticky;
-  top:0;
-  z-index:10;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-nav button{
-  flex:1;
-  padding:14px 6px;
-  border:0;
-  background:white;
-  font-weight:700;
-  color:#334155;
-}
-nav button.active{
-  background:#0f172a;
-  color:white;
-}
-section{
-  display:none;
-  padding:16px;
-}
-section.active{
-  display:block;
-}
-.card{
-  background:white;
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:16px;
-  box-shadow:0 4px 14px rgba(0,0,0,.08);
-}
-label{
-  font-size:13px;
-  font-weight:700;
-  color:#475569;
-}
-input,select{
-  width:100%;
-  padding:12px;
-  margin:6px 0 12px;
-  border:1px solid #cbd5e1;
-  border-radius:10px;
-  font-size:16px;
-  box-sizing:border-box;
-}
-.btn{
-  width:100%;
-  padding:13px;
-  border:0;
-  border-radius:12px;
-  background:#0f172a;
-  color:white;
-  font-size:16px;
-  font-weight:700;
-  margin-top:8px;
-}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#f4f6f8;color:#111827}
+header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
+nav{display:flex;background:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+nav button{flex:1;padding:13px 4px;border:0;background:white;font-weight:700;color:#334155;font-size:13px}
+nav button.active{background:#0f172a;color:white}
+section{display:none;padding:16px}
+section.active{display:block}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+label{font-size:13px;font-weight:700;color:#475569}
+input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;box-sizing:border-box}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:#0f172a;color:white;font-size:16px;font-weight:700;margin-top:8px}
 .btn2{background:#2563eb}
 .btnDanger{background:#dc2626}
-.mov{
-  border-bottom:1px solid #e5e7eb;
-  padding:12px 0;
-}
+.mov{border-bottom:1px solid #e5e7eb;padding:12px 0}
 .mov strong{display:block;font-size:15px}
 .small{font-size:13px;color:#64748b;margin-top:3px}
 .ok{color:#15803d;font-weight:800}
 .no{color:#dc2626;font-weight:800}
 .total{font-size:18px;font-weight:800;color:#0f172a}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px;
-}
-th,td{
-  border-bottom:1px solid #e5e7eb;
-  padding:8px;
-  text-align:right;
-}
+.filtros{display:flex;gap:6px;margin-bottom:12px}
+.filtros button{flex:1;padding:9px;border:0;border-radius:10px;background:#e5e7eb;font-weight:700;color:#334155}
+.filtros button.active{background:#0f172a;color:white}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
 th:first-child,td:first-child{text-align:left}
 </style>
 </head>
@@ -112,7 +43,8 @@ th:first-child,td:first-child{text-align:left}
 <nav>
 <button class="active" onclick="showTab('tc',this)">TC</button>
 <button onclick="showTab('bancos',this)">Bancos</button>
-<button onclick="showTab('amortizacion',this)">Amortización</button>
+<button onclick="showTab('amortizacion',this)">Amort.</button>
+<button onclick="showTab('resumen',this);generarResumen()">Resumen</button>
 </nav>
 
 <section id="tc" class="active">
@@ -172,6 +104,11 @@ th:first-child,td:first-child{text-align:left}
 
 <div class="card">
 <h3>Movimientos TC</h3>
+<div class="filtros">
+<button id="fTCtodos" class="active" onclick="setFiltroTC('todos')">Todos</button>
+<button id="fTCno" onclick="setFiltroTC('no')">No conciliados</button>
+<button id="fTCsi" onclick="setFiltroTC('si')">Conciliados</button>
+</div>
 <div id="listaTC"></div>
 </div>
 </section>
@@ -210,6 +147,11 @@ th:first-child,td:first-child{text-align:left}
 
 <div class="card">
 <h3>Movimientos Bancos</h3>
+<div class="filtros">
+<button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button>
+<button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button>
+<button id="fBsi" onclick="setFiltroBanco('si')">Conciliados</button>
+</div>
 <div id="listaBancos"></div>
 </div>
 </section>
@@ -239,10 +181,42 @@ th:first-child,td:first-child{text-align:left}
 </div>
 </section>
 
+<section id="resumen">
+<div class="card">
+<h2>Resumen mensual por conceptos</h2>
+
+<label>Origen</label>
+<select id="resOrigen" onchange="generarResumen()">
+<option value="todos">TC + Bancos</option>
+<option value="tc">Solo TC</option>
+<option value="bancos">Solo Bancos</option>
+</select>
+
+<label>Estado</label>
+<select id="resEstado" onchange="generarResumen()">
+<option value="todos">Todos</option>
+<option value="no">No conciliados</option>
+<option value="si">Conciliados</option>
+</select>
+
+<button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
+</div>
+
+<div class="card">
+<div style="overflow:auto">
+<table id="tablaResumen"></table>
+</div>
+</div>
+</section>
+
 <script>
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
+let resumenMensual = [];
+
+let filtroTC = "todos";
+let filtroBanco = "todos";
 
 document.getElementById("tcFecha").valueAsDate = new Date();
 document.getElementById("bFecha").valueAsDate = new Date();
@@ -256,6 +230,13 @@ function showTab(id,btn){
 
 function formato(n){
   return Number(n||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function mesTexto(fecha){
+  if(!fecha) return "Sin fecha";
+  const d = new Date(fecha + "T00:00:00");
+  const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+  return meses[d.getMonth()] + "-" + String(d.getFullYear()).slice(-2);
 }
 
 function normalizarTC(m){
@@ -291,6 +272,26 @@ bancos = bancos.map(normalizarBanco);
 localStorage.setItem("tc", JSON.stringify(tc));
 localStorage.setItem("bancos", JSON.stringify(bancos));
 
+function setFiltroTC(valor){
+  filtroTC = valor;
+  document.querySelectorAll("#tc .filtros button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("fTC"+valor).classList.add("active");
+  mostrarTC();
+}
+
+function setFiltroBanco(valor){
+  filtroBanco = valor;
+  document.querySelectorAll("#bancos .filtros button").forEach(b=>b.classList.remove("active"));
+  document.getElementById("fB"+valor).classList.add("active");
+  mostrarBancos();
+}
+
+function pasaFiltro(m,filtro){
+  if(filtro==="no" && m.Conciliado==="Si") return false;
+  if(filtro==="si" && m.Conciliado!=="Si") return false;
+  return true;
+}
+
 function guardarTC(){
   let valor = Number(tcValor.value || 0);
   let pago = Number(tcPago.value || 0);
@@ -324,6 +325,8 @@ function guardarTC(){
 function mostrarTC(){
   listaTC.innerHTML="";
   tc.slice().reverse().forEach((m,i)=>{
+    if(!pasaFiltro(m,filtroTC)) return;
+
     let idx = tc.length-1-i;
     listaTC.innerHTML += `
     <div class="mov">
@@ -364,6 +367,8 @@ function guardarBanco(){
 function mostrarBancos(){
   listaBancos.innerHTML="";
   bancos.slice().reverse().forEach((m,i)=>{
+    if(!pasaFiltro(m,filtroBanco)) return;
+
     let idx = bancos.length-1-i;
     listaBancos.innerHTML += `
     <div class="mov">
@@ -409,6 +414,8 @@ function exportarPendientes(tipo){
     localStorage.setItem("bancos",JSON.stringify(bancos));
     mostrarBancos();
   }
+
+  generarResumen();
 }
 
 function calcularAmortizacion(){
@@ -499,8 +506,114 @@ function exportarAmortizacion(){
   XLSX.writeFile(wb,"Amortizacion.xlsx");
 }
 
+function generarResumen(){
+  const origen = document.getElementById("resOrigen")?.value || "todos";
+  const estado = document.getElementById("resEstado")?.value || "todos";
+
+  let datos = [];
+
+  if(origen==="todos" || origen==="tc"){
+    tc.forEach(m=>{
+      datos.push({
+        Origen:"TC",
+        Mes:mesTexto(m.Fecha),
+        Concepto:m.Concepto || "Sin concepto",
+        Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
+        Valor:Number(m.Valor||0)
+      });
+    });
+  }
+
+  if(origen==="todos" || origen==="bancos"){
+    bancos.forEach(m=>{
+      datos.push({
+        Origen:"Bancos",
+        Mes:mesTexto(m.Fecha),
+        Concepto:m.Concepto || "Sin concepto",
+        Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
+        Valor:Number(m.Valor||0)
+      });
+    });
+  }
+
+  if(estado==="no"){
+    datos = datos.filter(d=>d.Estado==="No conciliado");
+  }
+
+  if(estado==="si"){
+    datos = datos.filter(d=>d.Estado==="Conciliado");
+  }
+
+  const mapa = {};
+
+  datos.forEach(d=>{
+    const clave = d.Origen + "|" + d.Mes + "|" + d.Concepto + "|" + d.Estado;
+    if(!mapa[clave]){
+      mapa[clave] = {
+        Origen:d.Origen,
+        Mes:d.Mes,
+        Concepto:d.Concepto,
+        Estado:d.Estado,
+        Cantidad:0,
+        Total:0
+      };
+    }
+    mapa[clave].Cantidad += 1;
+    mapa[clave].Total += d.Valor;
+  });
+
+  resumenMensual = Object.values(mapa);
+
+  resumenMensual.sort((a,b)=>{
+    if(a.Mes!==b.Mes) return a.Mes.localeCompare(b.Mes);
+    if(a.Origen!==b.Origen) return a.Origen.localeCompare(b.Origen);
+    return a.Concepto.localeCompare(b.Concepto);
+  });
+
+  tablaResumen.innerHTML = `
+  <tr>
+    <th>Origen</th>
+    <th>Mes</th>
+    <th>Concepto</th>
+    <th>Estado</th>
+    <th>Cant.</th>
+    <th>Total</th>
+  </tr>`;
+
+  if(resumenMensual.length===0){
+    tablaResumen.innerHTML += `<tr><td colspan="6">No hay datos para mostrar</td></tr>`;
+    return;
+  }
+
+  resumenMensual.forEach(r=>{
+    tablaResumen.innerHTML += `
+    <tr>
+      <td>${r.Origen}</td>
+      <td>${r.Mes}</td>
+      <td>${r.Concepto}</td>
+      <td>${r.Estado}</td>
+      <td>${r.Cantidad}</td>
+      <td>$${formato(r.Total)}</td>
+    </tr>`;
+  });
+}
+
+function exportarResumen(){
+  generarResumen();
+
+  if(resumenMensual.length===0){
+    alert("No hay resumen para exportar");
+    return;
+  }
+
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumenMensual), "Resumen");
+  XLSX.writeFile(wb,"Resumen_mensual_conceptos.xlsx");
+}
+
 mostrarTC();
 mostrarBancos();
+generarResumen();
 </script>
 
 </body>
