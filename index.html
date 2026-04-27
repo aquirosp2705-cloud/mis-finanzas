@@ -43,7 +43,7 @@ th:first-child,td:first-child{text-align:left}
 <button class="active" onclick="showTab('tc',this)">TC</button>
 <button onclick="showTab('bancos',this)">Bancos</button>
 <button onclick="showTab('amortizacion',this)">Amort.</button>
-<button onclick="showTab('resumen',this);cargarMesesResumen();generarResumen()">Resumen</button>
+<button onclick="showTab('resumen',this);cargarMesesResumen();cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()">Resumen</button>
 </nav>
 
 <section id="tc" class="active">
@@ -198,7 +198,7 @@ th:first-child,td:first-child{text-align:left}
 </select>
 
 <label>Origen</label>
-<select id="resOrigen" onchange="generarResumen();cargarFiltroEntidad()">
+<select id="resOrigen" onchange="cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()">
 <option value="todos">TC + Bancos</option>
 <option value="tc">Solo TC</option>
 <option value="bancos">Solo Bancos</option>
@@ -214,6 +214,11 @@ th:first-child,td:first-child{text-align:left}
 <option value="todos">Todos</option>
 <option value="no">No conciliados</option>
 <option value="si">Conciliados</option>
+</select>
+
+<label>Concepto</label>
+<select id="resConcepto" onchange="generarResumen()">
+<option value="todos">Todos los conceptos</option>
 </select>
 
 <button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
@@ -232,6 +237,7 @@ let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
 let resumenMensual = [];
+
 let filtroTC = "todos";
 let filtroBanco = "todos";
 
@@ -344,6 +350,8 @@ function guardarTC(){
   tcPorPagar.value=0;
   mostrarTC();
   cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
 }
 
 function mostrarTC(){
@@ -370,6 +378,8 @@ function eliminarTC(i){
   localStorage.setItem("tc",JSON.stringify(tc));
   mostrarTC();
   cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
 }
 
 function guardarBanco(){
@@ -388,6 +398,8 @@ function guardarBanco(){
   bValor.value="";
   mostrarBancos();
   cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
 }
 
 function mostrarBancos(){
@@ -411,6 +423,8 @@ function eliminarBanco(i){
   localStorage.setItem("bancos",JSON.stringify(bancos));
   mostrarBancos();
   cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
 }
 
 function exportarPendientes(tipo){
@@ -442,6 +456,8 @@ function exportarPendientes(tipo){
   }
 
   cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
   generarResumen();
 }
 
@@ -534,7 +550,9 @@ function exportarAmortizacion(){
 }
 
 function cargarMesesResumen(){
-  const actual = resMes ? resMes.value : "todos";
+  if(!resMes) return;
+
+  const actual = resMes.value;
   const meses = new Map();
 
   [...tc.map(x=>x.Fecha), ...bancos.map(x=>x.Fecha)].forEach(f=>{
@@ -543,9 +561,8 @@ function cargarMesesResumen(){
     }
   });
 
-  if(!resMes) return;
-
   resMes.innerHTML = `<option value="todos">Todos los meses</option>`;
+
   Array.from(meses.entries()).sort().reverse().forEach(([clave,texto])=>{
     resMes.innerHTML += `<option value="${clave}">${texto}</option>`;
   });
@@ -556,6 +573,8 @@ function cargarMesesResumen(){
 }
 
 function cargarFiltroEntidad(){
+  if(!resEntidad) return;
+
   const origen = resOrigen.value;
   const actual = resEntidad.value;
   let valores = [];
@@ -585,8 +604,32 @@ function cargarFiltroEntidad(){
   if([...resEntidad.options].some(o=>o.value===actual)){
     resEntidad.value = actual;
   }
+}
 
-  generarResumen();
+function cargarFiltroConcepto(){
+  if(!resConcepto) return;
+
+  const actual = resConcepto.value;
+  const origen = resOrigen.value;
+  let conceptos = [];
+
+  if(origen==="todos" || origen==="tc"){
+    conceptos = conceptos.concat(tc.map(x=>x.Concepto));
+  }
+
+  if(origen==="todos" || origen==="bancos"){
+    conceptos = conceptos.concat(bancos.map(x=>x.Concepto));
+  }
+
+  resConcepto.innerHTML = `<option value="todos">Todos los conceptos</option>`;
+
+  [...new Set(conceptos.filter(Boolean))].sort().forEach(c=>{
+    resConcepto.innerHTML += `<option value="${c}">${c}</option>`;
+  });
+
+  if([...resConcepto.options].some(o=>o.value===actual)){
+    resConcepto.value = actual;
+  }
 }
 
 function generarResumen(){
@@ -596,6 +639,7 @@ function generarResumen(){
   const origenFiltro = resOrigen.value;
   const entidadFiltro = resEntidad.value;
   const estadoFiltro = resEstado.value;
+  const conceptoFiltro = resConcepto.value;
 
   let datos = [];
 
@@ -649,11 +693,16 @@ function generarResumen(){
     }
   }
 
+  if(conceptoFiltro!=="todos"){
+    datos = datos.filter(d=>d.Concepto===conceptoFiltro);
+  }
+
   const mapa = {};
   let totalGeneral = 0;
 
   datos.forEach(d=>{
     const clave = d.Origen + "|" + d.Entidad + "|" + d.Mes + "|" + d.Concepto + "|" + d.Estado;
+
     if(!mapa[clave]){
       mapa[clave] = {
         Origen:d.Origen,
@@ -665,6 +714,7 @@ function generarResumen(){
         Total:0
       };
     }
+
     mapa[clave].Cantidad += 1;
     mapa[clave].Total += d.Valor;
     totalGeneral += d.Valor;
@@ -726,6 +776,7 @@ mostrarTC();
 mostrarBancos();
 cargarMesesResumen();
 cargarFiltroEntidad();
+cargarFiltroConcepto();
 generarResumen();
 </script>
 
