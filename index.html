@@ -4,14 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mis Finanzas</title>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#f4f6f8;color:#111827}
 header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
 nav{display:flex;background:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-nav button{flex:1;padding:13px 4px;border:0;background:white;font-weight:700;color:#334155;font-size:13px}
+nav button{flex:1;padding:12px 4px;border:0;background:white;font-weight:700;color:#334155;font-size:13px}
 nav button.active{background:#0f172a;color:white}
 section{display:none;padding:16px}
 section.active{display:block}
@@ -44,7 +43,7 @@ th:first-child,td:first-child{text-align:left}
 <button class="active" onclick="showTab('tc',this)">TC</button>
 <button onclick="showTab('bancos',this)">Bancos</button>
 <button onclick="showTab('amortizacion',this)">Amort.</button>
-<button onclick="showTab('resumen',this);generarResumen()">Resumen</button>
+<button onclick="showTab('resumen',this);cargarMesesResumen();generarResumen()">Resumen</button>
 </nav>
 
 <section id="tc" class="active">
@@ -56,10 +55,8 @@ th:first-child,td:first-child{text-align:left}
 
 <label>Tarjeta</label>
 <select id="tcTarjeta">
-<option>Visa</option>
-<option>Mastercard</option>
-<option>American Express</option>
-<option>Diners</option>
+<option>Pichincha</option>
+<option>Produbanco</option>
 <option>Otra</option>
 </select>
 
@@ -122,10 +119,10 @@ th:first-child,td:first-child{text-align:left}
 
 <label>Banco</label>
 <select id="bBanco">
-<option>Guayaquil</option>
-<option>Bolivariano</option>
 <option>Pichincha</option>
 <option>Produbanco</option>
+<option>Guayaquil</option>
+<option>Bolivariano</option>
 <option>Otro</option>
 </select>
 
@@ -136,7 +133,17 @@ th:first-child,td:first-child{text-align:left}
 </select>
 
 <label>Concepto</label>
-<input id="bConcepto" placeholder="Ej: transferencia, pago, retiro">
+<select id="bConcepto">
+<option>Transferencia</option>
+<option>Pago</option>
+<option>Retiro</option>
+<option>Depósito</option>
+<option>Servicios</option>
+<option>Otros</option>
+</select>
+
+<label>Detalle</label>
+<input id="bDetalle" placeholder="Detalle">
 
 <label>Valor</label>
 <input type="number" id="bValor" step="0.01">
@@ -183,13 +190,23 @@ th:first-child,td:first-child{text-align:left}
 
 <section id="resumen">
 <div class="card">
-<h2>Resumen mensual por conceptos</h2>
+<h2>Resumen mensual</h2>
+
+<label>Mes</label>
+<select id="resMes" onchange="generarResumen()">
+<option value="todos">Todos los meses</option>
+</select>
 
 <label>Origen</label>
-<select id="resOrigen" onchange="generarResumen()">
+<select id="resOrigen" onchange="generarResumen();cargarFiltroEntidad()">
 <option value="todos">TC + Bancos</option>
 <option value="tc">Solo TC</option>
 <option value="bancos">Solo Bancos</option>
+</select>
+
+<label>Tarjeta / Banco</label>
+<select id="resEntidad" onchange="generarResumen()">
+<option value="todos">Todas las tarjetas y bancos</option>
 </select>
 
 <label>Estado</label>
@@ -203,6 +220,7 @@ th:first-child,td:first-child{text-align:left}
 </div>
 
 <div class="card">
+<div id="totalResumen" class="total"></div>
 <div style="overflow:auto">
 <table id="tablaResumen"></table>
 </div>
@@ -214,7 +232,6 @@ let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
 let resumenMensual = [];
-
 let filtroTC = "todos";
 let filtroBanco = "todos";
 
@@ -230,6 +247,11 @@ function showTab(id,btn){
 
 function formato(n){
   return Number(n||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function mesClave(fecha){
+  if(!fecha) return "Sin fecha";
+  return fecha.substring(0,7);
 }
 
 function mesTexto(fecha){
@@ -262,6 +284,7 @@ function normalizarBanco(m){
     Banco: m.Banco || m.banco || "",
     Tipo: m.Tipo || m.tipo || "",
     Concepto: m.Concepto || m.concepto || "",
+    Detalle: m.Detalle || m.detalle || "",
     Valor: Number(m.Valor ?? m.valor ?? 0),
     Conciliado: m.Conciliado || m.conciliado || "No"
   };
@@ -320,13 +343,13 @@ function guardarTC(){
   tcPagadas.value=0;
   tcPorPagar.value=0;
   mostrarTC();
+  cargarMesesResumen();
 }
 
 function mostrarTC(){
   listaTC.innerHTML="";
   tc.slice().reverse().forEach((m,i)=>{
     if(!pasaFiltro(m,filtroTC)) return;
-
     let idx = tc.length-1-i;
     listaTC.innerHTML += `
     <div class="mov">
@@ -346,6 +369,7 @@ function eliminarTC(i){
   tc.splice(i,1);
   localStorage.setItem("tc",JSON.stringify(tc));
   mostrarTC();
+  cargarMesesResumen();
 }
 
 function guardarBanco(){
@@ -354,26 +378,27 @@ function guardarBanco(){
     Banco: bBanco.value,
     Tipo: bTipo.value,
     Concepto: bConcepto.value,
+    Detalle: bDetalle.value,
     Valor: Number(bValor.value || 0),
     Conciliado:"No"
   });
 
   localStorage.setItem("bancos",JSON.stringify(bancos));
-  bConcepto.value="";
+  bDetalle.value="";
   bValor.value="";
   mostrarBancos();
+  cargarMesesResumen();
 }
 
 function mostrarBancos(){
   listaBancos.innerHTML="";
   bancos.slice().reverse().forEach((m,i)=>{
     if(!pasaFiltro(m,filtroBanco)) return;
-
     let idx = bancos.length-1-i;
     listaBancos.innerHTML += `
     <div class="mov">
       <strong>${m.Fecha} | ${m.Banco} | ${m.Tipo}</strong>
-      <div>${m.Concepto || ""}</div>
+      <div>${m.Concepto || ""} ${m.Detalle ? "- " + m.Detalle : ""}</div>
       <div class="small">Valor: $${formato(m.Valor)}</div>
       <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
       <button class="btn btnDanger" onclick="eliminarBanco(${idx})">Eliminar</button>
@@ -385,6 +410,7 @@ function eliminarBanco(i){
   bancos.splice(i,1);
   localStorage.setItem("bancos",JSON.stringify(bancos));
   mostrarBancos();
+  cargarMesesResumen();
 }
 
 function exportarPendientes(tipo){
@@ -415,6 +441,7 @@ function exportarPendientes(tipo){
     mostrarBancos();
   }
 
+  cargarMesesResumen();
   generarResumen();
 }
 
@@ -506,16 +533,79 @@ function exportarAmortizacion(){
   XLSX.writeFile(wb,"Amortizacion.xlsx");
 }
 
+function cargarMesesResumen(){
+  const actual = resMes ? resMes.value : "todos";
+  const meses = new Map();
+
+  [...tc.map(x=>x.Fecha), ...bancos.map(x=>x.Fecha)].forEach(f=>{
+    if(f){
+      meses.set(mesClave(f), mesTexto(f));
+    }
+  });
+
+  if(!resMes) return;
+
+  resMes.innerHTML = `<option value="todos">Todos los meses</option>`;
+  Array.from(meses.entries()).sort().reverse().forEach(([clave,texto])=>{
+    resMes.innerHTML += `<option value="${clave}">${texto}</option>`;
+  });
+
+  if(Array.from(meses.keys()).includes(actual)){
+    resMes.value = actual;
+  }
+}
+
+function cargarFiltroEntidad(){
+  const origen = resOrigen.value;
+  const actual = resEntidad.value;
+  let valores = [];
+
+  if(origen==="todos"){
+    valores = [
+      ...tc.map(x=>"TC: " + x.Tarjeta),
+      ...bancos.map(x=>"Banco: " + x.Banco)
+    ];
+    resEntidad.innerHTML = `<option value="todos">Todas las tarjetas y bancos</option>`;
+  }
+
+  if(origen==="tc"){
+    valores = tc.map(x=>x.Tarjeta);
+    resEntidad.innerHTML = `<option value="todos">Todas las tarjetas</option>`;
+  }
+
+  if(origen==="bancos"){
+    valores = bancos.map(x=>x.Banco);
+    resEntidad.innerHTML = `<option value="todos">Todos los bancos</option>`;
+  }
+
+  [...new Set(valores.filter(Boolean))].sort().forEach(v=>{
+    resEntidad.innerHTML += `<option value="${v}">${v}</option>`;
+  });
+
+  if([...resEntidad.options].some(o=>o.value===actual)){
+    resEntidad.value = actual;
+  }
+
+  generarResumen();
+}
+
 function generarResumen(){
-  const origen = document.getElementById("resOrigen")?.value || "todos";
-  const estado = document.getElementById("resEstado")?.value || "todos";
+  if(!tablaResumen) return;
+
+  const mesFiltro = resMes.value;
+  const origenFiltro = resOrigen.value;
+  const entidadFiltro = resEntidad.value;
+  const estadoFiltro = resEstado.value;
 
   let datos = [];
 
-  if(origen==="todos" || origen==="tc"){
+  if(origenFiltro==="todos" || origenFiltro==="tc"){
     tc.forEach(m=>{
       datos.push({
         Origen:"TC",
+        Entidad:m.Tarjeta,
+        EntidadFiltro:"TC: " + m.Tarjeta,
+        MesClave:mesClave(m.Fecha),
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
@@ -524,10 +614,13 @@ function generarResumen(){
     });
   }
 
-  if(origen==="todos" || origen==="bancos"){
+  if(origenFiltro==="todos" || origenFiltro==="bancos"){
     bancos.forEach(m=>{
       datos.push({
         Origen:"Bancos",
+        Entidad:m.Banco,
+        EntidadFiltro:"Banco: " + m.Banco,
+        MesClave:mesClave(m.Fecha),
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
@@ -536,21 +629,35 @@ function generarResumen(){
     });
   }
 
-  if(estado==="no"){
+  if(mesFiltro!=="todos"){
+    datos = datos.filter(d=>d.MesClave===mesFiltro);
+  }
+
+  if(estadoFiltro==="no"){
     datos = datos.filter(d=>d.Estado==="No conciliado");
   }
 
-  if(estado==="si"){
+  if(estadoFiltro==="si"){
     datos = datos.filter(d=>d.Estado==="Conciliado");
   }
 
+  if(entidadFiltro!=="todos"){
+    if(origenFiltro==="todos"){
+      datos = datos.filter(d=>d.EntidadFiltro===entidadFiltro);
+    }else{
+      datos = datos.filter(d=>d.Entidad===entidadFiltro);
+    }
+  }
+
   const mapa = {};
+  let totalGeneral = 0;
 
   datos.forEach(d=>{
-    const clave = d.Origen + "|" + d.Mes + "|" + d.Concepto + "|" + d.Estado;
+    const clave = d.Origen + "|" + d.Entidad + "|" + d.Mes + "|" + d.Concepto + "|" + d.Estado;
     if(!mapa[clave]){
       mapa[clave] = {
         Origen:d.Origen,
+        TarjetaBanco:d.Entidad,
         Mes:d.Mes,
         Concepto:d.Concepto,
         Estado:d.Estado,
@@ -560,19 +667,22 @@ function generarResumen(){
     }
     mapa[clave].Cantidad += 1;
     mapa[clave].Total += d.Valor;
+    totalGeneral += d.Valor;
   });
 
-  resumenMensual = Object.values(mapa);
-
-  resumenMensual.sort((a,b)=>{
+  resumenMensual = Object.values(mapa).sort((a,b)=>{
     if(a.Mes!==b.Mes) return a.Mes.localeCompare(b.Mes);
     if(a.Origen!==b.Origen) return a.Origen.localeCompare(b.Origen);
+    if(a.TarjetaBanco!==b.TarjetaBanco) return a.TarjetaBanco.localeCompare(b.TarjetaBanco);
     return a.Concepto.localeCompare(b.Concepto);
   });
+
+  totalResumen.innerHTML = `Total seleccionado: $${formato(totalGeneral)}`;
 
   tablaResumen.innerHTML = `
   <tr>
     <th>Origen</th>
+    <th>Tarjeta/Banco</th>
     <th>Mes</th>
     <th>Concepto</th>
     <th>Estado</th>
@@ -581,7 +691,7 @@ function generarResumen(){
   </tr>`;
 
   if(resumenMensual.length===0){
-    tablaResumen.innerHTML += `<tr><td colspan="6">No hay datos para mostrar</td></tr>`;
+    tablaResumen.innerHTML += `<tr><td colspan="7">No hay datos para mostrar</td></tr>`;
     return;
   }
 
@@ -589,6 +699,7 @@ function generarResumen(){
     tablaResumen.innerHTML += `
     <tr>
       <td>${r.Origen}</td>
+      <td>${r.TarjetaBanco}</td>
       <td>${r.Mes}</td>
       <td>${r.Concepto}</td>
       <td>${r.Estado}</td>
@@ -608,11 +719,13 @@ function exportarResumen(){
 
   let wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumenMensual), "Resumen");
-  XLSX.writeFile(wb,"Resumen_mensual_conceptos.xlsx");
+  XLSX.writeFile(wb,"Resumen_mensual.xlsx");
 }
 
 mostrarTC();
 mostrarBancos();
+cargarMesesResumen();
+cargarFiltroEntidad();
 generarResumen();
 </script>
 
