@@ -1,10 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mis Finanzas</title>
+<title>Mis Finanzas - Editable</title>
+<!-- VERSION_EDITABLE_2026_05_04 -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <style>
 :root{
@@ -46,6 +46,7 @@ input:disabled{
   background:var(--navy);color:white;font-size:18px;font-weight:900;
 }
 .btnBlue{background:var(--blue)}
+.btnEdit{background:#f59e0b;color:white}
 .btnRed{background:var(--red)}
 .btnGray{background:#e5e7eb;color:#334155}
 .filters{display:flex;gap:10px;margin-bottom:18px}
@@ -89,6 +90,7 @@ th:first-child,td:first-child{text-align:left}
 </header>
 
 <section id="tc" class="active">
+  <div class="notice"><b>Versión editable:</b> cada movimiento de TC y Bancos tiene botón azul EDITAR.</div>
   <div class="card">
     <h2>Registro TC</h2>
     <label>Fecha</label><input type="date" id="tcFecha">
@@ -180,13 +182,72 @@ th:first-child,td:first-child{text-align:left}
     </div>
     <button class="btn btnBlue" onclick="exportarConFiltro('tc')">Exportar TC</button>
     <button class="btn btnBlue" onclick="exportarConFiltro('bancos')">Exportar Bancos</button>
+    <button class="btn btnGray" onclick="recargarDatosFotos()">Cargar datos visibles de fotos</button>
   </div>
 </section>
 
 <script>
+
+const TC_FOTOS = [
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"Si"},
+  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"Si"}
+];
+
+const BANCOS_FOTOS = [
+  {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
+  {Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"},
+  {Fecha:"2026-05-03",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Lavada",Valor:5.00,Conciliado:"Si"},
+  {Fecha:"2026-05-02",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Retiro",Detalle:"Efectivo",Valor:200.00,Conciliado:"Si"}
+];
+
+function cargarDatosFotosSiVacio(){
+  let yaTC = localStorage.getItem("tc");
+  let yaBancos = localStorage.getItem("bancos");
+
+  if(!yaTC || yaTC === "[]" || yaTC === "null"){
+    localStorage.setItem("tc", JSON.stringify(TC_FOTOS));
+    tc = TC_FOTOS.slice();
+  }
+
+  if(!yaBancos || yaBancos === "[]" || yaBancos === "null"){
+    localStorage.setItem("bancos", JSON.stringify(BANCOS_FOTOS));
+    bancos = BANCOS_FOTOS.slice();
+  }
+}
+
+function recargarDatosFotos(){
+  if(confirm("Esto cargará los movimientos visibles de las fotos. Si ya tienes datos nuevos en esta versión, se agregarán sin borrar. ¿Continuar?")){
+    let tcActual = JSON.parse(localStorage.getItem("tc")) || [];
+    let bActual = JSON.parse(localStorage.getItem("bancos")) || [];
+
+    function keyTC(x){return [x.Fecha,x.Tarjeta,x.Concepto,x.Detalle,x.Valor].join("|");}
+    function keyB(x){return [x.Fecha,x.Banco,x.Tipo,x.Concepto,x.Detalle,x.Valor].join("|");}
+
+    let keysTC = new Set(tcActual.map(keyTC));
+    TC_FOTOS.forEach(x => { if(!keysTC.has(keyTC(x))) tcActual.push(x); });
+
+    let keysB = new Set(bActual.map(keyB));
+    BANCOS_FOTOS.forEach(x => { if(!keysB.has(keyB(x))) bActual.push(x); });
+
+    localStorage.setItem("tc", JSON.stringify(tcActual));
+    localStorage.setItem("bancos", JSON.stringify(bActual));
+    tc = tcActual;
+    bancos = bActual;
+    refrescarTodo();
+    alert("Datos de las fotos cargados.");
+  }
+}
+
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 let amortizacion = [];
+cargarDatosFotosSiVacio();
 let filtroTC = "Todos";
 let filtroBancos = "Todos";
 
@@ -285,6 +346,7 @@ function mostrarTC(){
         <div class="line">Valor consumo: ${money(m.Valor)} | Pago: ${money(m.Pago)}</div>
         <div class="line">Acumulado: ${money(m.Acumulado)} | Saldo diferido: ${money(m.SaldoDiferido)}</div>
         <div class="${estado==='Si'?'ok':'no'}">Estado: ${estado==='Si'?'Conciliado':'No conciliado'}</div>
+        <button class="btn btnEdit" onclick="editarTC(${idx})">EDITAR MOVIMIENTO TC</button>
         <button class="btn btnRed" onclick="eliminarTC(${idx})">Eliminar</button>
       </div>`;
   });
@@ -303,10 +365,113 @@ function mostrarBancos(){
         <div class="movDetail">${m.Concepto||""} - ${m.Detalle||""}</div>
         <div class="line">Valor: ${money(m.Valor)}</div>
         <div class="${estado==='Si'?'ok':'no'}">Estado: ${estado==='Si'?'Conciliado':'No conciliado'}</div>
+        <button class="btn btnEdit" onclick="editarBanco(${idx})">EDITAR MOVIMIENTO BANCO</button>
         <button class="btn btnRed" onclick="eliminarBanco(${idx})">Eliminar</button>
       </div>`;
   });
 }
+
+
+function editarTC(i){
+  let m = tc[i];
+
+  let nuevaFecha = prompt("Fecha:", m.Fecha || "");
+  if(nuevaFecha === null) return;
+
+  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || "");
+  if(nuevaTarjeta === null) return;
+
+  let nuevoConcepto = prompt("Concepto:", m.Concepto || "");
+  if(nuevoConcepto === null) return;
+
+  let nuevoDetalle = prompt("Detalle:", m.Detalle || "");
+  if(nuevoDetalle === null) return;
+
+  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente");
+  if(nuevoTipo === null) return;
+  nuevoTipo = nuevoTipo.trim();
+  if(nuevoTipo.toLowerCase() !== "diferido") nuevoTipo = "Corriente";
+  else nuevoTipo = "Diferido";
+
+  let nuevasPagadas = 0;
+  let nuevasPorPagar = 0;
+
+  if(nuevoTipo === "Diferido"){
+    nuevasPagadas = Number(prompt("Cuotas pagadas:", m.CuotasPagadas || 0) || 0);
+    nuevasPorPagar = Number(prompt("Cuotas por pagar:", m.CuotasPorPagar || 0) || 0);
+  }
+
+  let nuevoValor = Number(prompt("Valor consumo:", m.Valor || 0) || 0);
+  let nuevoPago = Number(prompt("Pago:", m.Pago || 0) || 0);
+
+  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", normalizarEstado(m.Conciliado));
+  if(nuevoEstado === null) return;
+  nuevoEstado = nuevoEstado.trim().toLowerCase();
+  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
+
+  tc[i] = {
+    Fecha: nuevaFecha,
+    Tarjeta: nuevaTarjeta,
+    Concepto: nuevoConcepto,
+    Detalle: nuevoDetalle,
+    Tipo: nuevoTipo,
+    CuotasPagadas: nuevoTipo === "Diferido" ? nuevasPagadas : 0,
+    CuotasPorPagar: nuevoTipo === "Diferido" ? nuevasPorPagar : 0,
+    Valor: nuevoValor,
+    Pago: nuevoPago,
+    Acumulado: nuevoValor - nuevoPago,
+    SaldoDiferido: nuevoTipo === "Diferido" ? nuevoValor * nuevasPorPagar : 0,
+    Conciliado: nuevoEstado
+  };
+
+  localStorage.setItem("tc", JSON.stringify(tc));
+  refrescarTodo();
+  alert("Movimiento TC actualizado.");
+}
+
+function editarBanco(i){
+  let m = bancos[i];
+
+  let nuevaFecha = prompt("Fecha:", m.Fecha || "");
+  if(nuevaFecha === null) return;
+
+  let nuevoBanco = prompt("Banco:", m.Banco || "");
+  if(nuevoBanco === null) return;
+
+  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso");
+  if(nuevoTipo === null) return;
+  nuevoTipo = nuevoTipo.trim();
+  if(nuevoTipo.toLowerCase() !== "ingreso") nuevoTipo = "Egreso";
+  else nuevoTipo = "Ingreso";
+
+  let nuevoConcepto = prompt("Concepto:", m.Concepto || "");
+  if(nuevoConcepto === null) return;
+
+  let nuevoDetalle = prompt("Detalle:", m.Detalle || "");
+  if(nuevoDetalle === null) return;
+
+  let nuevoValor = Number(prompt("Valor:", m.Valor || 0) || 0);
+
+  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", normalizarEstado(m.Conciliado));
+  if(nuevoEstado === null) return;
+  nuevoEstado = nuevoEstado.trim().toLowerCase();
+  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
+
+  bancos[i] = {
+    Fecha: nuevaFecha,
+    Banco: nuevoBanco,
+    Tipo: nuevoTipo,
+    Concepto: nuevoConcepto,
+    Detalle: nuevoDetalle,
+    Valor: nuevoValor,
+    Conciliado: nuevoEstado
+  };
+
+  localStorage.setItem("bancos", JSON.stringify(bancos));
+  refrescarTodo();
+  alert("Movimiento Banco actualizado.");
+}
+
 
 function eliminarTC(i){
   if(confirm("¿Eliminar este movimiento de TC?")){
