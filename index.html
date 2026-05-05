@@ -97,11 +97,17 @@ th:first-child,td:first-child{text-align:left}
 <input type="number" id="tcPago" step="0.01" value="0">
 
 <button class="btn" onclick="guardarTC()">Guardar TC</button>
-<button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC a Excel</button>
+<button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC a Excel según tarjeta</button>
 </div>
 
 <div class="card">
 <h3>Movimientos TC</h3>
+
+<label>Filtrar por tarjeta</label>
+<select id="filtroTarjetaTC" onchange="mostrarTC()">
+<option value="todas">Todas las tarjetas</option>
+</select>
+
 <div class="filtros">
 <button id="fTCtodos" class="active" onclick="setFiltroTC('todos')">Todos</button>
 <button id="fTCno" onclick="setFiltroTC('no')">No conciliados</button>
@@ -362,6 +368,24 @@ if(localStorage.getItem("tc_fotos_cargadas_v3") !== "Si"){
 }
 
 
+
+function cargarFiltroTarjetaTC(){
+  if(!document.getElementById("filtroTarjetaTC")) return;
+
+  const actual = filtroTarjetaTC.value;
+  const tarjetas = [...new Set(tc.map(x=>x.Tarjeta).filter(Boolean))].sort();
+
+  filtroTarjetaTC.innerHTML = `<option value="todas">Todas las tarjetas</option>`;
+
+  tarjetas.forEach(t=>{
+    filtroTarjetaTC.innerHTML += `<option value="${t}">${t}</option>`;
+  });
+
+  if(tarjetas.includes(actual)){
+    filtroTarjetaTC.value = actual;
+  }
+}
+
 function setFiltroTC(valor){
   filtroTC = valor;
   document.querySelectorAll("#tc .filtros button").forEach(b=>b.classList.remove("active"));
@@ -404,6 +428,7 @@ function guardarTC(){
   });
 
   localStorage.setItem("tc",JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
   tcDetalle.value="";
   tcValor.value="";
   tcPago.value=0;
@@ -419,6 +444,10 @@ function mostrarTC(){
   listaTC.innerHTML="";
   tc.slice().reverse().forEach((m,i)=>{
     if(!pasaFiltro(m,filtroTC)) return;
+
+    let tarjetaFiltro = document.getElementById("filtroTarjetaTC") ? filtroTarjetaTC.value : "todas";
+    if(tarjetaFiltro !== "todas" && m.Tarjeta !== tarjetaFiltro) return;
+
     let idx = tc.length-1-i;
     listaTC.innerHTML += `
     <div class="mov">
@@ -438,6 +467,7 @@ function mostrarTC(){
 function eliminarTC(i){
   tc.splice(i,1);
   localStorage.setItem("tc",JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
   mostrarTC();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -594,6 +624,7 @@ function editarTC(i){
   };
 
   localStorage.setItem("tc",JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
   mostrarTC(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
 }
 
@@ -981,6 +1012,7 @@ function exportarResumen(){
 }
 
 controlCamposTC();
+cargarFiltroTarjetaTC();
 mostrarTC();
 mostrarBancos();
 cargarMesesResumen();
