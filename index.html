@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -262,13 +263,11 @@ function cargarDatosConfirmadosSiVacio(){
     tc = TC_CONFIRMADOS.map(x => ({...x}));
     localStorage.setItem("tc", JSON.stringify(tc));
   }
-
   if(!bancos || bancos.length === 0){
     bancos = BANCOS_CONFIRMADOS.map(x => ({...x}));
     localStorage.setItem("bancos", JSON.stringify(bancos));
   }
 }
-
 cargarDatosConfirmadosSiVacio();
 
 let amortizacion = [];
@@ -535,10 +534,8 @@ Los movimientos exportados quedaron como Conciliado.");
 
 function controlCamposTC(){
   let esCorriente = tcTipo.value === "Corriente";
-
   tcPagadas.disabled = esCorriente;
   tcPorPagar.disabled = esCorriente;
-
   if(esCorriente){
     tcPagadas.value = 0;
     tcPorPagar.value = 0;
@@ -647,6 +644,13 @@ function editarBanco(i){
   generarResumen();
 }
 
+function escapeHTML(txt){
+  return String(txt ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
 function descargarRespaldoHTML(){
   let fecha = new Date().toISOString().slice(0,10);
   let datos = {
@@ -655,57 +659,45 @@ function descargarRespaldoHTML(){
     bancos: bancos
   };
 
-  let scriptCompleto = document.documentElement.outerHTML
-    .replaceAll("</script>", "<\\/script>");
+  let appCompleta = document.documentElement.outerHTML;
+  let contenido = "";
+  contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
+  contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
+  contenido += "<style>";
+  contenido += "body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}";
+  contenido += ".card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}";
+  contenido += "pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}";
+  contenido += "table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}";
+  contenido += "th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}";
+  contenido += "th{background:#0f172a;color:white}";
+  contenido += "</style></head><body>";
 
-  let contenido = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<title>Respaldo Mis Finanzas ${fecha}</title>
-<style>
-body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}
-.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}
-pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}
-table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}
-th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}
-th{background:#0f172a;color:white}
-</style>
-</head>
-<body>
-<h1>Respaldo Mis Finanzas</h1>
-<div class="card">
-<b>Fecha de respaldo:</b> ${new Date().toLocaleString("es-EC")}<br>
-<b>Total movimientos TC:</b> ${tc.length}<br>
-<b>Total movimientos Bancos:</b> ${bancos.length}
-</div>
+  contenido += "<h1>Respaldo Mis Finanzas</h1>";
+  contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br>";
+  contenido += "<b>Total movimientos TC:</b> " + tc.length + "<br>";
+  contenido += "<b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
 
-<h2>Tarjetas de Crédito</h2>
-<table>
-<tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>
-${tc.map(m=>`<tr>
-<td>${m.Fecha||""}</td><td>${m.Tarjeta||""}</td><td>${m.Concepto||""}</td><td>${m.Detalle||""}</td>
-<td>${m.Tipo||""}</td><td>${m.Valor||0}</td><td>${m.Pago||0}</td><td>${m.Conciliado||""}</td>
-</tr>`).join("")}
-</table>
+  contenido += "<h2>Tarjetas de Crédito</h2><table>";
+  contenido += "<tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>";
+  tc.forEach(function(m){
+    contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Tarjeta)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Pago)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>";
+  });
+  contenido += "</table>";
 
-<h2>Bancos</h2>
-<table>
-<tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>
-${bancos.map(m=>`<tr>
-<td>${m.Fecha||""}</td><td>${m.Banco||""}</td><td>${m.Tipo||""}</td><td>${m.Concepto||""}</td>
-<td>${m.Detalle||""}</td><td>${m.Valor||0}</td><td>${m.Conciliado||""}</td>
-</tr>`).join("")}
-</table>
+  contenido += "<h2>Bancos</h2><table>";
+  contenido += "<tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>";
+  bancos.forEach(function(m){
+    contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Banco)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>";
+  });
+  contenido += "</table>";
 
-<h2>Datos técnicos para reconstruir movimientos</h2>
-<pre>${JSON.stringify(datos,null,2)}</pre>
+  contenido += "<h2>Datos técnicos para reconstruir movimientos</h2>";
+  contenido += "<pre>" + escapeHTML(JSON.stringify(datos,null,2)) + "</pre>";
 
-<h2>Script completo de la app</h2>
-<p>Copia este bloque si necesitas que actualicen el código completo.</p>
-<pre>${scriptCompleto.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}</pre>
-</body>
-</html>`;
+  contenido += "<h2>Script completo de la app</h2>";
+  contenido += "<pre>" + escapeHTML(appCompleta) + "</pre>";
+
+  contenido += "</body></html>";
 
   let blob = new Blob([contenido], {type:"text/html;charset=utf-8"});
   let url = URL.createObjectURL(blob);
