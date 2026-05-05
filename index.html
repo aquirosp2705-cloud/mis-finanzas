@@ -3,564 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mis Finanzas - Final Editable</title>
+<title>Mis Finanzas</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
 <style>
-:root{
-  --navy:#0f172a;--blue:#2563eb;--red:#e52525;--green:#168a43;
-  --bg:#f3f5f7;--muted:#64748b;--soft:#e5e7eb;--orange:#f59e0b;
-}
-*{box-sizing:border-box}
-body{
-  margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  background:var(--bg);color:var(--navy);font-weight:600;
-}
-header{
-  background:white;position:sticky;top:0;z-index:20;
-  box-shadow:0 4px 18px rgba(15,23,42,.10);
-}
+body{margin:0;font-family:-apple-system;background:#f4f6f8}
+header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
 nav{display:flex;background:white}
-nav button{
-  flex:1;border:0;background:white;color:#334155;padding:18px 4px;
-  font-weight:900;font-size:17px;
-}
-nav button.active{background:var(--navy);color:white}
-section{display:none;padding:18px}
+nav button{flex:1;padding:14px;border:0;font-weight:700}
+nav button.active{background:#0f172a;color:white}
+section{display:none;padding:16px}
 section.active{display:block}
-.card{
-  background:white;border-radius:24px;padding:22px;margin-bottom:20px;
-  box-shadow:0 12px 28px rgba(15,23,42,.07);
-}
-h2{font-size:25px;margin:0 0 20px 0;font-weight:950}
-label{display:block;margin-top:10px;margin-bottom:4px;color:#334155;font-size:14px}
-input,select{
-  width:100%;padding:14px;margin:4px 0 8px 0;border-radius:14px;
-  border:1px solid #d1d5db;font-size:16px;background:white;color:var(--navy);
-}
-input:disabled{background:#eef2f7;color:#94a3b8}
-.btn{
-  width:100%;padding:16px;border:0;border-radius:18px;margin-top:10px;
-  color:white;font-size:18px;font-weight:900;
-}
-.btnDark{background:var(--navy)}
-.btnBlue{background:var(--blue)}
-.btnRed{background:var(--red)}
-.btnEdit{background:var(--orange)}
-.btnGray{background:#e5e7eb;color:#334155}
-.filters{display:flex;gap:10px;margin-bottom:18px}
-.filters button{
-  flex:1;border:0;border-radius:14px;padding:12px 4px;font-size:14px;font-weight:900;
-  background:#e5e7eb;color:#334155;
-}
-.filters button.active{background:var(--navy);color:white}
-.mov{border-bottom:1px solid #e5e7eb;padding:18px 0}
-.mov:last-child{border-bottom:0}
-.movTitle{font-size:20px;font-weight:950;line-height:1.18}
-.movDetail{font-size:18px;margin-top:2px;font-weight:700;color:#111827}
-.line{color:var(--muted);font-size:16px;margin-top:7px;font-weight:800}
-.ok{color:var(--green);font-size:20px;font-weight:950;margin-top:6px}
-.no{color:var(--red);font-size:20px;font-weight:950;margin-top:6px}
-.notice{background:#ecfeff;border:1px solid #67e8f9;border-radius:16px;padding:14px;color:#155e75;margin-bottom:14px;font-weight:800}
-.summaryGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.summaryBox{background:#f8fafc;border-radius:16px;padding:14px}
-.summaryBox small{display:block;color:#64748b;font-size:12px}
-.summaryBox strong{font-size:18px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
-th:first-child,td:first-child{text-align:left}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px}
+input,select{width:100%;padding:10px;margin:6px 0;border-radius:10px}
+.btn{width:100%;padding:12px;border:0;border-radius:10px;background:#0f172a;color:white;margin-top:8px}
+.btnBlue{background:#2563eb}
+.btnRed{background:#dc2626}
+.btnEdit{background:#f59e0b}
+.mov{border-bottom:1px solid #ccc;padding:10px 0}
+.ok{color:green;font-weight:700}
+.no{color:red;font-weight:700}
 </style>
 </head>
+
 <body>
 
-<header>
+<header>Mis Finanzas</header>
+
 <nav>
-  <button class="active" onclick="showTab('tc',this)">TC</button>
-  <button onclick="showTab('bancos',this)">Bancos</button>
-  <button onclick="showTab('amort',this)">Amort.</button>
-  <button onclick="showTab('resumen',this)">Resumen</button>
+<button class="active" onclick="showTab('tc',this)">TC</button>
+<button onclick="showTab('bancos',this)">Bancos</button>
+<button onclick="showTab('resumen',this)">Resumen</button>
 </nav>
-</header>
 
 <section id="tc" class="active">
-  <div class="notice">Versión final editable: puedes <b>EDITAR</b> o eliminar movimientos de TC y Bancos. También puedes exportar aunque ya estén conciliados.</div>
-  <div class="card">
-    <h2>Registro TC</h2>
-    <label>Fecha</label><input type="date" id="tcFecha">
-    <label>Tarjeta</label>
-    <select id="tcTarjeta">
-      <option>Pichincha</option><option>Produbanco</option><option>OTRA</option>
-    </select>
-    <label>Concepto</label>
-    <select id="tcConcepto">
-      <option>Supermercado</option><option>Restaurante</option><option>Veterinaria</option>
-      <option>Peluquería</option><option>Hogar</option><option>Ropa</option><option>Farmacia</option>
-      <option>Servicios</option><option>Gasolina</option><option>Otros</option>
-    </select>
-    <label>Detalle</label><input id="tcDetalle" placeholder="Detalle">
-    <label>Tipo</label>
-    <select id="tcTipo" onchange="controlCamposTC()">
-      <option>Corriente</option><option>Diferido</option>
-    </select>
-    <label>Cuotas pagadas</label><input type="number" id="tcPagadas" value="0">
-    <label>Cuotas por pagar</label><input type="number" id="tcPorPagar" value="0">
-    <label>Valor consumo</label><input type="number" id="tcValor" placeholder="0.00">
-    <label>Pago</label><input type="number" id="tcPago" value="0">
-    <button class="btn btnDark" onclick="guardarTC()">Guardar TC</button>
-    <button class="btn btnBlue" onclick="exportarConFiltro('tc')">Exportar TC a Excel</button>
-  </div>
+<div class="card">
+<input type="date" id="tcFecha">
+<select id="tcTarjeta"><option>Pichincha</option><option>Produbanco</option></select>
+<input id="tcConcepto" placeholder="Concepto">
+<input id="tcDetalle" placeholder="Detalle">
 
-  <div class="card">
-    <h2>Movimientos TC</h2>
-    <div class="filters">
-      <button id="fTCtodos" class="active" onclick="setFiltro('tc','Todos')">Todos</button>
-      <button id="fTCno" onclick="setFiltro('tc','No')">No conciliados</button>
-      <button id="fTCsi" onclick="setFiltro('tc','Si')">Conciliados</button>
-    </div>
-    <div id="listaTC"></div>
-  </div>
+<select id="tcTipo" onchange="controlCamposTC()">
+<option>Corriente</option>
+<option>Diferido</option>
+</select>
+
+<input type="number" id="tcPagadas" placeholder="Cuotas pagadas">
+<input type="number" id="tcPorPagar" placeholder="Cuotas por pagar">
+
+<input type="number" id="tcValor" placeholder="Valor">
+<input type="number" id="tcPago" placeholder="Pago">
+
+<button class="btn" onclick="guardarTC()">Guardar</button>
+<button class="btn btnBlue" onclick="exportarExcel('tc')">Exportar</button>
+</div>
+
+<div class="card" id="listaTC"></div>
 </section>
 
 <section id="bancos">
-  <div class="card">
-    <h2>Registro Bancos</h2>
-    <label>Fecha</label><input type="date" id="bFecha">
-    <label>Banco</label>
-    <select id="bBanco">
-      <option>Guayaquil</option><option>Pichincha</option><option>Bolivariano</option>
-      <option>Produbanco</option><option>OTRA</option>
-    </select>
-    <label>Tipo</label><select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
-    <label>Concepto</label><input id="bConcepto" placeholder="Ej: Pago">
-    <label>Detalle</label><input id="bDetalle" placeholder="Detalle">
-    <label>Valor</label><input type="number" id="bValor" placeholder="0.00">
-    <button class="btn btnDark" onclick="guardarBanco()">Guardar Banco</button>
-    <button class="btn btnBlue" onclick="exportarConFiltro('bancos')">Exportar Bancos a Excel</button>
-  </div>
+<div class="card">
+<input type="date" id="bFecha">
+<select id="bBanco"><option>Guayaquil</option><option>Pichincha</option></select>
+<select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
 
-  <div class="card">
-    <h2>Movimientos Bancos</h2>
-    <div class="filters">
-      <button id="fBtodos" class="active" onclick="setFiltro('bancos','Todos')">Todos</button>
-      <button id="fBno" onclick="setFiltro('bancos','No')">No conciliados</button>
-      <button id="fBsi" onclick="setFiltro('bancos','Si')">Conciliados</button>
-    </div>
-    <div id="listaBancos"></div>
-  </div>
-</section>
+<input id="bConcepto" placeholder="Concepto">
+<input id="bDetalle" placeholder="Detalle">
+<input type="number" id="bValor" placeholder="Valor">
 
-<section id="amort">
-  <div class="card">
-    <h2>Amortización</h2>
-    <label>Monto</label><input type="number" id="amoMonto" placeholder="Monto">
-    <label>Tasa anual %</label><input type="number" id="amoTasa" placeholder="Tasa anual">
-    <label>Meses</label><input type="number" id="amoMeses" placeholder="Meses">
-    <button class="btn btnDark" onclick="calcularAmortizacion()">Calcular</button>
-    <button class="btn btnBlue" onclick="exportarAmortizacion()">Exportar Amortización</button>
-  </div>
-  <div class="card">
-    <div id="resumenAmo"></div>
-    <table id="tablaAmo"></table>
-  </div>
+<button class="btn" onclick="guardarBanco()">Guardar</button>
+<button class="btn btnBlue" onclick="exportarExcel('bancos')">Exportar</button>
+</div>
+
+<div class="card" id="listaBancos"></div>
 </section>
 
 <section id="resumen">
-  <div class="card">
-    <h2>Resumen</h2>
-    <div class="summaryGrid">
-      <div class="summaryBox"><small>Total TC</small><strong id="rTC">$0,00</strong></div>
-      <div class="summaryBox"><small>TC no conciliado</small><strong id="rTCNo">$0,00</strong></div>
-      <div class="summaryBox"><small>Ingresos bancos</small><strong id="rIng">$0,00</strong></div>
-      <div class="summaryBox"><small>Egresos bancos</small><strong id="rEgr">$0,00</strong></div>
-    </div>
-    <button class="btn btnBlue" onclick="exportarConFiltro('tc')">Exportar TC</button>
-    <button class="btn btnBlue" onclick="exportarConFiltro('bancos')">Exportar Bancos</button>
-    <button class="btn btnGray" onclick="cargarDatosConfirmado()">Cargar datos confirmados</button>
-    <button class="btn btnBlue" onclick="descargarRespaldoHTML()">Bajar respaldo HTML de movimientos</button>
-
-  </div>
+<div class="card">
+<button class="btn btnBlue" onclick="descargarRespaldoHTML()">Bajar respaldo HTML</button>
+</div>
 </section>
 
 <script>
-const TC_CONFIRMADOS = [
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"Si"}
+
+let tc = [
+{Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",Valor:15.95,Pago:0,Conciliado:"Si"},
+{Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",Valor:13,Pago:0,Conciliado:"Si"},
+{Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",Valor:2.33,Pago:0,Conciliado:"Si"}
 ];
 
-const BANCOS_CONFIRMADOS = [
-  {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
-  {Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Lavada",Valor:5.00,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Retiro",Detalle:"Efectivo",Valor:200.00,Conciliado:"Si"}
+let bancos = [
+{Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
+{Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"}
 ];
-
-let tc = JSON.parse(localStorage.getItem("tc")) || [];
-let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
-let amortizacion = [];
-let filtroTC = "Todos";
-let filtroBancos = "Todos";
-
-function cargarDatosIniciales(){
-  if(tc.length === 0){
-    tc = TC_CONFIRMADOS.slice();
-    localStorage.setItem("tc", JSON.stringify(tc));
-  }
-  if(bancos.length === 0){
-    bancos = BANCOS_CONFIRMADOS.slice();
-    localStorage.setItem("bancos", JSON.stringify(bancos));
-  }
-}
-
-function cargarDatosConfirmado(){
-  if(!confirm("Esto agregará los datos confirmados si no existen. No borra lo que ya tengas. ¿Continuar?")) return;
-  function kTC(x){return [x.Fecha,x.Tarjeta,x.Concepto,x.Detalle,x.Valor].join("|");}
-  function kB(x){return [x.Fecha,x.Banco,x.Tipo,x.Concepto,x.Detalle,x.Valor].join("|");}
-  let sTC = new Set(tc.map(kTC));
-  TC_CONFIRMADOS.forEach(x=>{ if(!sTC.has(kTC(x))) tc.push(x); });
-  let sB = new Set(bancos.map(kB));
-  BANCOS_CONFIRMADOS.forEach(x=>{ if(!sB.has(kB(x))) bancos.push(x); });
-  localStorage.setItem("tc", JSON.stringify(tc));
-  localStorage.setItem("bancos", JSON.stringify(bancos));
-  refrescarTodo();
-  alert("Datos confirmados cargados.");
-}
 
 function showTab(id,btn){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
-  refrescarTodo();
-}
-
-function money(v){
-  return "$" + Number(v||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function normalizarEstado(v){
-  return (v === "Si" || v === "Conciliado") ? "Si" : "No";
+document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+btn.classList.add("active");
+mostrar();
 }
 
 function controlCamposTC(){
-  let esCorriente = tcTipo.value === "Corriente";
-  tcPagadas.disabled = esCorriente;
-  tcPorPagar.disabled = esCorriente;
-  if(esCorriente){
-    tcPagadas.value = 0;
-    tcPorPagar.value = 0;
-  }
+let c = tcTipo.value==="Corriente";
+tcPagadas.disabled=c;
+tcPorPagar.disabled=c;
 }
 
 function guardarTC(){
-  let valor = Number(tcValor.value || 0);
-  let pago = Number(tcPago.value || 0);
-  let esDiferido = tcTipo.value === "Diferido";
-  let cuotasPend = esDiferido ? Number(tcPorPagar.value || 0) : 0;
-  let saldoDiferido = esDiferido ? valor * cuotasPend : 0;
-
-  tc.push({
-    Fecha: tcFecha.value,
-    Tarjeta: tcTarjeta.value,
-    Concepto: tcConcepto.value,
-    Detalle: tcDetalle.value,
-    Tipo: tcTipo.value,
-    CuotasPagadas: esDiferido ? Number(tcPagadas.value || 0) : 0,
-    CuotasPorPagar: cuotasPend,
-    Valor: valor,
-    Pago: pago,
-    Acumulado: valor - pago,
-    SaldoDiferido: saldoDiferido,
-    Conciliado: "No"
-  });
-  localStorage.setItem("tc", JSON.stringify(tc));
-  tcDetalle.value="";tcValor.value="";tcPago.value=0;tcPagadas.value=0;tcPorPagar.value=0;
-  controlCamposTC();refrescarTodo();
+tc.push({
+Fecha:tcFecha.value,
+Tarjeta:tcTarjeta.value,
+Concepto:tcConcepto.value,
+Detalle:tcDetalle.value,
+Tipo:tcTipo.value,
+Valor:Number(tcValor.value),
+Pago:Number(tcPago.value),
+Conciliado:"No"
+});
+mostrar();
 }
 
 function guardarBanco(){
-  bancos.push({
-    Fecha:bFecha.value,Banco:bBanco.value,Tipo:bTipo.value,
-    Concepto:bConcepto.value,Detalle:bDetalle.value,
-    Valor:Number(bValor.value||0),Conciliado:"No"
-  });
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  bConcepto.value="";bDetalle.value="";bValor.value="";
-  refrescarTodo();
+bancos.push({
+Fecha:bFecha.value,
+Banco:bBanco.value,
+Tipo:bTipo.value,
+Concepto:bConcepto.value,
+Detalle:bDetalle.value,
+Valor:Number(bValor.value),
+Conciliado:"No"
+});
+mostrar();
 }
 
-function setFiltro(tipo,valor){
-  if(tipo==="tc"){
-    filtroTC=valor;
-    fTCtodos.classList.toggle("active",valor==="Todos");
-    fTCno.classList.toggle("active",valor==="No");
-    fTCsi.classList.toggle("active",valor==="Si");
-  }else{
-    filtroBancos=valor;
-    fBtodos.classList.toggle("active",valor==="Todos");
-    fBno.classList.toggle("active",valor==="No");
-    fBsi.classList.toggle("active",valor==="Si");
-  }
-  refrescarTodo();
-}
+function mostrar(){
+listaTC.innerHTML="";
+tc.forEach((m,i)=>{
+listaTC.innerHTML+=`
+<div class="mov">
+<b>${m.Fecha} ${m.Concepto}</b>
+<div>${m.Detalle}</div>
+<div>$${m.Valor}</div>
+<button class="btn btnEdit" onclick="editarTC(${i})">EDITAR</button>
+</div>`;
+});
 
-function mostrarTC(){
-  listaTC.innerHTML="";
-  let datos = tc.filter(m => filtroTC==="Todos" || normalizarEstado(m.Conciliado)===filtroTC);
-  if(datos.length===0){listaTC.innerHTML="<div class='line'>No hay movimientos TC.</div>";return;}
-  datos.slice().reverse().forEach((m)=>{
-    let idx = tc.indexOf(m);
-    let estado = normalizarEstado(m.Conciliado);
-    listaTC.innerHTML += `
-      <div class="mov">
-        <div class="movTitle">${m.Fecha||"Sin fecha"} | ${m.Tarjeta||""} | ${m.Concepto||""}</div>
-        <div class="movDetail">${m.Detalle||""}</div>
-        <div class="line">Tipo: <b>${m.Tipo||"Corriente"}</b></div>
-        <div class="line">Cuotas pagadas: <b>${m.CuotasPagadas||0}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar||0}</b></div>
-        <div class="line">Valor consumo: ${money(m.Valor)} | Pago: ${money(m.Pago)}</div>
-        <div class="line">Acumulado: ${money(m.Acumulado)} | Saldo diferido: ${money(m.SaldoDiferido)}</div>
-        <div class="${estado==='Si'?'ok':'no'}">Estado: ${estado==='Si'?'Conciliado':'No conciliado'}</div>
-        <button class="btn btnEdit" onclick="editarTC(${idx})">EDITAR MOVIMIENTO TC</button>
-        <button class="btn btnRed" onclick="eliminarTC(${idx})">Eliminar</button>
-      </div>`;
-  });
-}
-
-function mostrarBancos(){
-  listaBancos.innerHTML="";
-  let datos = bancos.filter(m => filtroBancos==="Todos" || normalizarEstado(m.Conciliado)===filtroBancos);
-  if(datos.length===0){listaBancos.innerHTML="<div class='line'>No hay movimientos de bancos.</div>";return;}
-  datos.slice().reverse().forEach((m)=>{
-    let idx = bancos.indexOf(m);
-    let estado = normalizarEstado(m.Conciliado);
-    listaBancos.innerHTML += `
-      <div class="mov">
-        <div class="movTitle">${m.Fecha||"Sin fecha"} | ${m.Banco||""} | ${m.Tipo||""}</div>
-        <div class="movDetail">${m.Concepto||""} - ${m.Detalle||""}</div>
-        <div class="line">Valor: ${money(m.Valor)}</div>
-        <div class="${estado==='Si'?'ok':'no'}">Estado: ${estado==='Si'?'Conciliado':'No conciliado'}</div>
-        <button class="btn btnEdit" onclick="editarBanco(${idx})">EDITAR MOVIMIENTO BANCO</button>
-        <button class="btn btnRed" onclick="eliminarBanco(${idx})">Eliminar</button>
-      </div>`;
-  });
+listaBancos.innerHTML="";
+bancos.forEach((m,i)=>{
+listaBancos.innerHTML+=`
+<div class="mov">
+<b>${m.Fecha} ${m.Banco}</b>
+<div>${m.Detalle}</div>
+<div>$${m.Valor}</div>
+<button class="btn btnEdit" onclick="editarBanco(${i})">EDITAR</button>
+</div>`;
+});
 }
 
 function editarTC(i){
-  let m = tc[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || ""); if(nuevaTarjeta === null) return;
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "diferido" ? "Diferido" : "Corriente";
-  let nuevasPagadas = 0, nuevasPorPagar = 0;
-  if(nuevoTipo === "Diferido"){
-    nuevasPagadas = Number(prompt("Cuotas pagadas:", m.CuotasPagadas || 0) || 0);
-    nuevasPorPagar = Number(prompt("Cuotas por pagar:", m.CuotasPorPagar || 0) || 0);
-  }
-  let nuevoValor = Number(prompt("Valor consumo:", m.Valor || 0) || 0);
-  let nuevoPago = Number(prompt("Pago:", m.Pago || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", normalizarEstado(m.Conciliado));
-  if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
-
-  tc[i] = {
-    Fecha: nuevaFecha, Tarjeta: nuevaTarjeta, Concepto: nuevoConcepto, Detalle: nuevoDetalle,
-    Tipo: nuevoTipo, CuotasPagadas: nuevoTipo === "Diferido" ? nuevasPagadas : 0,
-    CuotasPorPagar: nuevoTipo === "Diferido" ? nuevasPorPagar : 0,
-    Valor: nuevoValor, Pago: nuevoPago, Acumulado: nuevoValor - nuevoPago,
-    SaldoDiferido: nuevoTipo === "Diferido" ? nuevoValor * nuevasPorPagar : 0,
-    Conciliado: nuevoEstado
-  };
-  localStorage.setItem("tc", JSON.stringify(tc));
-  refrescarTodo();
+let m=tc[i];
+tc[i].Valor=Number(prompt("Nuevo valor",m.Valor));
+mostrar();
 }
 
 function editarBanco(i){
-  let m = bancos[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevoBanco = prompt("Banco:", m.Banco || ""); if(nuevoBanco === null) return;
-  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "ingreso" ? "Ingreso" : "Egreso";
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoValor = Number(prompt("Valor:", m.Valor || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", normalizarEstado(m.Conciliado));
-  if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
-
-  bancos[i] = {
-    Fecha: nuevaFecha, Banco: nuevoBanco, Tipo: nuevoTipo,
-    Concepto: nuevoConcepto, Detalle: nuevoDetalle, Valor: nuevoValor,
-    Conciliado: nuevoEstado
-  };
-  localStorage.setItem("bancos", JSON.stringify(bancos));
-  refrescarTodo();
+let m=bancos[i];
+bancos[i].Valor=Number(prompt("Nuevo valor",m.Valor));
+mostrar();
 }
 
-function eliminarTC(i){
-  if(confirm("¿Eliminar este movimiento de TC?")){
-    tc.splice(i,1);localStorage.setItem("tc",JSON.stringify(tc));refrescarTodo();
-  }
+function exportarExcel(tipo){
+let data=tipo==="tc"?tc:bancos;
+let ws=XLSX.utils.json_to_sheet(data);
+let wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"Datos");
+XLSX.writeFile(wb,tipo+".xlsx");
 }
-
-function eliminarBanco(i){
-  if(confirm("¿Eliminar este movimiento de banco?")){
-    bancos.splice(i,1);localStorage.setItem("bancos",JSON.stringify(bancos));refrescarTodo();
-  }
-}
-
-function exportarConFiltro(tipo){
-  let data = tipo==="tc" ? tc : bancos;
-  if(data.length===0){alert("No hay movimientos para exportar.");return;}
-
-  let campoDestino = tipo==="tc" ? "Tarjeta" : "Banco";
-  let destinos = [...new Set(data.map(x => x[campoDestino]).filter(Boolean))];
-  let mensaje = "¿Qué " + (tipo==="tc"?"tarjeta":"banco") + " quieres exportar?\\n\\n";
-  mensaje += "Escribe exactamente uno de estos nombres o escribe TODAS:\\n";
-  mensaje += destinos.join("\\n");
-
-  let elegido = prompt(mensaje, "TODAS");
-  if(elegido === null) return;
-  elegido = elegido.trim();
-
-  let filtrado = elegido.toUpperCase()==="TODAS"
-    ? data
-    : data.filter(x => String(x[campoDestino]||"").toLowerCase() === elegido.toLowerCase());
-
-  if(filtrado.length===0){alert("No encontré movimientos para: " + elegido);return;}
-
-  let dataExcel = filtrado.map(x => ({...x, Conciliado:"Si"}));
-  let ws = XLSX.utils.json_to_sheet(dataExcel);
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,tipo==="tc" ? "TC" : "Bancos");
-
-  let fecha = new Date().toISOString().slice(0,10);
-  let destinoNombre = elegido.toUpperCase()==="TODAS" ? "TODAS" : elegido.replaceAll(" ","_");
-  let archivo = (tipo==="tc" ? "TC_" : "Bancos_") + destinoNombre + "_" + fecha + ".xlsx";
-
-  XLSX.writeFile(wb,archivo);
-  filtrado.forEach(m => m.Conciliado = "Si");
-  localStorage.setItem(tipo, JSON.stringify(data));
-  refrescarTodo();
-  alert("Exportado: " + archivo + "\\nMovimientos marcados como Conciliado.");
-}
-
 
 function descargarRespaldoHTML(){
-  let fecha = new Date().toISOString().slice(0,10);
-  let datos = {
-    fechaRespaldo: new Date().toISOString(),
-    tc: tc,
-    bancos: bancos
-  };
-
-  let contenido = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Respaldo Mis Finanzas ${fecha}</title>
-<style>
-body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}
-.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}
-pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px}
-table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}
-th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}
-th{background:#0f172a;color:white}
-</style>
-</head>
-<body>
-<h1>Respaldo Mis Finanzas</h1>
-<div class="card">
-<b>Fecha de respaldo:</b> ${new Date().toLocaleString("es-EC")}<br>
-<b>Total movimientos TC:</b> ${tc.length}<br>
-<b>Total movimientos Bancos:</b> ${bancos.length}
-</div>
-
-<h2>Tarjetas de Crédito</h2>
-<table>
-<tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>
-${tc.map(m=>`<tr>
-<td>${m.Fecha||""}</td><td>${m.Tarjeta||""}</td><td>${m.Concepto||""}</td><td>${m.Detalle||""}</td>
-<td>${m.Tipo||""}</td><td>${m.Valor||0}</td><td>${m.Pago||0}</td><td>${m.Conciliado||""}</td>
-</tr>`).join("")}
-</table>
-
-<h2>Bancos</h2>
-<table>
-<tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>
-${bancos.map(m=>`<tr>
-<td>${m.Fecha||""}</td><td>${m.Banco||""}</td><td>${m.Tipo||""}</td><td>${m.Concepto||""}</td>
-<td>${m.Detalle||""}</td><td>${m.Valor||0}</td><td>${m.Conciliado||""}</td>
-</tr>`).join("")}
-</table>
-
-<h2>Datos técnicos para restaurar</h2>
-<p>Copia este bloque completo si necesitas que actualicen tu app:</p>
-<pre id="datos">${JSON.stringify(datos,null,2)}</pre>
-</body>
-</html>`;
-
-  let blob = new Blob([contenido], {type:"text/html;charset=utf-8"});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "respaldo_mis_finanzas_" + fecha + ".html";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  alert("Respaldo HTML generado. Guárdalo en Archivos.");
+let contenido=`<pre>${JSON.stringify({tc,bancos},null,2)}</pre>`;
+let blob=new Blob([contenido],{type:"text/html"});
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="respaldo.html";
+a.click();
 }
 
+mostrar();
 
-
-function calcularAmortizacion(){
-  let monto=Number(amoMonto.value||0), tasaAnual=Number(amoTasa.value||0), meses=Number(amoMeses.value||0);
-  if(monto<=0 || tasaAnual<=0 || meses<=0){alert("Completa monto, tasa y meses.");return;}
-  let tasa=tasaAnual/100/12;
-  let cuota=monto*(tasa*Math.pow(1+tasa,meses))/(Math.pow(1+tasa,meses)-1);
-  let saldo=monto,totalInteres=0;
-  amortizacion=[];
-  tablaAmo.innerHTML="<tr><th>Mes</th><th>Cuota</th><th>Interés</th><th>Capital</th><th>Saldo</th></tr>";
-  for(let i=1;i<=meses;i++){
-    let interes=saldo*tasa, capital=cuota-interes; saldo-=capital;
-    if(i===meses && Math.abs(saldo)<0.05) saldo=0;
-    totalInteres+=interes;
-    amortizacion.push({Mes:i,Cuota:+cuota.toFixed(2),Interes:+interes.toFixed(2),Capital:+capital.toFixed(2),Saldo:+saldo.toFixed(2)});
-    tablaAmo.innerHTML+=`<tr><td>${i}</td><td>${cuota.toFixed(2)}</td><td>${interes.toFixed(2)}</td><td>${capital.toFixed(2)}</td><td>${saldo.toFixed(2)}</td></tr>`;
-  }
-  resumenAmo.innerHTML=`<div class="line"><b>Cuota:</b> ${money(cuota)}<br><b>Total intereses:</b> ${money(totalInteres)}<br><b>Total pagado:</b> ${money(monto+totalInteres)}</div>`;
-}
-
-function exportarAmortizacion(){
-  if(amortizacion.length===0){alert("Primero calcula la amortización.");return;}
-  let ws=XLSX.utils.json_to_sheet(amortizacion), wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Amortizacion");
-  XLSX.writeFile(wb,"Amortizacion_"+new Date().toISOString().slice(0,10)+".xlsx");
-}
-
-function resumen(){
-  let totalTC=tc.reduce((s,m)=>s+Number(m.Valor||0),0);
-  let tcNo=tc.filter(m=>normalizarEstado(m.Conciliado)!=="Si").reduce((s,m)=>s+Number(m.Valor||0),0);
-  let ing=bancos.filter(m=>m.Tipo==="Ingreso").reduce((s,m)=>s+Number(m.Valor||0),0);
-  let egr=bancos.filter(m=>m.Tipo==="Egreso").reduce((s,m)=>s+Number(m.Valor||0),0);
-  rTC.textContent=money(totalTC); rTCNo.textContent=money(tcNo); rIng.textContent=money(ing); rEgr.textContent=money(egr);
-}
-
-function refrescarTodo(){mostrarTC();mostrarBancos();resumen();}
-
-cargarDatosIniciales();
-controlCamposTC();
-refrescarTodo();
 </script>
+
 </body>
 </html>
