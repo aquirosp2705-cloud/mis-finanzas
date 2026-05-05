@@ -223,7 +223,7 @@ th:first-child,td:first-child{text-align:left}
 </select>
 
 <button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
-<button class="btn btn2" onclick="descargarRespaldoHTML()">Respaldar HTML completo</button>
+<button class="btn btn2" onclick="respaldarHTMLCompleto()">Respaldar HTML completo</button>
 </div>
 
 <div class="card">
@@ -246,29 +246,14 @@ const TC_CONFIRMADOS = [
   {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"Si"},
   {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"Si"}
 ];
-
 const BANCOS_CONFIRMADOS = [
   {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
   {Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"},
   {Fecha:"2026-05-03",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Lavada",Valor:5.00,Conciliado:"Si"},
   {Fecha:"2026-05-02",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Retiro",Detalle:"Efectivo",Valor:200.00,Conciliado:"Si"}
 ];
-
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
-
-function cargarDatosConfirmadosSiVacio(){
-  if(!tc || tc.length === 0){
-    tc = TC_CONFIRMADOS.map(function(x){ return Object.assign({}, x); });
-    localStorage.setItem("tc", JSON.stringify(tc));
-  }
-  if(!bancos || bancos.length === 0){
-    bancos = BANCOS_CONFIRMADOS.map(function(x){ return Object.assign({}, x); });
-    localStorage.setItem("bancos", JSON.stringify(bancos));
-  }
-}
-cargarDatosConfirmadosSiVacio();
-
 let amortizacion = [];
 let resumenMensual = [];
 
@@ -334,6 +319,9 @@ tc = tc.map(normalizarTC);
 bancos = bancos.map(normalizarBanco);
 localStorage.setItem("tc", JSON.stringify(tc));
 localStorage.setItem("bancos", JSON.stringify(bancos));
+
+if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=>normalizarTC(x)); localStorage.setItem("tc", JSON.stringify(tc)); }
+if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=>normalizarBanco(x)); localStorage.setItem("bancos", JSON.stringify(bancos)); }
 
 function setFiltroTC(valor){
   filtroTC = valor;
@@ -463,7 +451,6 @@ function eliminarBanco(i){
   cargarFiltroConcepto();
 }
 
-
 function exportarPendientes(tipo){
   let data = tipo==="tc" ? tc : bancos;
 
@@ -473,16 +460,10 @@ function exportarPendientes(tipo){
   }
 
   let campoDestino = tipo==="tc" ? "Tarjeta" : "Banco";
-  let destinos = [...new Set(data.map(function(d){ return d[campoDestino]; }).filter(Boolean))];
-
+  let destinos = [...new Set(data.map(d => d[campoDestino]).filter(Boolean))];
   let elegido = prompt(
-    "¿Qué " + (tipo==="tc" ? "tarjeta" : "banco") + " quieres exportar?
-
-" +
-    "Escribe uno de estos nombres o escribe TODOS:
-" +
-    destinos.join("
-"),
+    "¿Qué " + (tipo==="tc" ? "tarjeta" : "banco") + " quieres exportar?\n\n" +
+    "Escribe uno de estos nombres o escribe TODOS:\n" + destinos.join("\n"),
     "TODOS"
   );
 
@@ -491,14 +472,14 @@ function exportarPendientes(tipo){
 
   let seleccionados = elegido.toUpperCase()==="TODOS"
     ? data
-    : data.filter(function(d){ return String(d[campoDestino] || "").toLowerCase() === elegido.toLowerCase(); });
+    : data.filter(d => String(d[campoDestino] || "").toLowerCase() === elegido.toLowerCase());
 
   if(seleccionados.length===0){
     alert("No encontré registros para: " + elegido);
     return;
   }
 
-  seleccionados.forEach(function(d){ d.Conciliado = "Si"; });
+  seleccionados.forEach(d => d.Conciliado = "Si");
 
   let wb = XLSX.utils.book_new();
   let ws = XLSX.utils.json_to_sheet(seleccionados);
@@ -524,11 +505,8 @@ function exportarPendientes(tipo){
   cargarFiltroEntidad();
   cargarFiltroConcepto();
   generarResumen();
-
-  alert("Exportado: " + nombreArchivo + "
-Los movimientos exportados quedaron como Conciliado.");
+  alert("Exportado: " + nombreArchivo + "\nLos movimientos exportados quedaron como Conciliado.");
 }
-
 
 
 function controlCamposTC(){
@@ -543,36 +521,21 @@ function controlCamposTC(){
 
 function editarTC(i){
   let m = tc[i];
-
-  let nuevaFecha = prompt("Fecha:", m.Fecha || "");
-  if(nuevaFecha === null) return;
-
-  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || "");
-  if(nuevaTarjeta === null) return;
-
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || "");
-  if(nuevoConcepto === null) return;
-
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || "");
-  if(nuevoDetalle === null) return;
-
-  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente");
-  if(nuevoTipo === null) return;
+  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
+  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || ""); if(nuevaTarjeta === null) return;
+  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
+  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
+  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente"); if(nuevoTipo === null) return;
   nuevoTipo = nuevoTipo.trim().toLowerCase() === "diferido" ? "Diferido" : "Corriente";
-
   let nuevasPagadas = 0;
   let nuevasPorPagar = 0;
-
   if(nuevoTipo === "Diferido"){
     nuevasPagadas = Number(prompt("Cuotas pagadas:", m.CuotasPagadas || 0) || 0);
     nuevasPorPagar = Number(prompt("Cuotas por pagar:", m.CuotasPorPagar || 0) || 0);
   }
-
   let nuevoValor = Number(prompt("Valor consumo:", m.Valor || 0) || 0);
   let nuevoPago = Number(prompt("Pago:", m.Pago || 0) || 0);
-
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No");
-  if(nuevoEstado === null) return;
+  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
   nuevoEstado = nuevoEstado.trim().toLowerCase();
   nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
 
@@ -592,36 +555,19 @@ function editarTC(i){
   };
 
   localStorage.setItem("tc",JSON.stringify(tc));
-  mostrarTC();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-  generarResumen();
+  mostrarTC(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
 }
 
 function editarBanco(i){
   let m = bancos[i];
-
-  let nuevaFecha = prompt("Fecha:", m.Fecha || "");
-  if(nuevaFecha === null) return;
-
-  let nuevoBanco = prompt("Banco:", m.Banco || "");
-  if(nuevoBanco === null) return;
-
-  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso");
-  if(nuevoTipo === null) return;
+  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
+  let nuevoBanco = prompt("Banco:", m.Banco || ""); if(nuevoBanco === null) return;
+  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso"); if(nuevoTipo === null) return;
   nuevoTipo = nuevoTipo.trim().toLowerCase() === "ingreso" ? "Ingreso" : "Egreso";
-
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || "");
-  if(nuevoConcepto === null) return;
-
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || "");
-  if(nuevoDetalle === null) return;
-
+  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
+  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
   let nuevoValor = Number(prompt("Valor:", m.Valor || 0) || 0);
-
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No");
-  if(nuevoEstado === null) return;
+  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
   nuevoEstado = nuevoEstado.trim().toLowerCase();
   nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
 
@@ -636,11 +582,7 @@ function editarBanco(i){
   };
 
   localStorage.setItem("bancos",JSON.stringify(bancos));
-  mostrarBancos();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-  generarResumen();
+  mostrarBancos(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
 }
 
 function escapeHTML(txt){
@@ -648,56 +590,32 @@ function escapeHTML(txt){
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;");
+    .replace(/\"/g,"&quot;");
 }
 
-function descargarRespaldoHTML(){
+function respaldarHTMLCompleto(){
   let fecha = new Date().toISOString().slice(0,10);
-  let datos = {
-    fechaRespaldo: new Date().toISOString(),
-    tc: tc,
-    bancos: bancos
-  };
-
+  let datos = { fechaRespaldo: new Date().toISOString(), tc: tc, bancos: bancos };
   let appCompleta = document.documentElement.outerHTML;
 
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += "<style>";
-  contenido += "body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}";
-  contenido += ".card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}";
-  contenido += "pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}";
-  contenido += "table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}";
-  contenido += "th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}";
-  contenido += "th{background:#0f172a;color:white}";
-  contenido += "</style></head><body>";
-
+  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>";
+  contenido += "</head><body>";
   contenido += "<h1>Respaldo Mis Finanzas</h1>";
-  contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br>";
-  contenido += "<b>Total movimientos TC:</b> " + tc.length + "<br>";
-  contenido += "<b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
+  contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
 
-  contenido += "<h2>Tarjetas de Crédito</h2><table>";
-  contenido += "<tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>";
-  tc.forEach(function(m){
-    contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Tarjeta)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Pago)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>";
-  });
+  contenido += "<h2>Tarjetas de Crédito</h2><table><tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>";
+  tc.forEach(function(m){ contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Tarjeta)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Pago)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>"; });
   contenido += "</table>";
 
-  contenido += "<h2>Bancos</h2><table>";
-  contenido += "<tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>";
-  bancos.forEach(function(m){
-    contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Banco)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>";
-  });
+  contenido += "<h2>Bancos</h2><table><tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>";
+  bancos.forEach(function(m){ contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Banco)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>"; });
   contenido += "</table>";
 
-  contenido += "<h2>Datos técnicos para reconstruir movimientos</h2>";
-  contenido += "<pre>" + escapeHTML(JSON.stringify(datos,null,2)) + "</pre>";
-
-  contenido += "<h2>Script completo de la app</h2>";
-  contenido += "<pre>" + escapeHTML(appCompleta) + "</pre>";
-
+  contenido += "<h2>Datos técnicos para reconstruir movimientos</h2><pre>" + escapeHTML(JSON.stringify(datos,null,2)) + "</pre>";
+  contenido += "<h2>Script completo de la app</h2><pre>" + escapeHTML(appCompleta) + "</pre>";
   contenido += "</body></html>";
 
   let blob = new Blob([contenido], {type:"text/html;charset=utf-8"});
@@ -709,10 +627,8 @@ function descargarRespaldoHTML(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-
   alert("Respaldo HTML completo generado. Incluye movimientos y script.");
 }
-
 
 function calcularAmortizacion(){
   let monto = Number(amoMonto.value || 0);
