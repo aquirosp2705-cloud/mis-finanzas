@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mis Finanzas</title>
+<title>Mis Finanzas - TC Fotos No Conciliado</title>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 
 <style>
@@ -224,6 +224,7 @@ th:first-child,td:first-child{text-align:left}
 
 <button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
 <button class="btn btn2" onclick="respaldarHTMLCompleto()">Respaldar HTML completo</button>
+<button class="btn btn2" onclick="cargarMovimientosFotosTC(true)">Cargar/actualizar TC fotos como no conciliado</button>
 </div>
 
 <div class="card">
@@ -237,14 +238,14 @@ th:first-child,td:first-child{text-align:left}
 <script>
 
 const TC_CONFIRMADOS = [
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"Si"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"Si"}
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"No"},
+  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"No"}
 ];
 const BANCOS_CONFIRMADOS = [
   {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
@@ -322,6 +323,44 @@ localStorage.setItem("bancos", JSON.stringify(bancos));
 
 if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=>normalizarTC(x)); localStorage.setItem("tc", JSON.stringify(tc)); }
 if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=>normalizarBanco(x)); localStorage.setItem("bancos", JSON.stringify(bancos)); }
+
+function cargarMovimientosFotosTC(forzar){
+  if(forzar && !confirm("Esto cargará/actualizará los movimientos TC de las fotos como NO conciliados. No tocará Bancos. ¿Continuar?")) return;
+
+  function claveTC(m){
+    return [m.Fecha, m.Tarjeta, m.Concepto, m.Detalle, Number(m.Valor||0).toFixed(2)].join("|").toLowerCase();
+  }
+
+  let mapa = {};
+  tc.forEach(function(m, idx){ mapa[claveTC(m)] = idx; });
+
+  TC_CONFIRMADOS.forEach(function(base){
+    let mov = normalizarTC(base);
+    mov.Conciliado = "No";
+    let k = claveTC(mov);
+
+    if(mapa[k] !== undefined){
+      tc[mapa[k]] = mov;
+    }else{
+      tc.push(mov);
+    }
+  });
+
+  localStorage.setItem("tc", JSON.stringify(tc));
+  localStorage.setItem("tc_fotos_cargadas_v3", "Si");
+  mostrarTC();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+  generarResumen();
+
+  if(forzar) alert("TC de fotos cargado/actualizado como No conciliado.");
+}
+
+if(localStorage.getItem("tc_fotos_cargadas_v3") !== "Si"){
+  cargarMovimientosFotosTC(false);
+}
+
 
 function setFiltroTC(valor){
   filtroTC = valor;
