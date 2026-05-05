@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -260,11 +259,11 @@ let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
 
 function cargarDatosConfirmadosSiVacio(){
   if(!tc || tc.length === 0){
-    tc = TC_CONFIRMADOS.map(x => ({...x}));
+    tc = TC_CONFIRMADOS.map(function(x){ return Object.assign({}, x); });
     localStorage.setItem("tc", JSON.stringify(tc));
   }
   if(!bancos || bancos.length === 0){
-    bancos = BANCOS_CONFIRMADOS.map(x => ({...x}));
+    bancos = BANCOS_CONFIRMADOS.map(function(x){ return Object.assign({}, x); });
     localStorage.setItem("bancos", JSON.stringify(bancos));
   }
 }
@@ -474,7 +473,7 @@ function exportarPendientes(tipo){
   }
 
   let campoDestino = tipo==="tc" ? "Tarjeta" : "Banco";
-  let destinos = [...new Set(data.map(d => d[campoDestino]).filter(Boolean))];
+  let destinos = [...new Set(data.map(function(d){ return d[campoDestino]; }).filter(Boolean))];
 
   let elegido = prompt(
     "¿Qué " + (tipo==="tc" ? "tarjeta" : "banco") + " quieres exportar?
@@ -492,14 +491,14 @@ function exportarPendientes(tipo){
 
   let seleccionados = elegido.toUpperCase()==="TODOS"
     ? data
-    : data.filter(d => String(d[campoDestino] || "").toLowerCase() === elegido.toLowerCase());
+    : data.filter(function(d){ return String(d[campoDestino] || "").toLowerCase() === elegido.toLowerCase(); });
 
   if(seleccionados.length===0){
     alert("No encontré registros para: " + elegido);
     return;
   }
 
-  seleccionados.forEach(d => d.Conciliado = "Si");
+  seleccionados.forEach(function(d){ d.Conciliado = "Si"; });
 
   let wb = XLSX.utils.book_new();
   let ws = XLSX.utils.json_to_sheet(seleccionados);
@@ -645,10 +644,11 @@ function editarBanco(i){
 }
 
 function escapeHTML(txt){
-  return String(txt ?? "")
+  return String(txt === undefined || txt === null ? "" : txt)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
 }
 
 function descargarRespaldoHTML(){
@@ -660,6 +660,7 @@ function descargarRespaldoHTML(){
   };
 
   let appCompleta = document.documentElement.outerHTML;
+
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
