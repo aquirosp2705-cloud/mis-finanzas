@@ -1054,18 +1054,7 @@ function respaldarHTMLCompleto(){
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}
-/* Modal edición compatible iPad */
-.modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
-.modalFondo.active{display:block}
-.modalCard{background:white;border-radius:18px;padding:16px;max-width:620px;margin:24px auto;box-shadow:0 18px 45px rgba(0,0,0,.28)}
-.modalHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.modalHeader h2{margin:0;font-size:20px;color:#0f172a}
-.btnSmall{width:auto;padding:10px 14px;border:0;border-radius:10px;background:#64748b;color:white;font-weight:800}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:600px){.grid2{grid-template-columns:1fr}.modalCard{margin:6px auto}}
-
-</style>";
+  contenido += `<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>`;
   contenido += "</head><body>";
   contenido += "<h1>Respaldo Mis Finanzas</h1>";
   contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
