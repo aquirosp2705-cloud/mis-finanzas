@@ -1,1025 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mis Finanzas - TC Fotos No Conciliado</title>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-
-<style>
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial;background:#f4f6f8;color:#111827}
-header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
-nav{display:flex;background:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
-nav button{flex:1;padding:12px 4px;border:0;background:white;font-weight:700;color:#334155;font-size:13px}
-nav button.active{background:#0f172a;color:white}
-section{display:none;padding:16px}
-section.active{display:block}
-.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
-label{font-size:13px;font-weight:700;color:#475569}
-input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;box-sizing:border-box}
-.btn{width:100%;padding:13px;border:0;border-radius:12px;background:#0f172a;color:white;font-size:16px;font-weight:700;margin-top:8px}
-.btn2{background:#2563eb}
-.btnDanger{background:#dc2626}
-.btnEdit{background:#f59e0b}
-.mov{border-bottom:1px solid #e5e7eb;padding:12px 0}
-.mov strong{display:block;font-size:15px}
-.small{font-size:13px;color:#64748b;margin-top:3px}
-.ok{color:#15803d;font-weight:800}
-.no{color:#dc2626;font-weight:800}
-.total{font-size:18px;font-weight:800;color:#0f172a}
-.filtros{display:flex;gap:6px;margin-bottom:12px}
-.filtros button{flex:1;padding:9px;border:0;border-radius:10px;background:#e5e7eb;font-weight:700;color:#334155}
-.filtros button.active{background:#0f172a;color:white}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
-th:first-child,td:first-child{text-align:left}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="BI Gerencial" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>BI Gerencial</title>
+  <style>
+    :root{
+      --bg:#eef2f7; --card:#ffffff; --ink:#152033; --muted:#667085; --blue:#1f5eff;
+      --blue2:#133ea7; --green:#0f8a5f; --orange:#b96300; --red:#b42318; --line:#d8dee9;
+      --shadow:0 14px 32px rgba(16,24,40,.12); --radius:24px;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#e9eef8,#f7f8fb 40%,#e6edf7);color:var(--ink);min-height:100vh;}
+    .app{max-width:1120px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 18px 28px;}
+    .hero{background:linear-gradient(135deg,#14213d,#1f5eff);border-radius:30px;color:white;padding:24px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
+    .hero:after{content:"";position:absolute;right:-80px;top:-90px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.14)}
+    .hero h1{margin:0;font-size:34px;letter-spacing:-.6px}.hero p{margin:8px 0 0;color:rgba(255,255,255,.82);font-size:15px;line-height:1.4}.hero .date{margin-top:14px;display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.14);padding:9px 12px;border-radius:999px;font-size:13px;}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 18px}.btn{border:0;border-radius:16px;padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--card);box-shadow:0 4px 14px rgba(16,24,40,.08);color:var(--ink)}.btn.primary{background:var(--blue);color:#fff}.btn.green{background:var(--green);color:#fff}.btn.orange{background:#fff4e5;color:#8a4600}.btn.red{background:#fff1f0;color:var(--red)}.btn:active{transform:scale(.98)}
+    .search{width:100%;display:flex;gap:10px;margin-bottom:16px}.search input{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px 16px;font-size:16px;background:#fff;outline:none;box-shadow:0 3px 10px rgba(16,24,40,.04)}
+    .section{margin-top:22px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px}.section-title h2{font-size:20px;margin:0}.badge{font-size:12px;color:var(--muted);background:#fff;padding:7px 10px;border-radius:999px;border:1px solid var(--line)}
+    .grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:14px}.card{background:rgba(255,255,255,.92);border:1px solid rgba(216,222,233,.9);border-radius:var(--radius);padding:17px;box-shadow:0 7px 22px rgba(16,24,40,.08);min-height:160px;display:flex;flex-direction:column;justify-content:space-between;}
+    .card h3{margin:0 0 6px;font-size:18px;line-height:1.18}.meta{font-size:13px;color:var(--muted);line-height:1.35}.prep{margin-top:8px;color:#475467}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.small{padding:9px 11px;border-radius:13px;font-size:13px}.open{background:#12233f;color:#fff}.edit{background:#eef4ff;color:#1f5eff}.copy{background:#f2f4f7;color:#344054}.disabled{opacity:.52}.empty{padding:28px;text-align:center;color:var(--muted);background:#fff;border-radius:var(--radius);border:1px dashed var(--line)}
+    dialog{border:0;border-radius:24px;box-shadow:0 24px 70px rgba(16,24,40,.35);width:min(94vw,620px);padding:0} dialog::backdrop{background:rgba(15,23,42,.45)}.modal{padding:22px}.modal h2{margin:0 0 14px}.form{display:grid;gap:12px}.form label{font-size:13px;font-weight:700;color:#344054}.form input,.form select,.form textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:15px;outline:none}.form textarea{min-height:72px;resize:vertical}.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}.hint{font-size:12px;color:var(--muted);line-height:1.4}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 16px;border-radius:999px;font-size:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;bottom:34px}
+    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h1{font-size:30px}}@media(max-width:560px){.app{padding-left:14px;padding-right:14px}.grid{grid-template-columns:1fr}.hero{padding:21px;border-radius:26px}.hero h1{font-size:28px}.toolbar .btn{flex:1}.card{min-height:150px}}
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <header class="hero">
+      <h1>BI Gerencial</h1>
+      <p>Acceso rápido a reportes Power BI para iPad mini. Puedes agregar, editar, copiar enlaces y respaldar este HTML.</p>
+      <div class="date" id="lastUpdated">Actualizado: —</div>
+    </header>
 
-<header>Mis Finanzas</header>
+    <div class="toolbar">
+      <button class="btn primary" onclick="newBI()">➕ Nuevo BI</button>
+      <button class="btn green" onclick="backupHTML()">💾 Respaldar HTML</button>
+      <button class="btn" onclick="exportLinks()">📤 Exportar links</button>
+      <button class="btn orange" onclick="resetSeed()">↩️ Restaurar base</button>
+    </div>
 
-<nav>
-<button class="active" onclick="showTab('tc',this)">TC</button>
-<button onclick="showTab('bancos',this)">Bancos</button>
-<button onclick="showTab('amortizacion',this)">Amort.</button>
-<button onclick="showTab('resumen',this);cargarMesesResumen();cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()">Resumen</button>
-</nav>
+    <div class="search"><input id="q" placeholder="Buscar por nombre, categoría, preparador o descripción..." oninput="render()" /></div>
+    <main id="content"></main>
+  </div>
 
-<section id="tc" class="active">
-<div class="card">
-<h2>Consumos Tarjeta</h2>
+  <dialog id="editor">
+    <div class="modal">
+      <h2 id="modalTitle">Editar BI</h2>
+      <div class="form">
+        <input type="hidden" id="idx" />
+        <div><label>Nombre del BI</label><input id="name" placeholder="Ej: Ventas, Costos, Balance" /></div>
+        <div><label>Categoría</label><select id="category"><option>PROEXPO</option><option>OPERATIVO</option><option>COMERCIAL</option><option>EXTERNOS</option><option>OTROS</option></select></div>
+        <div><label>Preparado por</label><input id="owner" placeholder="Ej: Alexandra Quiros" /></div>
+        <div><label>Descripción</label><textarea id="desc" placeholder="Ej: Margen comercial, ventas por talla..."></textarea></div>
+        <div><label>Link Power BI</label><input id="url" placeholder="https://app.powerbi.com/links/..." /></div>
+        <p class="hint">Sugerencia: usa el vínculo corto de Power BI desde Compartir → Copiar vínculo. Si el link cambia, solo editas aquí y guardas.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeEditor()">Cancelar</button>
+        <button class="btn red" id="deleteBtn" onclick="deleteBI()">Eliminar</button>
+        <button class="btn primary" onclick="saveBI()">Guardar</button>
+      </div>
+    </div>
+  </dialog>
 
-<label>Fecha</label>
-<input type="date" id="tcFecha">
+  <div class="toast" id="toast"></div>
 
-<label>Tarjeta</label>
-<select id="tcTarjeta">
-<option>Pichincha</option>
-<option>Produbanco</option>
-<option>Otra</option>
-</select>
+  <script id="app-data" type="application/json">[
+    {"category":"PROEXPO","name":"Balance de Situación","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/BTMc6D_lBy"},
+    {"category":"PROEXPO","name":"PL","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/a0HwQW_njT"},
+    {"category":"PROEXPO","name":"Indicadores Financieros","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/flJIOPe0Nk"},
+    {"category":"OPERATIVO","name":"Variación de Costos y Gastos","owner":"Jennifer Dominguez","desc":"Costos y Gastos por rubro","url":"https://app.powerbi.com/links/FYjl6jsUYF"},
+    {"category":"OPERATIVO","name":"Análisis de Operación Empacadora","owner":"Jennifer Dominguez","desc":"Ventas por Talla, Margen Comercial","url":"https://app.powerbi.com/links/2TpJSaX7Hp"},
+    {"category":"COMERCIAL","name":"Margen Comercial Cliente y Procesos","owner":"Jennifer Dominguez","desc":"Margen por Cliente","url":""}
+  ]</script>
 
-<label>Concepto</label>
-<select id="tcConcepto">
-<option>Restaurante</option>
-<option>Supermercado</option>
-<option>Gasolina/Carro</option>
-<option>Medicina</option>
-<option>Doctor</option>
-<option>Peluquería</option>
-<option>Veterinaria</option>
-<option>Tecnologico/Electrico</option>
-<option>Hogar</option>
-<option>Otros</option>
-</select>
+  <script>
+    const STORAGE_KEY = 'bi_gerencial_links_v1';
+    const UPDATED_KEY = 'bi_gerencial_updated_v1';
+    const seed = JSON.parse(document.getElementById('app-data').textContent);
+    let data = loadData();
 
-<label>Detalle</label>
-<input id="tcDetalle" placeholder="Ej: farmacia, cena, supermercado">
-
-<label>Tipo consumo</label>
-<select id="tcTipo" onchange="controlCamposTC()">
-<option>Corriente</option>
-<option>Diferido</option>
-</select>
-
-<label>Cuotas pagadas</label>
-<input type="number" id="tcPagadas" value="0">
-
-<label>Cuotas por pagar</label>
-<input type="number" id="tcPorPagar" value="0">
-
-<label>Valor consumo</label>
-<input type="number" id="tcValor" step="0.01">
-
-<label>Pago</label>
-<input type="number" id="tcPago" step="0.01" value="0">
-
-<button class="btn" onclick="guardarTC()">Guardar TC</button>
-<button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC a Excel según tarjeta</button>
-</div>
-
-<div class="card">
-<h3>Movimientos TC</h3>
-
-<label>Filtrar por tarjeta</label>
-<select id="filtroTarjetaTC" onchange="mostrarTC()">
-<option value="todas">Todas las tarjetas</option>
-</select>
-
-<div class="filtros">
-<button id="fTCtodos" class="active" onclick="setFiltroTC('todos')">Todos</button>
-<button id="fTCno" onclick="setFiltroTC('no')">No conciliados</button>
-<button id="fTCsi" onclick="setFiltroTC('si')">Conciliados</button>
-</div>
-<div id="listaTC"></div>
-</div>
-</section>
-
-<section id="bancos">
-<div class="card">
-<h2>Movimientos Bancos</h2>
-
-<label>Fecha</label>
-<input type="date" id="bFecha">
-
-<label>Banco</label>
-<select id="bBanco">
-<option>Pichincha</option>
-<option>Produbanco</option>
-<option>Guayaquil</option>
-<option>Bolivariano</option>
-<option>Otro</option>
-</select>
-
-<label>Tipo</label>
-<select id="bTipo">
-<option>Ingreso</option>
-<option>Egreso</option>
-</select>
-
-<label>Concepto</label>
-<select id="bConcepto">
-<option>Transferencia</option>
-<option>Pago</option>
-<option>Retiro</option>
-<option>Depósito</option>
-<option>Servicios</option>
-<option>Otros</option>
-</select>
-
-<label>Detalle</label>
-<input id="bDetalle" placeholder="Detalle">
-
-<label>Valor</label>
-<input type="number" id="bValor" step="0.01">
-
-<button class="btn" onclick="guardarBanco()">Guardar Banco</button>
-<button class="btn btn2" onclick="exportarPendientes('bancos')">Exportar Bancos a Excel</button>
-</div>
-
-<div class="card">
-<h3>Movimientos Bancos</h3>
-<div class="filtros">
-<button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button>
-<button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button>
-<button id="fBsi" onclick="setFiltroBanco('si')">Conciliados</button>
-</div>
-<div id="listaBancos"></div>
-</div>
-</section>
-
-<section id="amortizacion">
-<div class="card">
-<h2>Calculadora de Amortización</h2>
-
-<label>Monto del préstamo</label>
-<input type="number" id="amoMonto" step="0.01">
-
-<label>Tasa anual %</label>
-<input type="number" id="amoTasa" step="0.01">
-
-<label>Plazo en meses</label>
-<input type="number" id="amoMeses">
-
-<button class="btn" onclick="calcularAmortizacion()">Calcular</button>
-<button class="btn btn2" onclick="exportarAmortizacion()">Exportar Amortización a Excel</button>
-</div>
-
-<div class="card">
-<div id="resumenAmo"></div>
-<div style="overflow:auto">
-<table id="tablaAmo"></table>
-</div>
-</div>
-</section>
-
-<section id="resumen">
-<div class="card">
-<h2>Resumen mensual</h2>
-
-<label>Mes</label>
-<select id="resMes" onchange="generarResumen()">
-<option value="todos">Todos los meses</option>
-</select>
-
-<label>Origen</label>
-<select id="resOrigen" onchange="cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()">
-<option value="todos">TC + Bancos</option>
-<option value="tc">Solo TC</option>
-<option value="bancos">Solo Bancos</option>
-</select>
-
-<label>Tarjeta / Banco</label>
-<select id="resEntidad" onchange="generarResumen()">
-<option value="todos">Todas las tarjetas y bancos</option>
-</select>
-
-<label>Estado</label>
-<select id="resEstado" onchange="generarResumen()">
-<option value="todos">Todos</option>
-<option value="no">No conciliados</option>
-<option value="si">Conciliados</option>
-</select>
-
-<label>Concepto</label>
-<select id="resConcepto" onchange="generarResumen()">
-<option value="todos">Todos los conceptos</option>
-</select>
-
-<button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
-<button class="btn btn2" onclick="respaldarHTMLCompleto()">Respaldar HTML completo</button>
-<button class="btn btn2" onclick="cargarMovimientosFotosTC(true)">Cargar/actualizar TC fotos como no conciliado</button>
-</div>
-
-<div class="card">
-<div id="totalResumen" class="total"></div>
-<div style="overflow:auto">
-<table id="tablaResumen"></table>
-</div>
-</div>
-</section>
-
-<script>
-
-const TC_CONFIRMADOS = [
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"No"}
-];
-const BANCOS_CONFIRMADOS = [
-  {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
-  {Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Lavada",Valor:5.00,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Retiro",Detalle:"Efectivo",Valor:200.00,Conciliado:"Si"}
-];
-let tc = JSON.parse(localStorage.getItem("tc")) || [];
-let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
-let amortizacion = [];
-let resumenMensual = [];
-
-let filtroTC = "todos";
-let filtroBanco = "todos";
-
-document.getElementById("tcFecha").valueAsDate = new Date();
-document.getElementById("bFecha").valueAsDate = new Date();
-
-function showTab(id,btn){
-  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
-}
-
-function formato(n){
-  return Number(n||0).toLocaleString("es-EC",{minimumFractionDigits:2,maximumFractionDigits:2});
-}
-
-function mesClave(fecha){
-  if(!fecha) return "Sin fecha";
-  return fecha.substring(0,7);
-}
-
-function mesTexto(fecha){
-  if(!fecha) return "Sin fecha";
-  const d = new Date(fecha + "T00:00:00");
-  const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-  return meses[d.getMonth()] + "-" + String(d.getFullYear()).slice(-2);
-}
-
-function normalizarTC(m){
-  return {
-    Fecha: m.Fecha || m.fecha || "",
-    Tarjeta: m.Tarjeta || m.tarjeta || "",
-    Concepto: m.Concepto || m.concepto || "",
-    Detalle: m.Detalle || m.detalle || "",
-    Tipo: m.Tipo || m.tipo || "Corriente",
-    CuotasPagadas: Number(m.CuotasPagadas ?? m.cuotasPagadas ?? 0),
-    CuotasPorPagar: Number(m.CuotasPorPagar ?? m.cuotasPorPagar ?? 0),
-    Valor: Number(m.Valor ?? m.valor ?? 0),
-    Pago: Number(m.Pago ?? m.pago ?? 0),
-    Acumulado: Number(m.Acumulado ?? m.acumulado ?? ((m.Valor ?? m.valor ?? 0) - (m.Pago ?? m.pago ?? 0))),
-    SaldoDiferido: Number(m.SaldoDiferido ?? m.saldoDiferido ?? 0),
-    Conciliado: m.Conciliado || m.conciliado || "No"
-  };
-}
-
-function normalizarBanco(m){
-  return {
-    Fecha: m.Fecha || m.fecha || "",
-    Banco: m.Banco || m.banco || "",
-    Tipo: m.Tipo || m.tipo || "",
-    Concepto: m.Concepto || m.concepto || "",
-    Detalle: m.Detalle || m.detalle || "",
-    Valor: Number(m.Valor ?? m.valor ?? 0),
-    Conciliado: m.Conciliado || m.conciliado || "No"
-  };
-}
-
-tc = tc.map(normalizarTC);
-bancos = bancos.map(normalizarBanco);
-localStorage.setItem("tc", JSON.stringify(tc));
-localStorage.setItem("bancos", JSON.stringify(bancos));
-
-if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=>normalizarTC(x)); localStorage.setItem("tc", JSON.stringify(tc)); }
-if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=>normalizarBanco(x)); localStorage.setItem("bancos", JSON.stringify(bancos)); }
-
-function cargarMovimientosFotosTC(forzar){
-  if(forzar && !confirm("Esto cargará/actualizará los movimientos TC de las fotos como NO conciliados. No tocará Bancos. ¿Continuar?")) return;
-
-  function claveTC(m){
-    return [m.Fecha, m.Tarjeta, m.Concepto, m.Detalle, Number(m.Valor||0).toFixed(2)].join("|").toLowerCase();
-  }
-
-  let mapa = {};
-  tc.forEach(function(m, idx){ mapa[claveTC(m)] = idx; });
-
-  TC_CONFIRMADOS.forEach(function(base){
-    let mov = normalizarTC(base);
-    mov.Conciliado = "No";
-    let k = claveTC(mov);
-
-    if(mapa[k] !== undefined){
-      tc[mapa[k]] = mov;
-    }else{
-      tc.push(mov);
+    function loadData(){
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || seed; } catch(e){ return seed; }
     }
-  });
-
-  localStorage.setItem("tc", JSON.stringify(tc));
-  localStorage.setItem("tc_fotos_cargadas_v3", "Si");
-  mostrarTC();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-  generarResumen();
-
-  if(forzar) alert("TC de fotos cargado/actualizado como No conciliado.");
-}
-
-if(localStorage.getItem("tc_fotos_cargadas_v3") !== "Si"){
-  cargarMovimientosFotosTC(false);
-}
-
-
-
-function cargarFiltroTarjetaTC(){
-  if(!document.getElementById("filtroTarjetaTC")) return;
-
-  const actual = filtroTarjetaTC.value;
-  const tarjetas = [...new Set(tc.map(x=>x.Tarjeta).filter(Boolean))].sort();
-
-  filtroTarjetaTC.innerHTML = `<option value="todas">Todas las tarjetas</option>`;
-
-  tarjetas.forEach(t=>{
-    filtroTarjetaTC.innerHTML += `<option value="${t}">${t}</option>`;
-  });
-
-  if(tarjetas.includes(actual)){
-    filtroTarjetaTC.value = actual;
-  }
-}
-
-function setFiltroTC(valor){
-  filtroTC = valor;
-  document.querySelectorAll("#tc .filtros button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("fTC"+valor).classList.add("active");
-  mostrarTC();
-}
-
-function setFiltroBanco(valor){
-  filtroBanco = valor;
-  document.querySelectorAll("#bancos .filtros button").forEach(b=>b.classList.remove("active"));
-  document.getElementById("fB"+valor).classList.add("active");
-  mostrarBancos();
-}
-
-function pasaFiltro(m,filtro){
-  if(filtro==="no" && m.Conciliado==="Si") return false;
-  if(filtro==="si" && m.Conciliado!=="Si") return false;
-  return true;
-}
-
-function guardarTC(){
-  let valor = Number(tcValor.value || 0);
-  let pago = Number(tcPago.value || 0);
-  let cuotasPorPagar = Number(tcPorPagar.value || 0);
-  let saldoDiferido = tcTipo.value === "Diferido" ? valor * cuotasPorPagar : 0;
-
-  tc.push({
-    Fecha: tcFecha.value,
-    Tarjeta: tcTarjeta.value,
-    Concepto: tcConcepto.value,
-    Detalle: tcDetalle.value,
-    Tipo: tcTipo.value,
-    CuotasPagadas: Number(tcPagadas.value || 0),
-    CuotasPorPagar: cuotasPorPagar,
-    Valor: valor,
-    Pago: pago,
-    Acumulado: valor - pago,
-    SaldoDiferido: saldoDiferido,
-    Conciliado: "No"
-  });
-
-  localStorage.setItem("tc",JSON.stringify(tc));
-  cargarFiltroTarjetaTC();
-  tcDetalle.value="";
-  tcValor.value="";
-  tcPago.value=0;
-  tcPagadas.value=0;
-  tcPorPagar.value=0;
-  mostrarTC();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-}
-
-function mostrarTC(){
-  listaTC.innerHTML="";
-  tc.slice().reverse().forEach((m,i)=>{
-    if(!pasaFiltro(m,filtroTC)) return;
-
-    let tarjetaFiltro = document.getElementById("filtroTarjetaTC") ? filtroTarjetaTC.value : "todas";
-    if(tarjetaFiltro !== "todas" && m.Tarjeta !== tarjetaFiltro) return;
-
-    let idx = tc.length-1-i;
-    listaTC.innerHTML += `
-    <div class="mov">
-      <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
-      <div>${m.Detalle || ""}</div>
-      <div class="small">Tipo: <b>${m.Tipo}</b></div>
-      <div class="small">Cuotas pagadas: <b>${m.CuotasPagadas}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar}</b></div>
-      <div class="small">Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}</div>
-      <div class="small">Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
-      <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
-      <button class="btn btnEdit" onclick="editarTC(${idx})">Editar</button>
-      <button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
-    </div>`;
-  });
-}
-
-function eliminarTC(i){
-  tc.splice(i,1);
-  localStorage.setItem("tc",JSON.stringify(tc));
-  cargarFiltroTarjetaTC();
-  mostrarTC();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-}
-
-function guardarBanco(){
-  bancos.push({
-    Fecha: bFecha.value,
-    Banco: bBanco.value,
-    Tipo: bTipo.value,
-    Concepto: bConcepto.value,
-    Detalle: bDetalle.value,
-    Valor: Number(bValor.value || 0),
-    Conciliado:"No"
-  });
-
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  bDetalle.value="";
-  bValor.value="";
-  mostrarBancos();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-}
-
-function mostrarBancos(){
-  listaBancos.innerHTML="";
-  bancos.slice().reverse().forEach((m,i)=>{
-    if(!pasaFiltro(m,filtroBanco)) return;
-    let idx = bancos.length-1-i;
-    listaBancos.innerHTML += `
-    <div class="mov">
-      <strong>${m.Fecha} | ${m.Banco} | ${m.Tipo}</strong>
-      <div>${m.Concepto || ""} ${m.Detalle ? "- " + m.Detalle : ""}</div>
-      <div class="small">Valor: $${formato(m.Valor)}</div>
-      <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
-      <button class="btn btnEdit" onclick="editarBanco(${idx})">Editar</button>
-      <button class="btn btnDanger" onclick="eliminarBanco(${idx})">Eliminar</button>
-    </div>`;
-  });
-}
-
-function eliminarBanco(i){
-  bancos.splice(i,1);
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  mostrarBancos();
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-}
-
-function exportarPendientes(tipo){
-  let data = tipo==="tc" ? tc : bancos;
-
-  if(data.length===0){
-    alert("No hay registros para exportar");
-    return;
-  }
-
-  let campoDestino = tipo==="tc" ? "Tarjeta" : "Banco";
-  let destinos = [...new Set(data.map(d => d[campoDestino]).filter(Boolean))];
-  let elegido = prompt(
-    "¿Qué " + (tipo==="tc" ? "tarjeta" : "banco") + " quieres exportar?\n\n" +
-    "Escribe uno de estos nombres o escribe TODOS:\n" + destinos.join("\n"),
-    "TODOS"
-  );
-
-  if(elegido === null) return;
-  elegido = elegido.trim();
-
-  let seleccionados = elegido.toUpperCase()==="TODOS"
-    ? data
-    : data.filter(d => String(d[campoDestino] || "").toLowerCase() === elegido.toLowerCase());
-
-  if(seleccionados.length===0){
-    alert("No encontré registros para: " + elegido);
-    return;
-  }
-
-  seleccionados.forEach(d => d.Conciliado = "Si");
-
-  let wb = XLSX.utils.book_new();
-  let ws = XLSX.utils.json_to_sheet(seleccionados);
-  XLSX.utils.book_append_sheet(wb, ws, tipo==="tc" ? "TC" : "Bancos");
-
-  let fecha = new Date().toISOString().slice(0,10);
-  let destinoNombre = elegido.toUpperCase()==="TODOS" ? "TODOS" : elegido.replaceAll(" ","_");
-  let nombreArchivo = tipo==="tc"
-    ? "TC_" + destinoNombre + "_" + fecha + ".xlsx"
-    : "Bancos_" + destinoNombre + "_" + fecha + ".xlsx";
-
-  XLSX.writeFile(wb, nombreArchivo);
-
-  if(tipo==="tc"){
-    localStorage.setItem("tc",JSON.stringify(tc));
-    mostrarTC();
-  }else{
-    localStorage.setItem("bancos",JSON.stringify(bancos));
-    mostrarBancos();
-  }
-
-  cargarMesesResumen();
-  cargarFiltroEntidad();
-  cargarFiltroConcepto();
-  generarResumen();
-  alert("Exportado: " + nombreArchivo + "\nLos movimientos exportados quedaron como Conciliado.");
-}
-
-
-function controlCamposTC(){
-  let esCorriente = tcTipo.value === "Corriente";
-  tcPagadas.disabled = esCorriente;
-  tcPorPagar.disabled = esCorriente;
-  if(esCorriente){
-    tcPagadas.value = 0;
-    tcPorPagar.value = 0;
-  }
-}
-
-function editarTC(i){
-  let m = tc[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || ""); if(nuevaTarjeta === null) return;
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "diferido" ? "Diferido" : "Corriente";
-  let nuevasPagadas = 0;
-  let nuevasPorPagar = 0;
-  if(nuevoTipo === "Diferido"){
-    nuevasPagadas = Number(prompt("Cuotas pagadas:", m.CuotasPagadas || 0) || 0);
-    nuevasPorPagar = Number(prompt("Cuotas por pagar:", m.CuotasPorPagar || 0) || 0);
-  }
-  let nuevoValor = Number(prompt("Valor consumo:", m.Valor || 0) || 0);
-  let nuevoPago = Number(prompt("Pago:", m.Pago || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
-
-  tc[i] = {
-    Fecha: nuevaFecha,
-    Tarjeta: nuevaTarjeta,
-    Concepto: nuevoConcepto,
-    Detalle: nuevoDetalle,
-    Tipo: nuevoTipo,
-    CuotasPagadas: nuevoTipo === "Diferido" ? nuevasPagadas : 0,
-    CuotasPorPagar: nuevoTipo === "Diferido" ? nuevasPorPagar : 0,
-    Valor: nuevoValor,
-    Pago: nuevoPago,
-    Acumulado: nuevoValor - nuevoPago,
-    SaldoDiferido: nuevoTipo === "Diferido" ? nuevoValor * nuevasPorPagar : 0,
-    Conciliado: nuevoEstado
-  };
-
-  localStorage.setItem("tc",JSON.stringify(tc));
-  cargarFiltroTarjetaTC();
-  mostrarTC(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
-}
-
-function editarBanco(i){
-  let m = bancos[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevoBanco = prompt("Banco:", m.Banco || ""); if(nuevoBanco === null) return;
-  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "ingreso" ? "Ingreso" : "Egreso";
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoValor = Number(prompt("Valor:", m.Valor || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
-
-  bancos[i] = {
-    Fecha: nuevaFecha,
-    Banco: nuevoBanco,
-    Tipo: nuevoTipo,
-    Concepto: nuevoConcepto,
-    Detalle: nuevoDetalle,
-    Valor: nuevoValor,
-    Conciliado: nuevoEstado
-  };
-
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  mostrarBancos(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
-}
-
-function escapeHTML(txt){
-  return String(txt === undefined || txt === null ? "" : txt)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/\"/g,"&quot;");
-}
-
-function respaldarHTMLCompleto(){
-  let fecha = new Date().toISOString().slice(0,10);
-  let datos = { fechaRespaldo: new Date().toISOString(), tc: tc, bancos: bancos };
-  let appCompleta = document.documentElement.outerHTML;
-
-  let contenido = "";
-  contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
-  contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>";
-  contenido += "</head><body>";
-  contenido += "<h1>Respaldo Mis Finanzas</h1>";
-  contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
-
-  contenido += "<h2>Tarjetas de Crédito</h2><table><tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr>";
-  tc.forEach(function(m){ contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Tarjeta)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Pago)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>"; });
-  contenido += "</table>";
-
-  contenido += "<h2>Bancos</h2><table><tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr>";
-  bancos.forEach(function(m){ contenido += "<tr><td>"+escapeHTML(m.Fecha)+"</td><td>"+escapeHTML(m.Banco)+"</td><td>"+escapeHTML(m.Tipo)+"</td><td>"+escapeHTML(m.Concepto)+"</td><td>"+escapeHTML(m.Detalle)+"</td><td>"+escapeHTML(m.Valor)+"</td><td>"+escapeHTML(m.Conciliado)+"</td></tr>"; });
-  contenido += "</table>";
-
-  contenido += "<h2>Datos técnicos para reconstruir movimientos</h2><pre>" + escapeHTML(JSON.stringify(datos,null,2)) + "</pre>";
-  contenido += "<h2>Script completo de la app</h2><pre>" + escapeHTML(appCompleta) + "</pre>";
-  contenido += "</body></html>";
-
-  let blob = new Blob([contenido], {type:"text/html;charset=utf-8"});
-  let url = URL.createObjectURL(blob);
-  let a = document.createElement("a");
-  a.href = url;
-  a.download = "respaldo_mis_finanzas_" + fecha + ".html";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  alert("Respaldo HTML completo generado. Incluye movimientos y script.");
-}
-
-function calcularAmortizacion(){
-  let monto = Number(amoMonto.value || 0);
-  let tasaAnual = Number(amoTasa.value || 0) / 100;
-  let meses = Number(amoMeses.value || 0);
-  let tasaMensual = tasaAnual / 12;
-
-  if(monto<=0 || meses<=0){
-    alert("Ingrese monto y plazo válidos");
-    return;
-  }
-
-  let cuota = tasaMensual===0
-    ? monto/meses
-    : monto*(tasaMensual*Math.pow(1+tasaMensual,meses))/(Math.pow(1+tasaMensual,meses)-1);
-
-  let saldo = monto;
-  let totalInteres = 0;
-  amortizacion = [];
-
-  for(let i=1;i<=meses;i++){
-    let interes = saldo*tasaMensual;
-    let capital = cuota-interes;
-
-    if(i===meses){
-      capital = saldo;
-      cuota = capital+interes;
+    function persist(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      localStorage.setItem(UPDATED_KEY, new Date().toISOString());
+      document.getElementById('app-data').textContent = JSON.stringify(data, null, 2);
+      setUpdated();
     }
-
-    saldo -= capital;
-    if(saldo<0.01) saldo=0;
-    totalInteres += interes;
-
-    amortizacion.push({
-      Mes:i,
-      Cuota:Number(cuota.toFixed(2)),
-      Interes:Number(interes.toFixed(2)),
-      Capital:Number(capital.toFixed(2)),
-      Saldo:Number(saldo.toFixed(2))
-    });
-  }
-
-  resumenAmo.innerHTML = `
-  <p class="total">Cuota mensual: $${formato(amortizacion[0].Cuota)}</p>
-  <p class="total">Intereses totales: $${formato(totalInteres)}</p>
-  <p class="total">Total pagado: $${formato(monto+totalInteres)}</p>`;
-
-  tablaAmo.innerHTML = `
-  <tr>
-    <th>Mes</th>
-    <th>Cuota</th>
-    <th>Interés</th>
-    <th>Capital</th>
-    <th>Saldo</th>
-  </tr>`;
-
-  amortizacion.forEach(r=>{
-    tablaAmo.innerHTML += `
-    <tr>
-      <td>${r.Mes}</td>
-      <td>${formato(r.Cuota)}</td>
-      <td>${formato(r.Interes)}</td>
-      <td>${formato(r.Capital)}</td>
-      <td>${formato(r.Saldo)}</td>
-    </tr>`;
-  });
-}
-
-function exportarAmortizacion(){
-  if(amortizacion.length===0){
-    alert("Primero calcule la amortización");
-    return;
-  }
-
-  let wb = XLSX.utils.book_new();
-  let resumen = [{
-    Monto:Number(amoMonto.value||0),
-    TasaAnual:Number(amoTasa.value||0),
-    Meses:Number(amoMeses.value||0),
-    CuotaMensual:amortizacion[0].Cuota,
-    InteresesTotales:Number(amortizacion.reduce((a,b)=>a+b.Interes,0).toFixed(2)),
-    TotalPagado:Number(amortizacion.reduce((a,b)=>a+b.Cuota,0).toFixed(2))
-  }];
-
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen), "Resumen");
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(amortizacion), "Tabla");
-  XLSX.writeFile(wb,"Amortizacion.xlsx");
-}
-
-function cargarMesesResumen(){
-  if(!resMes) return;
-
-  const actual = resMes.value;
-  const meses = new Map();
-
-  [...tc.map(x=>x.Fecha), ...bancos.map(x=>x.Fecha)].forEach(f=>{
-    if(f){
-      meses.set(mesClave(f), mesTexto(f));
+    function setUpdated(){
+      const iso = localStorage.getItem(UPDATED_KEY);
+      const d = iso ? new Date(iso) : new Date();
+      document.getElementById('lastUpdated').textContent = 'Actualizado: ' + d.toLocaleDateString('es-EC', {year:'numeric', month:'long', day:'numeric'}) + ' · ' + d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
     }
-  });
-
-  resMes.innerHTML = `<option value="todos">Todos los meses</option>`;
-
-  Array.from(meses.entries()).sort().reverse().forEach(([clave,texto])=>{
-    resMes.innerHTML += `<option value="${clave}">${texto}</option>`;
-  });
-
-  if(Array.from(meses.keys()).includes(actual)){
-    resMes.value = actual;
-  }
-}
-
-function cargarFiltroEntidad(){
-  if(!resEntidad) return;
-
-  const origen = resOrigen.value;
-  const actual = resEntidad.value;
-  let valores = [];
-
-  if(origen==="todos"){
-    valores = [
-      ...tc.map(x=>"TC: " + x.Tarjeta),
-      ...bancos.map(x=>"Banco: " + x.Banco)
-    ];
-    resEntidad.innerHTML = `<option value="todos">Todas las tarjetas y bancos</option>`;
-  }
-
-  if(origen==="tc"){
-    valores = tc.map(x=>x.Tarjeta);
-    resEntidad.innerHTML = `<option value="todos">Todas las tarjetas</option>`;
-  }
-
-  if(origen==="bancos"){
-    valores = bancos.map(x=>x.Banco);
-    resEntidad.innerHTML = `<option value="todos">Todos los bancos</option>`;
-  }
-
-  [...new Set(valores.filter(Boolean))].sort().forEach(v=>{
-    resEntidad.innerHTML += `<option value="${v}">${v}</option>`;
-  });
-
-  if([...resEntidad.options].some(o=>o.value===actual)){
-    resEntidad.value = actual;
-  }
-}
-
-function cargarFiltroConcepto(){
-  if(!resConcepto) return;
-
-  const actual = resConcepto.value;
-  const origen = resOrigen.value;
-  let conceptos = [];
-
-  if(origen==="todos" || origen==="tc"){
-    conceptos = conceptos.concat(tc.map(x=>x.Concepto));
-  }
-
-  if(origen==="todos" || origen==="bancos"){
-    conceptos = conceptos.concat(bancos.map(x=>x.Concepto));
-  }
-
-  resConcepto.innerHTML = `<option value="todos">Todos los conceptos</option>`;
-
-  [...new Set(conceptos.filter(Boolean))].sort().forEach(c=>{
-    resConcepto.innerHTML += `<option value="${c}">${c}</option>`;
-  });
-
-  if([...resConcepto.options].some(o=>o.value===actual)){
-    resConcepto.value = actual;
-  }
-}
-
-function generarResumen(){
-  if(!tablaResumen) return;
-
-  const mesFiltro = resMes.value;
-  const origenFiltro = resOrigen.value;
-  const entidadFiltro = resEntidad.value;
-  const estadoFiltro = resEstado.value;
-  const conceptoFiltro = resConcepto.value;
-
-  let datos = [];
-
-  if(origenFiltro==="todos" || origenFiltro==="tc"){
-    tc.forEach(m=>{
-      datos.push({
-        Origen:"TC",
-        Entidad:m.Tarjeta,
-        EntidadFiltro:"TC: " + m.Tarjeta,
-        MesClave:mesClave(m.Fecha),
-        Mes:mesTexto(m.Fecha),
-        Concepto:m.Concepto || "Sin concepto",
-        Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Valor||0)
-      });
-    });
-  }
-
-  if(origenFiltro==="todos" || origenFiltro==="bancos"){
-    bancos.forEach(m=>{
-      datos.push({
-        Origen:"Bancos",
-        Entidad:m.Banco,
-        EntidadFiltro:"Banco: " + m.Banco,
-        MesClave:mesClave(m.Fecha),
-        Mes:mesTexto(m.Fecha),
-        Concepto:m.Concepto || "Sin concepto",
-        Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Valor||0)
-      });
-    });
-  }
-
-  if(mesFiltro!=="todos"){
-    datos = datos.filter(d=>d.MesClave===mesFiltro);
-  }
-
-  if(estadoFiltro==="no"){
-    datos = datos.filter(d=>d.Estado==="No conciliado");
-  }
-
-  if(estadoFiltro==="si"){
-    datos = datos.filter(d=>d.Estado==="Conciliado");
-  }
-
-  if(entidadFiltro!=="todos"){
-    if(origenFiltro==="todos"){
-      datos = datos.filter(d=>d.EntidadFiltro===entidadFiltro);
-    }else{
-      datos = datos.filter(d=>d.Entidad===entidadFiltro);
+    function cleanUrl(url){
+      url = (url || '').trim();
+      const m = url.match(/https:\/\/app\.powerbi\.com\/links\/[^?\s]+/i);
+      return m ? m[0] : url;
     }
-  }
-
-  if(conceptoFiltro!=="todos"){
-    datos = datos.filter(d=>d.Concepto===conceptoFiltro);
-  }
-
-  const mapa = {};
-  let totalGeneral = 0;
-
-  datos.forEach(d=>{
-    const clave = d.Origen + "|" + d.Entidad + "|" + d.Mes + "|" + d.Concepto + "|" + d.Estado;
-
-    if(!mapa[clave]){
-      mapa[clave] = {
-        Origen:d.Origen,
-        TarjetaBanco:d.Entidad,
-        Mes:d.Mes,
-        Concepto:d.Concepto,
-        Estado:d.Estado,
-        Cantidad:0,
-        Total:0
-      };
+    function iconFor(cat){
+      const c=(cat||'').toUpperCase();
+      if(c.includes('PROEXPO')) return '🏢'; if(c.includes('OPERATIVO')) return '⚙️'; if(c.includes('COMERCIAL')) return '👥'; if(c.includes('EXTER')) return '🌐'; return '📁';
     }
-
-    mapa[clave].Cantidad += 1;
-    mapa[clave].Total += d.Valor;
-    totalGeneral += d.Valor;
-  });
-
-  resumenMensual = Object.values(mapa).sort((a,b)=>{
-    if(a.Mes!==b.Mes) return a.Mes.localeCompare(b.Mes);
-    if(a.Origen!==b.Origen) return a.Origen.localeCompare(b.Origen);
-    if(a.TarjetaBanco!==b.TarjetaBanco) return a.TarjetaBanco.localeCompare(b.TarjetaBanco);
-    return a.Concepto.localeCompare(b.Concepto);
-  });
-
-  totalResumen.innerHTML = `Total seleccionado: $${formato(totalGeneral)}`;
-
-  tablaResumen.innerHTML = `
-  <tr>
-    <th>Origen</th>
-    <th>Tarjeta/Banco</th>
-    <th>Mes</th>
-    <th>Concepto</th>
-    <th>Estado</th>
-    <th>Cant.</th>
-    <th>Total</th>
-  </tr>`;
-
-  if(resumenMensual.length===0){
-    tablaResumen.innerHTML += `<tr><td colspan="7">No hay datos para mostrar</td></tr>`;
-    return;
-  }
-
-  resumenMensual.forEach(r=>{
-    tablaResumen.innerHTML += `
-    <tr>
-      <td>${r.Origen}</td>
-      <td>${r.TarjetaBanco}</td>
-      <td>${r.Mes}</td>
-      <td>${r.Concepto}</td>
-      <td>${r.Estado}</td>
-      <td>${r.Cantidad}</td>
-      <td>$${formato(r.Total)}</td>
-    </tr>`;
-  });
-}
-
-function exportarResumen(){
-  generarResumen();
-
-  if(resumenMensual.length===0){
-    alert("No hay resumen para exportar");
-    return;
-  }
-
-  let wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumenMensual), "Resumen");
-  XLSX.writeFile(wb,"Resumen_mensual.xlsx");
-}
-
-controlCamposTC();
-cargarFiltroTarjetaTC();
-mostrarTC();
-mostrarBancos();
-cargarMesesResumen();
-cargarFiltroEntidad();
-cargarFiltroConcepto();
-generarResumen();
-</script>
-
+    function render(){
+      setUpdated();
+      const q = (document.getElementById('q').value || '').toLowerCase();
+      const filtered = data.filter(x => [x.name,x.category,x.owner,x.desc,x.url].join(' ').toLowerCase().includes(q));
+      const groups = [...new Set(filtered.map(x=>x.category || 'OTROS'))];
+      const content = document.getElementById('content');
+      if(!filtered.length){ content.innerHTML='<div class="empty">No encontré BI con ese criterio.</div>'; return; }
+      content.innerHTML = groups.map(cat => {
+        const items = filtered.filter(x => (x.category||'OTROS') === cat);
+        return `<section class="section"><div class="section-title"><h2>${iconFor(cat)} ${cat}</h2><span class="badge">${items.length} BI</span></div><div class="grid">${items.map(card).join('')}</div></section>`;
+      }).join('');
+    }
+    function card(item){
+      const realIndex = data.indexOf(item);
+      const hasUrl = !!(item.url && item.url.trim());
+      return `<article class="card"><div><h3>${escapeHTML(item.name || 'Sin nombre')}</h3><div class="meta">${escapeHTML(item.desc || 'Sin descripción')}</div><div class="meta prep">Preparado por: ${escapeHTML(item.owner || '—')}</div></div><div class="actions"><button class="btn small open ${hasUrl?'':'disabled'}" onclick="openBI(${realIndex})">Abrir</button><button class="btn small edit" onclick="editBI(${realIndex})">Editar</button><button class="btn small copy ${hasUrl?'':'disabled'}" onclick="copyBI(${realIndex})">Copiar link</button></div></article>`;
+    }
+    function escapeHTML(s){ return String(s||'').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+    function openBI(i){ const u = cleanUrl(data[i].url); if(!u){ toast('Este BI todavía no tiene link.'); return; } window.open(u, '_blank'); }
+    async function copyBI(i){ const u = cleanUrl(data[i].url); if(!u){ toast('No hay link para copiar.'); return; } try{ await navigator.clipboard.writeText(u); toast('Link copiado.'); }catch(e){ prompt('Copia el link:', u); } }
+    function newBI(){ document.getElementById('modalTitle').textContent='Nuevo BI'; document.getElementById('idx').value=''; document.getElementById('name').value=''; document.getElementById('category').value='OTROS'; document.getElementById('owner').value=''; document.getElementById('desc').value=''; document.getElementById('url').value=''; document.getElementById('deleteBtn').style.display='none'; document.getElementById('editor').showModal(); }
+    function editBI(i){ const x=data[i]; document.getElementById('modalTitle').textContent='Editar BI'; document.getElementById('idx').value=i; document.getElementById('name').value=x.name||''; document.getElementById('category').value=x.category||'OTROS'; document.getElementById('owner').value=x.owner||''; document.getElementById('desc').value=x.desc||''; document.getElementById('url').value=x.url||''; document.getElementById('deleteBtn').style.display='inline-block'; document.getElementById('editor').showModal(); }
+    function closeEditor(){ document.getElementById('editor').close(); }
+    function saveBI(){ const obj={category:document.getElementById('category').value,name:document.getElementById('name').value.trim()||'Sin nombre',owner:document.getElementById('owner').value.trim(),desc:document.getElementById('desc').value.trim(),url:cleanUrl(document.getElementById('url').value)}; const idx=document.getElementById('idx').value; if(idx==='') data.push(obj); else data[Number(idx)]=obj; persist(); closeEditor(); render(); toast('BI guardado.'); }
+    function deleteBI(){ const idx=Number(document.getElementById('idx').value); if(Number.isInteger(idx) && confirm('¿Eliminar este BI?')){ data.splice(idx,1); persist(); closeEditor(); render(); toast('BI eliminado.'); } }
+    function resetSeed(){ if(confirm('¿Restaurar la base original? Se reemplazarán los cambios guardados en este dispositivo.')){ data = JSON.parse(JSON.stringify(seed)); persist(); render(); toast('Base restaurada.'); } }
+    function exportLinks(){ const rows=[['Categoria','Nombre','Preparado por','Descripcion','Link'],...data.map(x=>[x.category,x.name,x.owner,x.desc,cleanUrl(x.url)])]; const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n'); downloadBlob(csv,'BI_Gerencial_links.csv','text/csv;charset=utf-8'); }
+    function backupHTML(){ persist(); const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML; const stamp=new Date().toISOString().slice(0,10); downloadBlob(html,`BI_Gerencial_respaldo_${stamp}.html`,'text/html;charset=utf-8'); toast('Respaldo HTML generado.'); }
+    function downloadBlob(content, filename, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); }
+    function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+    render();
+  </script>
 </body>
 </html>
+
