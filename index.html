@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-title" content="BI Gerencial" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>BI Gerencial</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root{
       --bg:#eef2f7; --card:#ffffff; --ink:#152033; --muted:#667085; --blue:#1f5eff;
@@ -37,6 +38,8 @@
 
     <div class="toolbar">
       <button class="btn primary" onclick="newBI()">➕ Nuevo BI</button>
+      <button class="btn" onclick="document.getElementById('excelFile').click()">📥 Importar Excel</button>
+      <input id="excelFile" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(event)" />
       <button class="btn green" onclick="backupHTML()">💾 Respaldar HTML</button>
       <button class="btn" onclick="exportLinks()">📤 Exportar links</button>
       <button class="btn orange" onclick="resetSeed()">↩️ Restaurar base</button>
@@ -136,6 +139,53 @@
     function backupHTML(){ persist(); const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML; const stamp=new Date().toISOString().slice(0,10); downloadBlob(html,`BI_Gerencial_respaldo_${stamp}.html`,'text/html;charset=utf-8'); toast('Respaldo HTML generado.'); }
     function downloadBlob(content, filename, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); }
     function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+
+    function normHeader(v){ return String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' '); }
+    function pick(row, keys){
+      const map={}; Object.keys(row).forEach(k=>map[normHeader(k)]=row[k]);
+      for(const k of keys){ const nk=normHeader(k); if(map[nk] !== undefined && String(map[nk]).trim() !== '') return String(map[nk]).trim(); }
+      return '';
+    }
+    function rowToBI(row){
+      return {
+        category: pick(row,['Categoria','Categoría','Grupo','Area','Área']) || 'OTROS',
+        name: pick(row,['Nombre','Nombre BI','Reporte','BI','Informe']) || 'Sin nombre',
+        owner: pick(row,['Preparado por','Responsable','Owner','Usuario']) || '',
+        desc: pick(row,['Descripcion','Descripción','Detalle','Comentario']) || '',
+        url: cleanUrl(pick(row,['Link','URL','Enlace','Vinculo','Vínculo','Power BI']))
+      };
+    }
+    async function importExcel(event){
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if(!file) return;
+      if(typeof XLSX === 'undefined'){
+        toast('No se pudo cargar el lector de Excel. Revisa internet o usa CSV.');
+        return;
+      }
+      try{
+        const buffer = await file.arrayBuffer();
+        const wb = XLSX.read(buffer, {type:'array'});
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(sheet, {defval:''});
+        const imported = rows.map(rowToBI).filter(x => x.name && x.name !== 'Sin nombre' && (x.url || x.desc || x.owner || x.category));
+        if(!imported.length){ toast('No encontré filas válidas en el Excel.'); return; }
+        const mode = confirm('¿Actualizar por nombre y agregar nuevos?\n\nAceptar = actualiza/agrega sin borrar.\nCancelar = reemplaza toda la lista con el Excel.');
+        if(mode){
+          imported.forEach(x=>{
+            const i = data.findIndex(y => normHeader(y.name) === normHeader(x.name));
+            if(i >= 0) data[i] = {...data[i], ...x}; else data.push(x);
+          });
+        } else {
+          data = imported;
+        }
+        persist(); render(); toast('Excel importado: ' + imported.length + ' BI.');
+      }catch(e){
+        console.error(e);
+        toast('No pude leer el Excel. Revisa columnas o usa CSV.');
+      }
+    }
+
     render();
   </script>
 </body>
