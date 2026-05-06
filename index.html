@@ -141,19 +141,59 @@
     function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
 
     function normHeader(v){ return String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' '); }
+    function cleanCell(v){ return String(v === undefined || v === null ? '' : v).trim(); }
+    function looksLikePowerBI(v){ return /https:\/\/app\.powerbi\.com\/links\//i.test(String(v||'')); }
+    function normalizeCategory(v){
+      const s = cleanCell(v);
+      if(!s) return 'OTROS';
+      const u = s.toUpperCase();
+      if(u.includes('PROEXPO')) return 'PROEXPO';
+      if(u.includes('OPER')) return 'OPERATIVO';
+      if(u.includes('COMER')) return 'COMERCIAL';
+      if(u.includes('EXTER')) return 'EXTERNOS';
+      return s;
+    }
     function pick(row, keys){
       const map={}; Object.keys(row).forEach(k=>map[normHeader(k)]=row[k]);
-      for(const k of keys){ const nk=normHeader(k); if(map[nk] !== undefined && String(map[nk]).trim() !== '') return String(map[nk]).trim(); }
+      for(const k of keys){ const nk=normHeader(k); if(map[nk] !== undefined && cleanCell(map[nk]) !== '') return cleanCell(map[nk]); }
       return '';
     }
     function rowToBI(row){
       return {
-        category: pick(row,['Categoria','Categoría','Grupo','Area','Área']) || 'OTROS',
-        name: pick(row,['Nombre','Nombre BI','Reporte','BI','Informe']) || 'Sin nombre',
-        owner: pick(row,['Preparado por','Responsable','Owner','Usuario']) || '',
-        desc: pick(row,['Descripcion','Descripción','Detalle','Comentario']) || '',
+        category: normalizeCategory(pick(row,['Categoria','Categoría','Empresa','Grupo','Area','Área'])),
+        name: pick(row,['Nombre','Nombre BI','Descripcion','Descripción','Reporte','BI','Informe']),
+        owner: pick(row,['Preparado por','Prepara','Responsable','Owner','Usuario']),
+        desc: pick(row,['Detalle','Comentario','Observacion','Observación','Notas']),
         url: cleanUrl(pick(row,['Link','URL','Enlace','Vinculo','Vínculo','Power BI']))
       };
+    }
+    function inferFromArrayRows(aoa){
+      const results=[];
+      let lastCategory='';
+      for(let r=0;r<aoa.length;r++){
+        const row=(aoa[r]||[]).map(cleanCell);
+        if(!row.some(Boolean)) continue;
+        const linkIndex=row.findIndex(looksLikePowerBI);
+        if(linkIndex<0) {
+          if(row[0] && !/empresa|categoria|informes bi/i.test(row[0]) && r>1) lastCategory=row[0];
+          continue;
+        }
+        const link=cleanUrl(row[linkIndex]);
+        const before=row.slice(0, linkIndex).filter(Boolean);
+        let category='', name='', owner='', desc='';
+        // Soporta tu formato real: Empresa | Descripcion | Prepara | Descripción extra | Link
+        category = row[0] || lastCategory || 'OTROS';
+        if(row[0]) lastCategory = row[0];
+        name = row[1] || before.find(v => !looksLikePowerBI(v)) || 'Sin nombre';
+        owner = row[2] || '';
+        desc = row[3] || '';
+        results.push({category:normalizeCategory(category), name:name || 'Sin nombre', owner, desc, url:link});
+      }
+      return results.filter(x=>x.url && x.name);
+    }
+    function inferFromJsonRows(rows){
+      const imported = rows.map(rowToBI).filter(x => x.url && x.name);
+      return imported;
     }
     async function importExcel(event){
       const file = event.target.files && event.target.files[0];
@@ -166,12 +206,24 @@
       try{
         const buffer = await file.arrayBuffer();
         const wb = XLSX.read(buffer, {type:'array'});
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(sheet, {defval:''});
-        const imported = rows.map(rowToBI).filter(x => x.name && x.name !== 'Sin nombre' && (x.url || x.desc || x.owner || x.category));
-        if(!imported.length){ toast('No encontré filas válidas en el Excel.'); return; }
-        const mode = confirm('¿Actualizar por nombre y agregar nuevos?\n\nAceptar = actualiza/agrega sin borrar.\nCancelar = reemplaza toda la lista con el Excel.');
-        if(mode){
+        let imported=[];
+        for(const sheetName of wb.SheetNames){
+          const sheet = wb.Sheets[sheetName];
+          // 1) Intentar con todas las posibles filas de encabezado.
+          for(let headerRow=0; headerRow<8 && imported.length===0; headerRow++){
+            const rows = XLSX.utils.sheet_to_json(sheet, {defval:'', range:headerRow});
+            imported = inferFromJsonRows(rows);
+          }
+          // 2) Si el Excel tiene encabezados raros o filas vacías, escanear celda por celda buscando links.
+          if(imported.length===0){
+            const aoa = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
+            imported = inferFromArrayRows(aoa);
+          }
+          if(imported.length) break;
+        }
+        if(!imported.length){ toast('No encontré links de Power BI dentro del Excel.'); return; }
+        const merge = confirm('Encontré ' + imported.length + ' BI en el Excel.\n\nAceptar = actualizar/agregar sin borrar.\nCancelar = reemplazar toda la lista con el Excel.');
+        if(merge){
           imported.forEach(x=>{
             const i = data.findIndex(y => normHeader(y.name) === normHeader(x.name));
             if(i >= 0) data[i] = {...data[i], ...x}; else data.push(x);
@@ -182,12 +234,12 @@
         persist(); render(); toast('Excel importado: ' + imported.length + ' BI.');
       }catch(e){
         console.error(e);
-        toast('No pude leer el Excel. Revisa columnas o usa CSV.');
+        toast('No pude leer el Excel. Intenta guardarlo como .xlsx o .csv.');
       }
     }
-
     render();
   </script>
 </body>
 </html>
+
 
