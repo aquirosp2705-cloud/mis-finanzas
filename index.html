@@ -256,6 +256,12 @@ th:first-child,td:first-child{text-align:left}
 
 <div class="card">
 <h3>Movimientos Bancos</h3>
+
+<label>Filtrar por banco</label>
+<select id="filtroBancoMov" onchange="mostrarBancos()">
+  <option value="todos">Todos los bancos</option>
+</select>
+
 <div class="filtros">
 <button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button>
 <button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button>
@@ -690,6 +696,24 @@ function cargarFiltroTarjetaTC(){
   }
 }
 
+
+function cargarFiltroBancoMov(){
+  if(!document.getElementById("filtroBancoMov")) return;
+
+  const actual = filtroBancoMov.value;
+  const bancosLista = [...new Set(bancos.map(x=>x.Banco).filter(Boolean))].sort();
+
+  filtroBancoMov.innerHTML = `<option value="todos">Todos los bancos</option>`;
+
+  bancosLista.forEach(b=>{
+    filtroBancoMov.innerHTML += `<option value="${b}">${b}</option>`;
+  });
+
+  if(bancosLista.includes(actual)){
+    filtroBancoMov.value = actual;
+  }
+}
+
 function setFiltroTC(valor){
   filtroTC = valor;
   document.querySelectorAll("#tc .filtros button").forEach(b=>b.classList.remove("active"));
@@ -792,6 +816,7 @@ function guardarBanco(){
   localStorage.setItem("bancos",JSON.stringify(bancos));
   bDetalle.value="";
   bValor.value="";
+  cargarFiltroBancoMov();
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -802,6 +827,10 @@ function mostrarBancos(){
   listaBancos.innerHTML="";
   bancos.slice().reverse().forEach((m,i)=>{
     if(!pasaFiltro(m,filtroBanco)) return;
+
+    let bancoFiltro = document.getElementById("filtroBancoMov") ? filtroBancoMov.value : "todos";
+    if(bancoFiltro !== "todos" && m.Banco !== bancoFiltro) return;
+
     let idx = bancos.length-1-i;
     listaBancos.innerHTML += `
     <div class="mov">
@@ -818,6 +847,7 @@ function mostrarBancos(){
 function eliminarBanco(i){
   bancos.splice(i,1);
   localStorage.setItem("bancos",JSON.stringify(bancos));
+  cargarFiltroBancoMov();
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -1396,6 +1426,7 @@ function exportarResumen(){
 
 controlCamposTC();
 cargarFiltroTarjetaTC();
+cargarFiltroBancoMov();
 mostrarTC();
 mostrarBancos();
 cargarMesesResumen();
