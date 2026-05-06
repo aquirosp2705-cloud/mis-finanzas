@@ -31,6 +31,17 @@ input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
 th:first-child,td:first-child{text-align:left}
+
+/* Modal edición compatible iPad */
+.modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
+.modalFondo.active{display:block}
+.modalCard{background:white;border-radius:18px;padding:16px;max-width:620px;margin:24px auto;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.modalHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.modalHeader h2{margin:0;font-size:20px;color:#0f172a}
+.btnSmall{width:auto;padding:10px 14px;border:0;border-radius:10px;background:#64748b;color:white;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.modalCard{margin:6px auto}}
+
 </style>
 </head>
 
@@ -424,6 +435,116 @@ th:first-child,td:first-child{text-align:left}
 </div>
 </section>
 
+
+
+<!-- Modal visual para editar transacciones en iPad -->
+<div id="modalEditar" class="modalFondo">
+  <div class="modalCard">
+    <div class="modalHeader">
+      <h2 id="modalTitulo">Editar movimiento</h2>
+      <button class="btnSmall" onclick="cerrarEditor()">Cerrar</button>
+    </div>
+    <input type="hidden" id="editTipoOrigen">
+    <input type="hidden" id="editIndice">
+
+    <label>Fecha</label>
+    <input type="date" id="editFecha">
+
+    <div id="camposTCEdit">
+      <label>Tarjeta</label>
+      <select id="editTarjeta">
+        <option>Pichincha</option>
+        <option>Produbanco</option>
+        <option>Otra</option>
+      </select>
+
+      <label>Concepto</label>
+      <select id="editConceptoTC">
+        <option>Restaurante</option>
+        <option>Supermercado</option>
+        <option>Gasolina/Carro</option>
+        <option>Medicina</option>
+        <option>Doctor</option>
+        <option>Peluquería</option>
+        <option>Veterinaria</option>
+        <option>Tecnologico/Electrico</option>
+        <option>Hogar</option>
+        <option>Otros</option>
+      </select>
+
+      <label>Tipo consumo</label>
+      <select id="editTipoTC" onchange="controlCamposEditarTC()">
+        <option>Corriente</option>
+        <option>Diferido</option>
+      </select>
+
+      <div class="grid2">
+        <div>
+          <label>Cuotas pagadas</label>
+          <input type="number" id="editCuotasPagadas" value="0">
+        </div>
+        <div>
+          <label>Cuotas por pagar</label>
+          <input type="number" id="editCuotasPorPagar" value="0">
+        </div>
+      </div>
+
+      <div class="grid2">
+        <div>
+          <label>Valor consumo</label>
+          <input type="number" id="editValorTC" step="0.01">
+        </div>
+        <div>
+          <label>Pago</label>
+          <input type="number" id="editPagoTC" step="0.01">
+        </div>
+      </div>
+    </div>
+
+    <div id="camposBancoEdit" style="display:none">
+      <label>Banco</label>
+      <select id="editBanco">
+        <option>Pichincha</option>
+        <option>Produbanco</option>
+        <option>Guayaquil</option>
+        <option>Bolivariano</option>
+        <option>Otro</option>
+      </select>
+
+      <label>Tipo</label>
+      <select id="editTipoBanco">
+        <option>Ingreso</option>
+        <option>Egreso</option>
+      </select>
+
+      <label>Concepto</label>
+      <select id="editConceptoBanco">
+        <option>Transferencia</option>
+        <option>Pago</option>
+        <option>Retiro</option>
+        <option>Depósito</option>
+        <option>Servicios</option>
+        <option>Otros</option>
+      </select>
+
+      <label>Valor</label>
+      <input type="number" id="editValorBanco" step="0.01">
+    </div>
+
+    <label>Detalle</label>
+    <input id="editDetalle" placeholder="Detalle del movimiento">
+
+    <label>Estado</label>
+    <select id="editConciliado">
+      <option value="No">No conciliado</option>
+      <option value="Si">Conciliado</option>
+    </select>
+
+    <button class="btn" onclick="guardarEdicionMovimiento()">Guardar cambios</button>
+    <button class="btn btnDanger" onclick="cerrarEditor()">Cancelar</button>
+  </div>
+</div>
+
 <script>
 
 const TC_CONFIRMADOS = [
@@ -771,71 +892,126 @@ function controlCamposTC(){
   }
 }
 
-function editarTC(i){
-  let m = tc[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevaTarjeta = prompt("Tarjeta:", m.Tarjeta || ""); if(nuevaTarjeta === null) return;
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoTipo = prompt("Tipo: Corriente o Diferido", m.Tipo || "Corriente"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "diferido" ? "Diferido" : "Corriente";
-  let nuevasPagadas = 0;
-  let nuevasPorPagar = 0;
-  if(nuevoTipo === "Diferido"){
-    nuevasPagadas = Number(prompt("Cuotas pagadas:", m.CuotasPagadas || 0) || 0);
-    nuevasPorPagar = Number(prompt("Cuotas por pagar:", m.CuotasPorPagar || 0) || 0);
+function setSelectValue(selectId, valor){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  const v = String(valor || "");
+  if(v && ![...sel.options].some(o=>o.value===v)){
+    sel.innerHTML += `<option value="${v}">${v}</option>`;
   }
-  let nuevoValor = Number(prompt("Valor consumo:", m.Valor || 0) || 0);
-  let nuevoPago = Number(prompt("Pago:", m.Pago || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
+  sel.value = v;
+}
 
-  tc[i] = {
-    Fecha: nuevaFecha,
-    Tarjeta: nuevaTarjeta,
-    Concepto: nuevoConcepto,
-    Detalle: nuevoDetalle,
-    Tipo: nuevoTipo,
-    CuotasPagadas: nuevoTipo === "Diferido" ? nuevasPagadas : 0,
-    CuotasPorPagar: nuevoTipo === "Diferido" ? nuevasPorPagar : 0,
-    Valor: nuevoValor,
-    Pago: nuevoPago,
-    Acumulado: nuevoValor - nuevoPago,
-    SaldoDiferido: nuevoTipo === "Diferido" ? nuevoValor * nuevasPorPagar : 0,
-    Conciliado: nuevoEstado
-  };
+function abrirEditor(tipo, i){
+  editTipoOrigen.value = tipo;
+  editIndice.value = i;
 
-  localStorage.setItem("tc",JSON.stringify(tc));
-  cargarFiltroTarjetaTC();
-  mostrarTC(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
+  if(tipo === "tc"){
+    const m = tc[i];
+    modalTitulo.innerText = "Editar consumo TC";
+    camposTCEdit.style.display = "block";
+    camposBancoEdit.style.display = "none";
+
+    editFecha.value = m.Fecha || "";
+    setSelectValue("editTarjeta", m.Tarjeta || "Pichincha");
+    setSelectValue("editConceptoTC", m.Concepto || "Otros");
+    editDetalle.value = m.Detalle || "";
+    setSelectValue("editTipoTC", m.Tipo || "Corriente");
+    editCuotasPagadas.value = Number(m.CuotasPagadas || 0);
+    editCuotasPorPagar.value = Number(m.CuotasPorPagar || 0);
+    editValorTC.value = Number(m.Valor || 0);
+    editPagoTC.value = Number(m.Pago || 0);
+    editConciliado.value = m.Conciliado === "Si" ? "Si" : "No";
+    controlCamposEditarTC();
+  }else{
+    const m = bancos[i];
+    modalTitulo.innerText = "Editar movimiento Banco";
+    camposTCEdit.style.display = "none";
+    camposBancoEdit.style.display = "block";
+
+    editFecha.value = m.Fecha || "";
+    setSelectValue("editBanco", m.Banco || "Guayaquil");
+    setSelectValue("editTipoBanco", m.Tipo || "Egreso");
+    setSelectValue("editConceptoBanco", m.Concepto || "Otros");
+    editDetalle.value = m.Detalle || "";
+    editValorBanco.value = Number(m.Valor || 0);
+    editConciliado.value = m.Conciliado === "Si" ? "Si" : "No";
+  }
+
+  modalEditar.classList.add("active");
+}
+
+function cerrarEditor(){
+  modalEditar.classList.remove("active");
+}
+
+function controlCamposEditarTC(){
+  const esCorriente = editTipoTC.value === "Corriente";
+  editCuotasPagadas.disabled = esCorriente;
+  editCuotasPorPagar.disabled = esCorriente;
+  if(esCorriente){
+    editCuotasPagadas.value = 0;
+    editCuotasPorPagar.value = 0;
+  }
+}
+
+function editarTC(i){
+  abrirEditor("tc", i);
 }
 
 function editarBanco(i){
-  let m = bancos[i];
-  let nuevaFecha = prompt("Fecha:", m.Fecha || ""); if(nuevaFecha === null) return;
-  let nuevoBanco = prompt("Banco:", m.Banco || ""); if(nuevoBanco === null) return;
-  let nuevoTipo = prompt("Tipo: Ingreso o Egreso", m.Tipo || "Egreso"); if(nuevoTipo === null) return;
-  nuevoTipo = nuevoTipo.trim().toLowerCase() === "ingreso" ? "Ingreso" : "Egreso";
-  let nuevoConcepto = prompt("Concepto:", m.Concepto || ""); if(nuevoConcepto === null) return;
-  let nuevoDetalle = prompt("Detalle:", m.Detalle || ""); if(nuevoDetalle === null) return;
-  let nuevoValor = Number(prompt("Valor:", m.Valor || 0) || 0);
-  let nuevoEstado = prompt("Estado: Si para Conciliado / No para No conciliado", m.Conciliado || "No"); if(nuevoEstado === null) return;
-  nuevoEstado = nuevoEstado.trim().toLowerCase();
-  nuevoEstado = (nuevoEstado === "si" || nuevoEstado === "sí" || nuevoEstado === "conciliado") ? "Si" : "No";
+  abrirEditor("bancos", i);
+}
 
-  bancos[i] = {
-    Fecha: nuevaFecha,
-    Banco: nuevoBanco,
-    Tipo: nuevoTipo,
-    Concepto: nuevoConcepto,
-    Detalle: nuevoDetalle,
-    Valor: nuevoValor,
-    Conciliado: nuevoEstado
-  };
+function guardarEdicionMovimiento(){
+  const tipo = editTipoOrigen.value;
+  const i = Number(editIndice.value);
 
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  mostrarBancos(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
+  if(tipo === "tc"){
+    const valor = Number(editValorTC.value || 0);
+    const pago = Number(editPagoTC.value || 0);
+    const tipoConsumo = editTipoTC.value || "Corriente";
+    const cuotasPagadas = tipoConsumo === "Diferido" ? Number(editCuotasPagadas.value || 0) : 0;
+    const cuotasPorPagar = tipoConsumo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 0;
+
+    tc[i] = {
+      Fecha: editFecha.value,
+      Tarjeta: editTarjeta.value,
+      Concepto: editConceptoTC.value,
+      Detalle: editDetalle.value,
+      Tipo: tipoConsumo,
+      CuotasPagadas: cuotasPagadas,
+      CuotasPorPagar: cuotasPorPagar,
+      Valor: valor,
+      Pago: pago,
+      Acumulado: valor - pago,
+      SaldoDiferido: tipoConsumo === "Diferido" ? valor * cuotasPorPagar : 0,
+      Conciliado: editConciliado.value
+    };
+
+    localStorage.setItem("tc", JSON.stringify(tc));
+    cargarFiltroTarjetaTC();
+    mostrarTC();
+  }else{
+    bancos[i] = {
+      Fecha: editFecha.value,
+      Banco: editBanco.value,
+      Tipo: editTipoBanco.value,
+      Concepto: editConceptoBanco.value,
+      Detalle: editDetalle.value,
+      Valor: Number(editValorBanco.value || 0),
+      Conciliado: editConciliado.value
+    };
+
+    localStorage.setItem("bancos", JSON.stringify(bancos));
+    mostrarBancos();
+  }
+
+  cerrarEditor();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+  generarResumen();
 }
 
 function escapeHTML(txt){
@@ -878,7 +1054,18 @@ function respaldarHTMLCompleto(){
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>";
+  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}
+/* Modal edición compatible iPad */
+.modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
+.modalFondo.active{display:block}
+.modalCard{background:white;border-radius:18px;padding:16px;max-width:620px;margin:24px auto;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.modalHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.modalHeader h2{margin:0;font-size:20px;color:#0f172a}
+.btnSmall{width:auto;padding:10px 14px;border:0;border-radius:10px;background:#64748b;color:white;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.modalCard{margin:6px auto}}
+
+</style>";
   contenido += "</head><body>";
   contenido += "<h1>Respaldo Mis Finanzas</h1>";
   contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
