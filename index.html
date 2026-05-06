@@ -1,245 +1,1363 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="BI Gerencial" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>BI Gerencial</title>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <style>
-    :root{
-      --bg:#eef2f7; --card:#ffffff; --ink:#152033; --muted:#667085; --blue:#1f5eff;
-      --blue2:#133ea7; --green:#0f8a5f; --orange:#b96300; --red:#b42318; --line:#d8dee9;
-      --shadow:0 14px 32px rgba(16,24,40,.12); --radius:24px;
+<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'><title>Respaldo Mis Finanzas 2026-05-05</title><style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style></head><body><h1>Respaldo Mis Finanzas</h1><div class='card'><b>Fecha de respaldo:</b> 4/5/2026, 10:28:21 p. m.<br><b>Total movimientos TC:</b> 8<br><b>Total movimientos Bancos:</b> 4</div><h2>Tarjetas de Crédito</h2><table><tr><th>Fecha</th><th>Tarjeta</th><th>Concepto</th><th>Detalle</th><th>Tipo</th><th>Valor</th><th>Pago</th><th>Estado</th></tr><tr><td>2026-05-03</td><td>Pichincha</td><td>Restaurante</td><td>Colibri</td><td>Corriente</td><td>15.95</td><td>0</td><td>No</td></tr><tr><td>2026-05-03</td><td>Pichincha</td><td>Peluquería</td><td>Cepillado</td><td>Corriente</td><td>13</td><td>0</td><td>No</td></tr><tr><td>2026-05-03</td><td>Pichincha</td><td>Hogar</td><td>Liwy</td><td>Corriente</td><td>2.33</td><td>0</td><td>No</td></tr><tr><td>2026-05-03</td><td>Pichincha</td><td>Supermercado</td><td>Megamaxi</td><td>Corriente</td><td>38.58</td><td>0</td><td>No</td></tr><tr><td>2026-05-02</td><td>Pichincha</td><td>Veterinaria</td><td>Suero Molly</td><td>Corriente</td><td>40</td><td>0</td><td>No</td></tr><tr><td>2026-05-02</td><td>Pichincha</td><td>Restaurante</td><td>La guayaca</td><td>Corriente</td><td>47.15</td><td>0</td><td>No</td></tr><tr><td>2026-04-30</td><td>Pichincha</td><td>Otros</td><td>Cine</td><td>Corriente</td><td>33.78</td><td>0</td><td>No</td></tr><tr><td>2026-04-30</td><td>Pichincha</td><td>Restaurante</td><td>Tinta Cafe</td><td>Corriente</td><td>35.16</td><td>0</td><td>No</td></tr></table><h2>Bancos</h2><table><tr><th>Fecha</th><th>Banco</th><th>Tipo</th><th>Concepto</th><th>Detalle</th><th>Valor</th><th>Estado</th></tr><tr><td>2026-05-04</td><td>Bolivariano</td><td>Egreso</td><td>Pago</td><td>Alicuota May26</td><td>185.91</td><td>Si</td></tr><tr><td>2026-05-04</td><td>Guayaquil</td><td>Egreso</td><td>Pago</td><td>Jardin</td><td>20.41</td><td>Si</td></tr><tr><td>2026-05-03</td><td>Guayaquil</td><td>Egreso</td><td>Pago</td><td>Lavada</td><td>5</td><td>Si</td></tr><tr><td>2026-05-02</td><td>Guayaquil</td><td>Egreso</td><td>Retiro</td><td>Efectivo</td><td>200</td><td>Si</td></tr></table><h2>Datos técnicos para reconstruir movimientos</h2><pre>{
+  &quot;fechaRespaldo&quot;: &quot;2026-05-05T03:28:21.000Z&quot;,
+  &quot;tc&quot;: [
+    {
+      &quot;Fecha&quot;: &quot;2026-05-03&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Restaurante&quot;,
+      &quot;Detalle&quot;: &quot;Colibri&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 15.95,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 15.95,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-03&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Peluquería&quot;,
+      &quot;Detalle&quot;: &quot;Cepillado&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 13,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 13,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-03&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Hogar&quot;,
+      &quot;Detalle&quot;: &quot;Liwy&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 2.33,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 2.33,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-03&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Supermercado&quot;,
+      &quot;Detalle&quot;: &quot;Megamaxi&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 38.58,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 38.58,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-02&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Veterinaria&quot;,
+      &quot;Detalle&quot;: &quot;Suero Molly&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 40,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 40,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-02&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Restaurante&quot;,
+      &quot;Detalle&quot;: &quot;La guayaca&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 47.15,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 47.15,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-04-30&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Otros&quot;,
+      &quot;Detalle&quot;: &quot;Cine&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 33.78,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 33.78,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-04-30&quot;,
+      &quot;Tarjeta&quot;: &quot;Pichincha&quot;,
+      &quot;Concepto&quot;: &quot;Restaurante&quot;,
+      &quot;Detalle&quot;: &quot;Tinta Cafe&quot;,
+      &quot;Tipo&quot;: &quot;Corriente&quot;,
+      &quot;CuotasPagadas&quot;: 0,
+      &quot;CuotasPorPagar&quot;: 0,
+      &quot;Valor&quot;: 35.16,
+      &quot;Pago&quot;: 0,
+      &quot;Acumulado&quot;: 35.16,
+      &quot;SaldoDiferido&quot;: 0,
+      &quot;Conciliado&quot;: &quot;No&quot;
     }
-    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:linear-gradient(135deg,#e9eef8,#f7f8fb 40%,#e6edf7);color:var(--ink);min-height:100vh;}
-    .app{max-width:1120px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 18px 28px;}
-    .hero{background:linear-gradient(135deg,#14213d,#1f5eff);border-radius:30px;color:white;padding:24px;box-shadow:var(--shadow);position:relative;overflow:hidden;}
-    .hero:after{content:"";position:absolute;right:-80px;top:-90px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,.14)}
-    .hero h1{margin:0;font-size:34px;letter-spacing:-.6px}.hero p{margin:8px 0 0;color:rgba(255,255,255,.82);font-size:15px;line-height:1.4}.hero .date{margin-top:14px;display:inline-flex;gap:8px;align-items:center;background:rgba(255,255,255,.14);padding:9px 12px;border-radius:999px;font-size:13px;}
-    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 18px}.btn{border:0;border-radius:16px;padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer;background:var(--card);box-shadow:0 4px 14px rgba(16,24,40,.08);color:var(--ink)}.btn.primary{background:var(--blue);color:#fff}.btn.green{background:var(--green);color:#fff}.btn.orange{background:#fff4e5;color:#8a4600}.btn.red{background:#fff1f0;color:var(--red)}.btn:active{transform:scale(.98)}
-    .search{width:100%;display:flex;gap:10px;margin-bottom:16px}.search input{width:100%;border:1px solid var(--line);border-radius:18px;padding:14px 16px;font-size:16px;background:#fff;outline:none;box-shadow:0 3px 10px rgba(16,24,40,.04)}
-    .section{margin-top:22px}.section-title{display:flex;align-items:center;justify-content:space-between;margin:0 4px 12px}.section-title h2{font-size:20px;margin:0}.badge{font-size:12px;color:var(--muted);background:#fff;padding:7px 10px;border-radius:999px;border:1px solid var(--line)}
-    .grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:14px}.card{background:rgba(255,255,255,.92);border:1px solid rgba(216,222,233,.9);border-radius:var(--radius);padding:17px;box-shadow:0 7px 22px rgba(16,24,40,.08);min-height:160px;display:flex;flex-direction:column;justify-content:space-between;}
-    .card h3{margin:0 0 6px;font-size:18px;line-height:1.18}.meta{font-size:13px;color:var(--muted);line-height:1.35}.prep{margin-top:8px;color:#475467}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.small{padding:9px 11px;border-radius:13px;font-size:13px}.open{background:#12233f;color:#fff}.edit{background:#eef4ff;color:#1f5eff}.copy{background:#f2f4f7;color:#344054}.disabled{opacity:.52}.empty{padding:28px;text-align:center;color:var(--muted);background:#fff;border-radius:var(--radius);border:1px dashed var(--line)}
-    dialog{border:0;border-radius:24px;box-shadow:0 24px 70px rgba(16,24,40,.35);width:min(94vw,620px);padding:0} dialog::backdrop{background:rgba(15,23,42,.45)}.modal{padding:22px}.modal h2{margin:0 0 14px}.form{display:grid;gap:12px}.form label{font-size:13px;font-weight:700;color:#344054}.form input,.form select,.form textarea{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:15px;outline:none}.form textarea{min-height:72px;resize:vertical}.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}.hint{font-size:12px;color:var(--muted);line-height:1.4}.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#101828;color:#fff;padding:12px 16px;border-radius:999px;font-size:14px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:99}.toast.show{opacity:1;bottom:34px}
-    @media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero h1{font-size:30px}}@media(max-width:560px){.app{padding-left:14px;padding-right:14px}.grid{grid-template-columns:1fr}.hero{padding:21px;border-radius:26px}.hero h1{font-size:28px}.toolbar .btn{flex:1}.card{min-height:150px}}
-  </style>
-</head>
-<body>
-  <div class="app">
-    <header class="hero">
-      <h1>BI Gerencial</h1>
-      <p>Acceso rápido a reportes Power BI para iPad mini. Puedes agregar, editar, copiar enlaces y respaldar este HTML.</p>
-      <div class="date" id="lastUpdated">Actualizado: —</div>
-    </header>
+  ],
+  &quot;bancos&quot;: [
+    {
+      &quot;Fecha&quot;: &quot;2026-05-04&quot;,
+      &quot;Banco&quot;: &quot;Bolivariano&quot;,
+      &quot;Tipo&quot;: &quot;Egreso&quot;,
+      &quot;Concepto&quot;: &quot;Pago&quot;,
+      &quot;Detalle&quot;: &quot;Alicuota May26&quot;,
+      &quot;Valor&quot;: 185.91,
+      &quot;Conciliado&quot;: &quot;Si&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-04&quot;,
+      &quot;Banco&quot;: &quot;Guayaquil&quot;,
+      &quot;Tipo&quot;: &quot;Egreso&quot;,
+      &quot;Concepto&quot;: &quot;Pago&quot;,
+      &quot;Detalle&quot;: &quot;Jardin&quot;,
+      &quot;Valor&quot;: 20.41,
+      &quot;Conciliado&quot;: &quot;Si&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-03&quot;,
+      &quot;Banco&quot;: &quot;Guayaquil&quot;,
+      &quot;Tipo&quot;: &quot;Egreso&quot;,
+      &quot;Concepto&quot;: &quot;Pago&quot;,
+      &quot;Detalle&quot;: &quot;Lavada&quot;,
+      &quot;Valor&quot;: 5,
+      &quot;Conciliado&quot;: &quot;Si&quot;
+    },
+    {
+      &quot;Fecha&quot;: &quot;2026-05-02&quot;,
+      &quot;Banco&quot;: &quot;Guayaquil&quot;,
+      &quot;Tipo&quot;: &quot;Egreso&quot;,
+      &quot;Concepto&quot;: &quot;Retiro&quot;,
+      &quot;Detalle&quot;: &quot;Efectivo&quot;,
+      &quot;Valor&quot;: 200,
+      &quot;Conciliado&quot;: &quot;Si&quot;
+    }
+  ]
+}</pre><h2>Script completo de la app</h2><pre>&lt;html lang=&quot;es&quot;&gt;&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+&lt;title&gt;Mis Finanzas - TC Fotos No Conciliado&lt;/title&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js&quot;&gt;&lt;/script&gt;
 
-    <div class="toolbar">
-      <button class="btn primary" onclick="newBI()">➕ Nuevo BI</button>
-      <button class="btn" onclick="document.getElementById('excelFile').click()">📥 Importar Excel</button>
-      <input id="excelFile" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="importExcel(event)" />
-      <button class="btn green" onclick="backupHTML()">💾 Respaldar HTML</button>
-      <button class="btn" onclick="exportLinks()">📤 Exportar links</button>
-      <button class="btn orange" onclick="resetSeed()">↩️ Restaurar base</button>
-    </div>
+&lt;style&gt;
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Arial;background:#f4f6f8;color:#111827}
+header{background:#0f172a;color:white;padding:18px;text-align:center;font-size:22px;font-weight:700}
+nav{display:flex;background:white;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+nav button{flex:1;padding:12px 4px;border:0;background:white;font-weight:700;color:#334155;font-size:13px}
+nav button.active{background:#0f172a;color:white}
+section{display:none;padding:16px}
+section.active{display:block}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:16px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+label{font-size:13px;font-weight:700;color:#475569}
+input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;box-sizing:border-box}
+.btn{width:100%;padding:13px;border:0;border-radius:12px;background:#0f172a;color:white;font-size:16px;font-weight:700;margin-top:8px}
+.btn2{background:#2563eb}
+.btnDanger{background:#dc2626}
+.btnEdit{background:#f59e0b}
+.mov{border-bottom:1px solid #e5e7eb;padding:12px 0}
+.mov strong{display:block;font-size:15px}
+.small{font-size:13px;color:#64748b;margin-top:3px}
+.ok{color:#15803d;font-weight:800}
+.no{color:#dc2626;font-weight:800}
+.total{font-size:18px;font-weight:800;color:#0f172a}
+.filtros{display:flex;gap:6px;margin-bottom:12px}
+.filtros button{flex:1;padding:9px;border:0;border-radius:10px;background:#e5e7eb;font-weight:700;color:#334155}
+.filtros button.active{background:#0f172a;color:white}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
+th:first-child,td:first-child{text-align:left}
+&lt;/style&gt;
+&lt;/head&gt;
 
-    <div class="search"><input id="q" placeholder="Buscar por nombre, categoría, preparador o descripción..." oninput="render()" /></div>
-    <main id="content"></main>
-  </div>
+&lt;body&gt;
 
-  <dialog id="editor">
-    <div class="modal">
-      <h2 id="modalTitle">Editar BI</h2>
-      <div class="form">
-        <input type="hidden" id="idx" />
-        <div><label>Nombre del BI</label><input id="name" placeholder="Ej: Ventas, Costos, Balance" /></div>
-        <div><label>Categoría</label><select id="category"><option>PROEXPO</option><option>OPERATIVO</option><option>COMERCIAL</option><option>EXTERNOS</option><option>OTROS</option></select></div>
-        <div><label>Preparado por</label><input id="owner" placeholder="Ej: Alexandra Quiros" /></div>
-        <div><label>Descripción</label><textarea id="desc" placeholder="Ej: Margen comercial, ventas por talla..."></textarea></div>
-        <div><label>Link Power BI</label><input id="url" placeholder="https://app.powerbi.com/links/..." /></div>
-        <p class="hint">Sugerencia: usa el vínculo corto de Power BI desde Compartir → Copiar vínculo. Si el link cambia, solo editas aquí y guardas.</p>
-      </div>
-      <div class="modal-actions">
-        <button class="btn" onclick="closeEditor()">Cancelar</button>
-        <button class="btn red" id="deleteBtn" onclick="deleteBI()">Eliminar</button>
-        <button class="btn primary" onclick="saveBI()">Guardar</button>
-      </div>
-    </div>
-  </dialog>
+&lt;header&gt;Mis Finanzas&lt;/header&gt;
 
-  <div class="toast" id="toast"></div>
+&lt;nav&gt;
+&lt;button class=&quot;&quot; onclick=&quot;showTab('tc',this)&quot;&gt;TC&lt;/button&gt;
+&lt;button onclick=&quot;showTab('bancos',this)&quot; class=&quot;&quot;&gt;Bancos&lt;/button&gt;
+&lt;button onclick=&quot;showTab('amortizacion',this)&quot; class=&quot;&quot;&gt;Amort.&lt;/button&gt;
+&lt;button onclick=&quot;showTab('resumen',this);cargarMesesResumen();cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()&quot; class=&quot;active&quot;&gt;Resumen&lt;/button&gt;
+&lt;/nav&gt;
 
-  <script id="app-data" type="application/json">[
-    {"category":"PROEXPO","name":"Balance de Situación","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/BTMc6D_lBy"},
-    {"category":"PROEXPO","name":"PL","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/a0HwQW_njT"},
-    {"category":"PROEXPO","name":"Indicadores Financieros","owner":"Alexandra Quiros","desc":"","url":"https://app.powerbi.com/links/flJIOPe0Nk"},
-    {"category":"OPERATIVO","name":"Variación de Costos y Gastos","owner":"Jennifer Dominguez","desc":"Costos y Gastos por rubro","url":"https://app.powerbi.com/links/FYjl6jsUYF"},
-    {"category":"OPERATIVO","name":"Análisis de Operación Empacadora","owner":"Jennifer Dominguez","desc":"Ventas por Talla, Margen Comercial","url":"https://app.powerbi.com/links/2TpJSaX7Hp"},
-    {"category":"COMERCIAL","name":"Margen Comercial Cliente y Procesos","owner":"Jennifer Dominguez","desc":"Margen por Cliente","url":""}
-  ]</script>
+&lt;section id=&quot;tc&quot; class=&quot;&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;h2&gt;Consumos Tarjeta&lt;/h2&gt;
 
-  <script>
-    const STORAGE_KEY = 'bi_gerencial_links_v1';
-    const UPDATED_KEY = 'bi_gerencial_updated_v1';
-    const seed = JSON.parse(document.getElementById('app-data').textContent);
-    let data = loadData();
+&lt;label&gt;Fecha&lt;/label&gt;
+&lt;input type=&quot;date&quot; id=&quot;tcFecha&quot;&gt;
 
-    function loadData(){
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || seed; } catch(e){ return seed; }
-    }
-    function persist(){
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      localStorage.setItem(UPDATED_KEY, new Date().toISOString());
-      document.getElementById('app-data').textContent = JSON.stringify(data, null, 2);
-      setUpdated();
-    }
-    function setUpdated(){
-      const iso = localStorage.getItem(UPDATED_KEY);
-      const d = iso ? new Date(iso) : new Date();
-      document.getElementById('lastUpdated').textContent = 'Actualizado: ' + d.toLocaleDateString('es-EC', {year:'numeric', month:'long', day:'numeric'}) + ' · ' + d.toLocaleTimeString('es-EC',{hour:'2-digit',minute:'2-digit'});
-    }
-    function cleanUrl(url){
-      url = (url || '').trim();
-      const m = url.match(/https:\/\/app\.powerbi\.com\/links\/[^?\s]+/i);
-      return m ? m[0] : url;
-    }
-    function iconFor(cat){
-      const c=(cat||'').toUpperCase();
-      if(c.includes('PROEXPO')) return '🏢'; if(c.includes('OPERATIVO')) return '⚙️'; if(c.includes('COMERCIAL')) return '👥'; if(c.includes('EXTER')) return '🌐'; return '📁';
-    }
-    function render(){
-      setUpdated();
-      const q = (document.getElementById('q').value || '').toLowerCase();
-      const filtered = data.filter(x => [x.name,x.category,x.owner,x.desc,x.url].join(' ').toLowerCase().includes(q));
-      const groups = [...new Set(filtered.map(x=>x.category || 'OTROS'))];
-      const content = document.getElementById('content');
-      if(!filtered.length){ content.innerHTML='<div class="empty">No encontré BI con ese criterio.</div>'; return; }
-      content.innerHTML = groups.map(cat => {
-        const items = filtered.filter(x => (x.category||'OTROS') === cat);
-        return `<section class="section"><div class="section-title"><h2>${iconFor(cat)} ${cat}</h2><span class="badge">${items.length} BI</span></div><div class="grid">${items.map(card).join('')}</div></section>`;
-      }).join('');
-    }
-    function card(item){
-      const realIndex = data.indexOf(item);
-      const hasUrl = !!(item.url && item.url.trim());
-      return `<article class="card"><div><h3>${escapeHTML(item.name || 'Sin nombre')}</h3><div class="meta">${escapeHTML(item.desc || 'Sin descripción')}</div><div class="meta prep">Preparado por: ${escapeHTML(item.owner || '—')}</div></div><div class="actions"><button class="btn small open ${hasUrl?'':'disabled'}" onclick="openBI(${realIndex})">Abrir</button><button class="btn small edit" onclick="editBI(${realIndex})">Editar</button><button class="btn small copy ${hasUrl?'':'disabled'}" onclick="copyBI(${realIndex})">Copiar link</button></div></article>`;
-    }
-    function escapeHTML(s){ return String(s||'').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
-    function openBI(i){ const u = cleanUrl(data[i].url); if(!u){ toast('Este BI todavía no tiene link.'); return; } window.open(u, '_blank'); }
-    async function copyBI(i){ const u = cleanUrl(data[i].url); if(!u){ toast('No hay link para copiar.'); return; } try{ await navigator.clipboard.writeText(u); toast('Link copiado.'); }catch(e){ prompt('Copia el link:', u); } }
-    function newBI(){ document.getElementById('modalTitle').textContent='Nuevo BI'; document.getElementById('idx').value=''; document.getElementById('name').value=''; document.getElementById('category').value='OTROS'; document.getElementById('owner').value=''; document.getElementById('desc').value=''; document.getElementById('url').value=''; document.getElementById('deleteBtn').style.display='none'; document.getElementById('editor').showModal(); }
-    function editBI(i){ const x=data[i]; document.getElementById('modalTitle').textContent='Editar BI'; document.getElementById('idx').value=i; document.getElementById('name').value=x.name||''; document.getElementById('category').value=x.category||'OTROS'; document.getElementById('owner').value=x.owner||''; document.getElementById('desc').value=x.desc||''; document.getElementById('url').value=x.url||''; document.getElementById('deleteBtn').style.display='inline-block'; document.getElementById('editor').showModal(); }
-    function closeEditor(){ document.getElementById('editor').close(); }
-    function saveBI(){ const obj={category:document.getElementById('category').value,name:document.getElementById('name').value.trim()||'Sin nombre',owner:document.getElementById('owner').value.trim(),desc:document.getElementById('desc').value.trim(),url:cleanUrl(document.getElementById('url').value)}; const idx=document.getElementById('idx').value; if(idx==='') data.push(obj); else data[Number(idx)]=obj; persist(); closeEditor(); render(); toast('BI guardado.'); }
-    function deleteBI(){ const idx=Number(document.getElementById('idx').value); if(Number.isInteger(idx) && confirm('¿Eliminar este BI?')){ data.splice(idx,1); persist(); closeEditor(); render(); toast('BI eliminado.'); } }
-    function resetSeed(){ if(confirm('¿Restaurar la base original? Se reemplazarán los cambios guardados en este dispositivo.')){ data = JSON.parse(JSON.stringify(seed)); persist(); render(); toast('Base restaurada.'); } }
-    function exportLinks(){ const rows=[['Categoria','Nombre','Preparado por','Descripcion','Link'],...data.map(x=>[x.category,x.name,x.owner,x.desc,cleanUrl(x.url)])]; const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replace(/"/g,'""')+'"').join(',')).join('\n'); downloadBlob(csv,'BI_Gerencial_links.csv','text/csv;charset=utf-8'); }
-    function backupHTML(){ persist(); const html='<!DOCTYPE html>\n'+document.documentElement.outerHTML; const stamp=new Date().toISOString().slice(0,10); downloadBlob(html,`BI_Gerencial_respaldo_${stamp}.html`,'text/html;charset=utf-8'); toast('Respaldo HTML generado.'); }
-    function downloadBlob(content, filename, type){ const blob=new Blob([content],{type}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); }
-    function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+&lt;label&gt;Tarjeta&lt;/label&gt;
+&lt;select id=&quot;tcTarjeta&quot;&gt;
+&lt;option&gt;Pichincha&lt;/option&gt;
+&lt;option&gt;Produbanco&lt;/option&gt;
+&lt;option&gt;Otra&lt;/option&gt;
+&lt;/select&gt;
 
-    function normHeader(v){ return String(v||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' '); }
-    function cleanCell(v){ return String(v === undefined || v === null ? '' : v).trim(); }
-    function looksLikePowerBI(v){ return /https:\/\/app\.powerbi\.com\/links\//i.test(String(v||'')); }
-    function normalizeCategory(v){
-      const s = cleanCell(v);
-      if(!s) return 'OTROS';
-      const u = s.toUpperCase();
-      if(u.includes('PROEXPO')) return 'PROEXPO';
-      if(u.includes('OPER')) return 'OPERATIVO';
-      if(u.includes('COMER')) return 'COMERCIAL';
-      if(u.includes('EXTER')) return 'EXTERNOS';
-      return s;
+&lt;label&gt;Concepto&lt;/label&gt;
+&lt;select id=&quot;tcConcepto&quot;&gt;
+&lt;option&gt;Restaurante&lt;/option&gt;
+&lt;option&gt;Supermercado&lt;/option&gt;
+&lt;option&gt;Gasolina/Carro&lt;/option&gt;
+&lt;option&gt;Medicina&lt;/option&gt;
+&lt;option&gt;Doctor&lt;/option&gt;
+&lt;option&gt;Peluquería&lt;/option&gt;
+&lt;option&gt;Veterinaria&lt;/option&gt;
+&lt;option&gt;Tecnologico/Electrico&lt;/option&gt;
+&lt;option&gt;Hogar&lt;/option&gt;
+&lt;option&gt;Otros&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Detalle&lt;/label&gt;
+&lt;input id=&quot;tcDetalle&quot; placeholder=&quot;Ej: farmacia, cena, supermercado&quot;&gt;
+
+&lt;label&gt;Tipo consumo&lt;/label&gt;
+&lt;select id=&quot;tcTipo&quot; onchange=&quot;controlCamposTC()&quot;&gt;
+&lt;option&gt;Corriente&lt;/option&gt;
+&lt;option&gt;Diferido&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Cuotas pagadas&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;tcPagadas&quot; value=&quot;0&quot; disabled=&quot;&quot;&gt;
+
+&lt;label&gt;Cuotas por pagar&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;tcPorPagar&quot; value=&quot;0&quot; disabled=&quot;&quot;&gt;
+
+&lt;label&gt;Valor consumo&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;tcValor&quot; step=&quot;0.01&quot;&gt;
+
+&lt;label&gt;Pago&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;tcPago&quot; step=&quot;0.01&quot; value=&quot;0&quot;&gt;
+
+&lt;button class=&quot;btn&quot; onclick=&quot;guardarTC()&quot;&gt;Guardar TC&lt;/button&gt;
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;exportarPendientes('tc')&quot;&gt;Exportar TC a Excel según tarjeta&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;card&quot;&gt;
+&lt;h3&gt;Movimientos TC&lt;/h3&gt;
+
+&lt;label&gt;Filtrar por tarjeta&lt;/label&gt;
+&lt;select id=&quot;filtroTarjetaTC&quot; onchange=&quot;mostrarTC()&quot;&gt;&lt;option value=&quot;todas&quot;&gt;Todas las tarjetas&lt;/option&gt;&lt;option value=&quot;Pichincha&quot;&gt;Pichincha&lt;/option&gt;&lt;/select&gt;
+
+&lt;div class=&quot;filtros&quot;&gt;
+&lt;button id=&quot;fTCtodos&quot; class=&quot;active&quot; onclick=&quot;setFiltroTC('todos')&quot;&gt;Todos&lt;/button&gt;
+&lt;button id=&quot;fTCno&quot; onclick=&quot;setFiltroTC('no')&quot;&gt;No conciliados&lt;/button&gt;
+&lt;button id=&quot;fTCsi&quot; onclick=&quot;setFiltroTC('si')&quot;&gt;Conciliados&lt;/button&gt;
+&lt;/div&gt;
+&lt;div id=&quot;listaTC&quot;&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-04-30 | Pichincha | Restaurante&lt;/strong&gt;
+      &lt;div&gt;Tinta Cafe&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $35,16 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $35,16 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(7)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(7)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-04-30 | Pichincha | Otros&lt;/strong&gt;
+      &lt;div&gt;Cine&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $33,78 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $33,78 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(6)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(6)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-02 | Pichincha | Restaurante&lt;/strong&gt;
+      &lt;div&gt;La guayaca&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $47,15 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $47,15 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(5)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(5)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-02 | Pichincha | Veterinaria&lt;/strong&gt;
+      &lt;div&gt;Suero Molly&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $40,00 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $40,00 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(4)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(4)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-03 | Pichincha | Supermercado&lt;/strong&gt;
+      &lt;div&gt;Megamaxi&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $38,58 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $38,58 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(3)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(3)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-03 | Pichincha | Hogar&lt;/strong&gt;
+      &lt;div&gt;Liwy&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $2,33 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $2,33 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(2)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(2)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-03 | Pichincha | Peluquería&lt;/strong&gt;
+      &lt;div&gt;Cepillado&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $13,00 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $13,00 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(1)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(1)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-03 | Pichincha | Restaurante&lt;/strong&gt;
+      &lt;div&gt;Colibri&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;Corriente&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;0&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;0&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $15,95 | Pago: $0,00&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $15,95 | Saldo diferido: $0,00&lt;/div&gt;
+      &lt;div class=&quot;no&quot;&gt;Estado: No conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(0)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(0)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;bancos&quot; class=&quot;&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;h2&gt;Movimientos Bancos&lt;/h2&gt;
+
+&lt;label&gt;Fecha&lt;/label&gt;
+&lt;input type=&quot;date&quot; id=&quot;bFecha&quot;&gt;
+
+&lt;label&gt;Banco&lt;/label&gt;
+&lt;select id=&quot;bBanco&quot;&gt;
+&lt;option&gt;Pichincha&lt;/option&gt;
+&lt;option&gt;Produbanco&lt;/option&gt;
+&lt;option&gt;Guayaquil&lt;/option&gt;
+&lt;option&gt;Bolivariano&lt;/option&gt;
+&lt;option&gt;Otro&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Tipo&lt;/label&gt;
+&lt;select id=&quot;bTipo&quot;&gt;
+&lt;option&gt;Ingreso&lt;/option&gt;
+&lt;option&gt;Egreso&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Concepto&lt;/label&gt;
+&lt;select id=&quot;bConcepto&quot;&gt;
+&lt;option&gt;Transferencia&lt;/option&gt;
+&lt;option&gt;Pago&lt;/option&gt;
+&lt;option&gt;Retiro&lt;/option&gt;
+&lt;option&gt;Depósito&lt;/option&gt;
+&lt;option&gt;Servicios&lt;/option&gt;
+&lt;option&gt;Otros&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Detalle&lt;/label&gt;
+&lt;input id=&quot;bDetalle&quot; placeholder=&quot;Detalle&quot;&gt;
+
+&lt;label&gt;Valor&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;bValor&quot; step=&quot;0.01&quot;&gt;
+
+&lt;button class=&quot;btn&quot; onclick=&quot;guardarBanco()&quot;&gt;Guardar Banco&lt;/button&gt;
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;exportarPendientes('bancos')&quot;&gt;Exportar Bancos a Excel&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;card&quot;&gt;
+&lt;h3&gt;Movimientos Bancos&lt;/h3&gt;
+&lt;div class=&quot;filtros&quot;&gt;
+&lt;button id=&quot;fBtodos&quot; class=&quot;active&quot; onclick=&quot;setFiltroBanco('todos')&quot;&gt;Todos&lt;/button&gt;
+&lt;button id=&quot;fBno&quot; onclick=&quot;setFiltroBanco('no')&quot;&gt;No conciliados&lt;/button&gt;
+&lt;button id=&quot;fBsi&quot; onclick=&quot;setFiltroBanco('si')&quot;&gt;Conciliados&lt;/button&gt;
+&lt;/div&gt;
+&lt;div id=&quot;listaBancos&quot;&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-02 | Guayaquil | Egreso&lt;/strong&gt;
+      &lt;div&gt;Retiro - Efectivo&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor: $200,00&lt;/div&gt;
+      &lt;div class=&quot;ok&quot;&gt;Estado: Conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarBanco(3)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarBanco(3)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-03 | Guayaquil | Egreso&lt;/strong&gt;
+      &lt;div&gt;Pago - Lavada&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor: $5,00&lt;/div&gt;
+      &lt;div class=&quot;ok&quot;&gt;Estado: Conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarBanco(2)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarBanco(2)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-04 | Guayaquil | Egreso&lt;/strong&gt;
+      &lt;div&gt;Pago - Jardin&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor: $20,41&lt;/div&gt;
+      &lt;div class=&quot;ok&quot;&gt;Estado: Conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarBanco(1)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarBanco(1)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;2026-05-04 | Bolivariano | Egreso&lt;/strong&gt;
+      &lt;div&gt;Pago - Alicuota May26&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor: $185,91&lt;/div&gt;
+      &lt;div class=&quot;ok&quot;&gt;Estado: Conciliado&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarBanco(0)&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarBanco(0)&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;amortizacion&quot; class=&quot;&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;h2&gt;Calculadora de Amortización&lt;/h2&gt;
+
+&lt;label&gt;Monto del préstamo&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;amoMonto&quot; step=&quot;0.01&quot;&gt;
+
+&lt;label&gt;Tasa anual %&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;amoTasa&quot; step=&quot;0.01&quot;&gt;
+
+&lt;label&gt;Plazo en meses&lt;/label&gt;
+&lt;input type=&quot;number&quot; id=&quot;amoMeses&quot;&gt;
+
+&lt;button class=&quot;btn&quot; onclick=&quot;calcularAmortizacion()&quot;&gt;Calcular&lt;/button&gt;
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;exportarAmortizacion()&quot;&gt;Exportar Amortización a Excel&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;card&quot;&gt;
+&lt;div id=&quot;resumenAmo&quot;&gt;&lt;/div&gt;
+&lt;div style=&quot;overflow:auto&quot;&gt;
+&lt;table id=&quot;tablaAmo&quot;&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section id=&quot;resumen&quot; class=&quot;active&quot;&gt;
+&lt;div class=&quot;card&quot;&gt;
+&lt;h2&gt;Resumen mensual&lt;/h2&gt;
+
+&lt;label&gt;Mes&lt;/label&gt;
+&lt;select id=&quot;resMes&quot; onchange=&quot;generarResumen()&quot;&gt;&lt;option value=&quot;todos&quot;&gt;Todos los meses&lt;/option&gt;&lt;option value=&quot;2026-05&quot;&gt;May-26&lt;/option&gt;&lt;option value=&quot;2026-04&quot;&gt;Abr-26&lt;/option&gt;&lt;/select&gt;
+
+&lt;label&gt;Origen&lt;/label&gt;
+&lt;select id=&quot;resOrigen&quot; onchange=&quot;cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()&quot;&gt;
+&lt;option value=&quot;todos&quot;&gt;TC + Bancos&lt;/option&gt;
+&lt;option value=&quot;tc&quot;&gt;Solo TC&lt;/option&gt;
+&lt;option value=&quot;bancos&quot;&gt;Solo Bancos&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Tarjeta / Banco&lt;/label&gt;
+&lt;select id=&quot;resEntidad&quot; onchange=&quot;generarResumen()&quot;&gt;&lt;option value=&quot;todos&quot;&gt;Todas las tarjetas&lt;/option&gt;&lt;option value=&quot;Pichincha&quot;&gt;Pichincha&lt;/option&gt;&lt;/select&gt;
+
+&lt;label&gt;Estado&lt;/label&gt;
+&lt;select id=&quot;resEstado&quot; onchange=&quot;generarResumen()&quot;&gt;
+&lt;option value=&quot;todos&quot;&gt;Todos&lt;/option&gt;
+&lt;option value=&quot;no&quot;&gt;No conciliados&lt;/option&gt;
+&lt;option value=&quot;si&quot;&gt;Conciliados&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;label&gt;Concepto&lt;/label&gt;
+&lt;select id=&quot;resConcepto&quot; onchange=&quot;generarResumen()&quot;&gt;&lt;option value=&quot;todos&quot;&gt;Todos los conceptos&lt;/option&gt;&lt;option value=&quot;Hogar&quot;&gt;Hogar&lt;/option&gt;&lt;option value=&quot;Otros&quot;&gt;Otros&lt;/option&gt;&lt;option value=&quot;Peluquería&quot;&gt;Peluquería&lt;/option&gt;&lt;option value=&quot;Restaurante&quot;&gt;Restaurante&lt;/option&gt;&lt;option value=&quot;Supermercado&quot;&gt;Supermercado&lt;/option&gt;&lt;option value=&quot;Veterinaria&quot;&gt;Veterinaria&lt;/option&gt;&lt;/select&gt;
+
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;exportarResumen()&quot;&gt;Exportar Resumen a Excel&lt;/button&gt;
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;respaldarHTMLCompleto()&quot;&gt;Respaldar HTML completo&lt;/button&gt;
+&lt;button class=&quot;btn btn2&quot; onclick=&quot;cargarMovimientosFotosTC(true)&quot;&gt;Cargar/actualizar TC fotos como no conciliado&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;card&quot;&gt;
+&lt;div id=&quot;totalResumen&quot; class=&quot;total&quot;&gt;Total seleccionado: $225,95&lt;/div&gt;
+&lt;div style=&quot;overflow:auto&quot;&gt;
+&lt;table id=&quot;tablaResumen&quot;&gt;
+  &lt;tbody&gt;&lt;tr&gt;
+    &lt;th&gt;Origen&lt;/th&gt;
+    &lt;th&gt;Tarjeta/Banco&lt;/th&gt;
+    &lt;th&gt;Mes&lt;/th&gt;
+    &lt;th&gt;Concepto&lt;/th&gt;
+    &lt;th&gt;Estado&lt;/th&gt;
+    &lt;th&gt;Cant.&lt;/th&gt;
+    &lt;th&gt;Total&lt;/th&gt;
+  &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;Abr-26&lt;/td&gt;
+      &lt;td&gt;Otros&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$33,78&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;Abr-26&lt;/td&gt;
+      &lt;td&gt;Restaurante&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$35,16&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;May-26&lt;/td&gt;
+      &lt;td&gt;Hogar&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$2,33&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;May-26&lt;/td&gt;
+      &lt;td&gt;Peluquería&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$13,00&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;May-26&lt;/td&gt;
+      &lt;td&gt;Restaurante&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;$63,10&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;May-26&lt;/td&gt;
+      &lt;td&gt;Supermercado&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$38,58&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;
+    &lt;tbody&gt;&lt;tr&gt;
+      &lt;td&gt;TC&lt;/td&gt;
+      &lt;td&gt;Pichincha&lt;/td&gt;
+      &lt;td&gt;May-26&lt;/td&gt;
+      &lt;td&gt;Veterinaria&lt;/td&gt;
+      &lt;td&gt;No conciliado&lt;/td&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;$40,00&lt;/td&gt;
+    &lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+
+const TC_CONFIRMADOS = [
+  {Fecha:&quot;2026-05-03&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Restaurante&quot;,Detalle:&quot;Colibri&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-05-03&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Peluquería&quot;,Detalle:&quot;Cepillado&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-05-03&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Hogar&quot;,Detalle:&quot;Liwy&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-05-03&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Supermercado&quot;,Detalle:&quot;Megamaxi&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-05-02&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Veterinaria&quot;,Detalle:&quot;Suero Molly&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-05-02&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Restaurante&quot;,Detalle:&quot;La guayaca&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-04-30&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Otros&quot;,Detalle:&quot;Cine&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:&quot;No&quot;},
+  {Fecha:&quot;2026-04-30&quot;,Tarjeta:&quot;Pichincha&quot;,Concepto:&quot;Restaurante&quot;,Detalle:&quot;Tinta Cafe&quot;,Tipo:&quot;Corriente&quot;,CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:&quot;No&quot;}
+];
+const BANCOS_CONFIRMADOS = [
+  {Fecha:&quot;2026-05-04&quot;,Banco:&quot;Bolivariano&quot;,Tipo:&quot;Egreso&quot;,Concepto:&quot;Pago&quot;,Detalle:&quot;Alicuota May26&quot;,Valor:185.91,Conciliado:&quot;Si&quot;},
+  {Fecha:&quot;2026-05-04&quot;,Banco:&quot;Guayaquil&quot;,Tipo:&quot;Egreso&quot;,Concepto:&quot;Pago&quot;,Detalle:&quot;Jardin&quot;,Valor:20.41,Conciliado:&quot;Si&quot;},
+  {Fecha:&quot;2026-05-03&quot;,Banco:&quot;Guayaquil&quot;,Tipo:&quot;Egreso&quot;,Concepto:&quot;Pago&quot;,Detalle:&quot;Lavada&quot;,Valor:5.00,Conciliado:&quot;Si&quot;},
+  {Fecha:&quot;2026-05-02&quot;,Banco:&quot;Guayaquil&quot;,Tipo:&quot;Egreso&quot;,Concepto:&quot;Retiro&quot;,Detalle:&quot;Efectivo&quot;,Valor:200.00,Conciliado:&quot;Si&quot;}
+];
+let tc = JSON.parse(localStorage.getItem(&quot;tc&quot;)) || [];
+let bancos = JSON.parse(localStorage.getItem(&quot;bancos&quot;)) || [];
+let amortizacion = [];
+let resumenMensual = [];
+
+let filtroTC = &quot;todos&quot;;
+let filtroBanco = &quot;todos&quot;;
+
+document.getElementById(&quot;tcFecha&quot;).valueAsDate = new Date();
+document.getElementById(&quot;bFecha&quot;).valueAsDate = new Date();
+
+function showTab(id,btn){
+  document.querySelectorAll(&quot;section&quot;).forEach(s=&gt;s.classList.remove(&quot;active&quot;));
+  document.querySelectorAll(&quot;nav button&quot;).forEach(b=&gt;b.classList.remove(&quot;active&quot;));
+  document.getElementById(id).classList.add(&quot;active&quot;);
+  btn.classList.add(&quot;active&quot;);
+}
+
+function formato(n){
+  return Number(n||0).toLocaleString(&quot;es-EC&quot;,{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function mesClave(fecha){
+  if(!fecha) return &quot;Sin fecha&quot;;
+  return fecha.substring(0,7);
+}
+
+function mesTexto(fecha){
+  if(!fecha) return &quot;Sin fecha&quot;;
+  const d = new Date(fecha + &quot;T00:00:00&quot;);
+  const meses = [&quot;Ene&quot;,&quot;Feb&quot;,&quot;Mar&quot;,&quot;Abr&quot;,&quot;May&quot;,&quot;Jun&quot;,&quot;Jul&quot;,&quot;Ago&quot;,&quot;Sep&quot;,&quot;Oct&quot;,&quot;Nov&quot;,&quot;Dic&quot;];
+  return meses[d.getMonth()] + &quot;-&quot; + String(d.getFullYear()).slice(-2);
+}
+
+function normalizarTC(m){
+  return {
+    Fecha: m.Fecha || m.fecha || &quot;&quot;,
+    Tarjeta: m.Tarjeta || m.tarjeta || &quot;&quot;,
+    Concepto: m.Concepto || m.concepto || &quot;&quot;,
+    Detalle: m.Detalle || m.detalle || &quot;&quot;,
+    Tipo: m.Tipo || m.tipo || &quot;Corriente&quot;,
+    CuotasPagadas: Number(m.CuotasPagadas ?? m.cuotasPagadas ?? 0),
+    CuotasPorPagar: Number(m.CuotasPorPagar ?? m.cuotasPorPagar ?? 0),
+    Valor: Number(m.Valor ?? m.valor ?? 0),
+    Pago: Number(m.Pago ?? m.pago ?? 0),
+    Acumulado: Number(m.Acumulado ?? m.acumulado ?? ((m.Valor ?? m.valor ?? 0) - (m.Pago ?? m.pago ?? 0))),
+    SaldoDiferido: Number(m.SaldoDiferido ?? m.saldoDiferido ?? 0),
+    Conciliado: m.Conciliado || m.conciliado || &quot;No&quot;
+  };
+}
+
+function normalizarBanco(m){
+  return {
+    Fecha: m.Fecha || m.fecha || &quot;&quot;,
+    Banco: m.Banco || m.banco || &quot;&quot;,
+    Tipo: m.Tipo || m.tipo || &quot;&quot;,
+    Concepto: m.Concepto || m.concepto || &quot;&quot;,
+    Detalle: m.Detalle || m.detalle || &quot;&quot;,
+    Valor: Number(m.Valor ?? m.valor ?? 0),
+    Conciliado: m.Conciliado || m.conciliado || &quot;No&quot;
+  };
+}
+
+tc = tc.map(normalizarTC);
+bancos = bancos.map(normalizarBanco);
+localStorage.setItem(&quot;tc&quot;, JSON.stringify(tc));
+localStorage.setItem(&quot;bancos&quot;, JSON.stringify(bancos));
+
+if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=&gt;normalizarTC(x)); localStorage.setItem(&quot;tc&quot;, JSON.stringify(tc)); }
+if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=&gt;normalizarBanco(x)); localStorage.setItem(&quot;bancos&quot;, JSON.stringify(bancos)); }
+
+function cargarMovimientosFotosTC(forzar){
+  if(forzar &amp;&amp; !confirm(&quot;Esto cargará/actualizará los movimientos TC de las fotos como NO conciliados. No tocará Bancos. ¿Continuar?&quot;)) return;
+
+  function claveTC(m){
+    return [m.Fecha, m.Tarjeta, m.Concepto, m.Detalle, Number(m.Valor||0).toFixed(2)].join(&quot;|&quot;).toLowerCase();
+  }
+
+  let mapa = {};
+  tc.forEach(function(m, idx){ mapa[claveTC(m)] = idx; });
+
+  TC_CONFIRMADOS.forEach(function(base){
+    let mov = normalizarTC(base);
+    mov.Conciliado = &quot;No&quot;;
+    let k = claveTC(mov);
+
+    if(mapa[k] !== undefined){
+      tc[mapa[k]] = mov;
+    }else{
+      tc.push(mov);
     }
-    function pick(row, keys){
-      const map={}; Object.keys(row).forEach(k=>map[normHeader(k)]=row[k]);
-      for(const k of keys){ const nk=normHeader(k); if(map[nk] !== undefined && cleanCell(map[nk]) !== '') return cleanCell(map[nk]); }
-      return '';
+  });
+
+  localStorage.setItem(&quot;tc&quot;, JSON.stringify(tc));
+  localStorage.setItem(&quot;tc_fotos_cargadas_v3&quot;, &quot;Si&quot;);
+  mostrarTC();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+  generarResumen();
+
+  if(forzar) alert(&quot;TC de fotos cargado/actualizado como No conciliado.&quot;);
+}
+
+if(localStorage.getItem(&quot;tc_fotos_cargadas_v3&quot;) !== &quot;Si&quot;){
+  cargarMovimientosFotosTC(false);
+}
+
+
+
+function cargarFiltroTarjetaTC(){
+  if(!document.getElementById(&quot;filtroTarjetaTC&quot;)) return;
+
+  const actual = filtroTarjetaTC.value;
+  const tarjetas = [...new Set(tc.map(x=&gt;x.Tarjeta).filter(Boolean))].sort();
+
+  filtroTarjetaTC.innerHTML = `&lt;option value=&quot;todas&quot;&gt;Todas las tarjetas&lt;/option&gt;`;
+
+  tarjetas.forEach(t=&gt;{
+    filtroTarjetaTC.innerHTML += `&lt;option value=&quot;${t}&quot;&gt;${t}&lt;/option&gt;`;
+  });
+
+  if(tarjetas.includes(actual)){
+    filtroTarjetaTC.value = actual;
+  }
+}
+
+function setFiltroTC(valor){
+  filtroTC = valor;
+  document.querySelectorAll(&quot;#tc .filtros button&quot;).forEach(b=&gt;b.classList.remove(&quot;active&quot;));
+  document.getElementById(&quot;fTC&quot;+valor).classList.add(&quot;active&quot;);
+  mostrarTC();
+}
+
+function setFiltroBanco(valor){
+  filtroBanco = valor;
+  document.querySelectorAll(&quot;#bancos .filtros button&quot;).forEach(b=&gt;b.classList.remove(&quot;active&quot;));
+  document.getElementById(&quot;fB&quot;+valor).classList.add(&quot;active&quot;);
+  mostrarBancos();
+}
+
+function pasaFiltro(m,filtro){
+  if(filtro===&quot;no&quot; &amp;&amp; m.Conciliado===&quot;Si&quot;) return false;
+  if(filtro===&quot;si&quot; &amp;&amp; m.Conciliado!==&quot;Si&quot;) return false;
+  return true;
+}
+
+function guardarTC(){
+  let valor = Number(tcValor.value || 0);
+  let pago = Number(tcPago.value || 0);
+  let cuotasPorPagar = Number(tcPorPagar.value || 0);
+  let saldoDiferido = tcTipo.value === &quot;Diferido&quot; ? valor * cuotasPorPagar : 0;
+
+  tc.push({
+    Fecha: tcFecha.value,
+    Tarjeta: tcTarjeta.value,
+    Concepto: tcConcepto.value,
+    Detalle: tcDetalle.value,
+    Tipo: tcTipo.value,
+    CuotasPagadas: Number(tcPagadas.value || 0),
+    CuotasPorPagar: cuotasPorPagar,
+    Valor: valor,
+    Pago: pago,
+    Acumulado: valor - pago,
+    SaldoDiferido: saldoDiferido,
+    Conciliado: &quot;No&quot;
+  });
+
+  localStorage.setItem(&quot;tc&quot;,JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
+  tcDetalle.value=&quot;&quot;;
+  tcValor.value=&quot;&quot;;
+  tcPago.value=0;
+  tcPagadas.value=0;
+  tcPorPagar.value=0;
+  mostrarTC();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+}
+
+function mostrarTC(){
+  listaTC.innerHTML=&quot;&quot;;
+  tc.slice().reverse().forEach((m,i)=&gt;{
+    if(!pasaFiltro(m,filtroTC)) return;
+
+    let tarjetaFiltro = document.getElementById(&quot;filtroTarjetaTC&quot;) ? filtroTarjetaTC.value : &quot;todas&quot;;
+    if(tarjetaFiltro !== &quot;todas&quot; &amp;&amp; m.Tarjeta !== tarjetaFiltro) return;
+
+    let idx = tc.length-1-i;
+    listaTC.innerHTML += `
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}&lt;/strong&gt;
+      &lt;div&gt;${m.Detalle || &quot;&quot;}&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Tipo: &lt;b&gt;${m.Tipo}&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Cuotas pagadas: &lt;b&gt;${m.CuotasPagadas}&lt;/b&gt; | Cuotas por pagar: &lt;b&gt;${m.CuotasPorPagar}&lt;/b&gt;&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}&lt;/div&gt;
+      &lt;div class=&quot;${m.Conciliado==='Si'?'ok':'no'}&quot;&gt;Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarTC(${idx})&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarTC(${idx})&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;`;
+  });
+}
+
+function eliminarTC(i){
+  tc.splice(i,1);
+  localStorage.setItem(&quot;tc&quot;,JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
+  mostrarTC();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+}
+
+function guardarBanco(){
+  bancos.push({
+    Fecha: bFecha.value,
+    Banco: bBanco.value,
+    Tipo: bTipo.value,
+    Concepto: bConcepto.value,
+    Detalle: bDetalle.value,
+    Valor: Number(bValor.value || 0),
+    Conciliado:&quot;No&quot;
+  });
+
+  localStorage.setItem(&quot;bancos&quot;,JSON.stringify(bancos));
+  bDetalle.value=&quot;&quot;;
+  bValor.value=&quot;&quot;;
+  mostrarBancos();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+}
+
+function mostrarBancos(){
+  listaBancos.innerHTML=&quot;&quot;;
+  bancos.slice().reverse().forEach((m,i)=&gt;{
+    if(!pasaFiltro(m,filtroBanco)) return;
+    let idx = bancos.length-1-i;
+    listaBancos.innerHTML += `
+    &lt;div class=&quot;mov&quot;&gt;
+      &lt;strong&gt;${m.Fecha} | ${m.Banco} | ${m.Tipo}&lt;/strong&gt;
+      &lt;div&gt;${m.Concepto || &quot;&quot;} ${m.Detalle ? &quot;- &quot; + m.Detalle : &quot;&quot;}&lt;/div&gt;
+      &lt;div class=&quot;small&quot;&gt;Valor: $${formato(m.Valor)}&lt;/div&gt;
+      &lt;div class=&quot;${m.Conciliado==='Si'?'ok':'no'}&quot;&gt;Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}&lt;/div&gt;
+      &lt;button class=&quot;btn btnEdit&quot; onclick=&quot;editarBanco(${idx})&quot;&gt;Editar&lt;/button&gt;
+      &lt;button class=&quot;btn btnDanger&quot; onclick=&quot;eliminarBanco(${idx})&quot;&gt;Eliminar&lt;/button&gt;
+    &lt;/div&gt;`;
+  });
+}
+
+function eliminarBanco(i){
+  bancos.splice(i,1);
+  localStorage.setItem(&quot;bancos&quot;,JSON.stringify(bancos));
+  mostrarBancos();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+}
+
+function exportarPendientes(tipo){
+  let data = tipo===&quot;tc&quot; ? tc : bancos;
+
+  if(data.length===0){
+    alert(&quot;No hay registros para exportar&quot;);
+    return;
+  }
+
+  let campoDestino = tipo===&quot;tc&quot; ? &quot;Tarjeta&quot; : &quot;Banco&quot;;
+  let destinos = [...new Set(data.map(d =&gt; d[campoDestino]).filter(Boolean))];
+  let elegido = prompt(
+    &quot;¿Qué &quot; + (tipo===&quot;tc&quot; ? &quot;tarjeta&quot; : &quot;banco&quot;) + &quot; quieres exportar?\n\n&quot; +
+    &quot;Escribe uno de estos nombres o escribe TODOS:\n&quot; + destinos.join(&quot;\n&quot;),
+    &quot;TODOS&quot;
+  );
+
+  if(elegido === null) return;
+  elegido = elegido.trim();
+
+  let seleccionados = elegido.toUpperCase()===&quot;TODOS&quot;
+    ? data
+    : data.filter(d =&gt; String(d[campoDestino] || &quot;&quot;).toLowerCase() === elegido.toLowerCase());
+
+  if(seleccionados.length===0){
+    alert(&quot;No encontré registros para: &quot; + elegido);
+    return;
+  }
+
+  seleccionados.forEach(d =&gt; d.Conciliado = &quot;Si&quot;);
+
+  let wb = XLSX.utils.book_new();
+  let ws = XLSX.utils.json_to_sheet(seleccionados);
+  XLSX.utils.book_append_sheet(wb, ws, tipo===&quot;tc&quot; ? &quot;TC&quot; : &quot;Bancos&quot;);
+
+  let fecha = new Date().toISOString().slice(0,10);
+  let destinoNombre = elegido.toUpperCase()===&quot;TODOS&quot; ? &quot;TODOS&quot; : elegido.replaceAll(&quot; &quot;,&quot;_&quot;);
+  let nombreArchivo = tipo===&quot;tc&quot;
+    ? &quot;TC_&quot; + destinoNombre + &quot;_&quot; + fecha + &quot;.xlsx&quot;
+    : &quot;Bancos_&quot; + destinoNombre + &quot;_&quot; + fecha + &quot;.xlsx&quot;;
+
+  XLSX.writeFile(wb, nombreArchivo);
+
+  if(tipo===&quot;tc&quot;){
+    localStorage.setItem(&quot;tc&quot;,JSON.stringify(tc));
+    mostrarTC();
+  }else{
+    localStorage.setItem(&quot;bancos&quot;,JSON.stringify(bancos));
+    mostrarBancos();
+  }
+
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+  generarResumen();
+  alert(&quot;Exportado: &quot; + nombreArchivo + &quot;\nLos movimientos exportados quedaron como Conciliado.&quot;);
+}
+
+
+function controlCamposTC(){
+  let esCorriente = tcTipo.value === &quot;Corriente&quot;;
+  tcPagadas.disabled = esCorriente;
+  tcPorPagar.disabled = esCorriente;
+  if(esCorriente){
+    tcPagadas.value = 0;
+    tcPorPagar.value = 0;
+  }
+}
+
+function editarTC(i){
+  let m = tc[i];
+  let nuevaFecha = prompt(&quot;Fecha:&quot;, m.Fecha || &quot;&quot;); if(nuevaFecha === null) return;
+  let nuevaTarjeta = prompt(&quot;Tarjeta:&quot;, m.Tarjeta || &quot;&quot;); if(nuevaTarjeta === null) return;
+  let nuevoConcepto = prompt(&quot;Concepto:&quot;, m.Concepto || &quot;&quot;); if(nuevoConcepto === null) return;
+  let nuevoDetalle = prompt(&quot;Detalle:&quot;, m.Detalle || &quot;&quot;); if(nuevoDetalle === null) return;
+  let nuevoTipo = prompt(&quot;Tipo: Corriente o Diferido&quot;, m.Tipo || &quot;Corriente&quot;); if(nuevoTipo === null) return;
+  nuevoTipo = nuevoTipo.trim().toLowerCase() === &quot;diferido&quot; ? &quot;Diferido&quot; : &quot;Corriente&quot;;
+  let nuevasPagadas = 0;
+  let nuevasPorPagar = 0;
+  if(nuevoTipo === &quot;Diferido&quot;){
+    nuevasPagadas = Number(prompt(&quot;Cuotas pagadas:&quot;, m.CuotasPagadas || 0) || 0);
+    nuevasPorPagar = Number(prompt(&quot;Cuotas por pagar:&quot;, m.CuotasPorPagar || 0) || 0);
+  }
+  let nuevoValor = Number(prompt(&quot;Valor consumo:&quot;, m.Valor || 0) || 0);
+  let nuevoPago = Number(prompt(&quot;Pago:&quot;, m.Pago || 0) || 0);
+  let nuevoEstado = prompt(&quot;Estado: Si para Conciliado / No para No conciliado&quot;, m.Conciliado || &quot;No&quot;); if(nuevoEstado === null) return;
+  nuevoEstado = nuevoEstado.trim().toLowerCase();
+  nuevoEstado = (nuevoEstado === &quot;si&quot; || nuevoEstado === &quot;sí&quot; || nuevoEstado === &quot;conciliado&quot;) ? &quot;Si&quot; : &quot;No&quot;;
+
+  tc[i] = {
+    Fecha: nuevaFecha,
+    Tarjeta: nuevaTarjeta,
+    Concepto: nuevoConcepto,
+    Detalle: nuevoDetalle,
+    Tipo: nuevoTipo,
+    CuotasPagadas: nuevoTipo === &quot;Diferido&quot; ? nuevasPagadas : 0,
+    CuotasPorPagar: nuevoTipo === &quot;Diferido&quot; ? nuevasPorPagar : 0,
+    Valor: nuevoValor,
+    Pago: nuevoPago,
+    Acumulado: nuevoValor - nuevoPago,
+    SaldoDiferido: nuevoTipo === &quot;Diferido&quot; ? nuevoValor * nuevasPorPagar : 0,
+    Conciliado: nuevoEstado
+  };
+
+  localStorage.setItem(&quot;tc&quot;,JSON.stringify(tc));
+  cargarFiltroTarjetaTC();
+  mostrarTC(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
+}
+
+function editarBanco(i){
+  let m = bancos[i];
+  let nuevaFecha = prompt(&quot;Fecha:&quot;, m.Fecha || &quot;&quot;); if(nuevaFecha === null) return;
+  let nuevoBanco = prompt(&quot;Banco:&quot;, m.Banco || &quot;&quot;); if(nuevoBanco === null) return;
+  let nuevoTipo = prompt(&quot;Tipo: Ingreso o Egreso&quot;, m.Tipo || &quot;Egreso&quot;); if(nuevoTipo === null) return;
+  nuevoTipo = nuevoTipo.trim().toLowerCase() === &quot;ingreso&quot; ? &quot;Ingreso&quot; : &quot;Egreso&quot;;
+  let nuevoConcepto = prompt(&quot;Concepto:&quot;, m.Concepto || &quot;&quot;); if(nuevoConcepto === null) return;
+  let nuevoDetalle = prompt(&quot;Detalle:&quot;, m.Detalle || &quot;&quot;); if(nuevoDetalle === null) return;
+  let nuevoValor = Number(prompt(&quot;Valor:&quot;, m.Valor || 0) || 0);
+  let nuevoEstado = prompt(&quot;Estado: Si para Conciliado / No para No conciliado&quot;, m.Conciliado || &quot;No&quot;); if(nuevoEstado === null) return;
+  nuevoEstado = nuevoEstado.trim().toLowerCase();
+  nuevoEstado = (nuevoEstado === &quot;si&quot; || nuevoEstado === &quot;sí&quot; || nuevoEstado === &quot;conciliado&quot;) ? &quot;Si&quot; : &quot;No&quot;;
+
+  bancos[i] = {
+    Fecha: nuevaFecha,
+    Banco: nuevoBanco,
+    Tipo: nuevoTipo,
+    Concepto: nuevoConcepto,
+    Detalle: nuevoDetalle,
+    Valor: nuevoValor,
+    Conciliado: nuevoEstado
+  };
+
+  localStorage.setItem(&quot;bancos&quot;,JSON.stringify(bancos));
+  mostrarBancos(); cargarMesesResumen(); cargarFiltroEntidad(); cargarFiltroConcepto(); generarResumen();
+}
+
+function escapeHTML(txt){
+  return String(txt === undefined || txt === null ? &quot;&quot; : txt)
+    .replace(/&amp;/g,&quot;&amp;amp;&quot;)
+    .replace(/&lt;/g,&quot;&amp;lt;&quot;)
+    .replace(/&gt;/g,&quot;&amp;gt;&quot;)
+    .replace(/\&quot;/g,&quot;&amp;quot;&quot;);
+}
+
+function respaldarHTMLCompleto(){
+  let fecha = new Date().toISOString().slice(0,10);
+  let datos = { fechaRespaldo: new Date().toISOString(), tc: tc, bancos: bancos };
+  let appCompleta = document.documentElement.outerHTML;
+
+  let contenido = &quot;&quot;;
+  contenido += &quot;&lt;!DOCTYPE html&gt;&lt;html lang='es'&gt;&lt;head&gt;&lt;meta charset='UTF-8'&gt;&quot;;
+  contenido += &quot;&lt;title&gt;Respaldo Mis Finanzas &quot; + fecha + &quot;&lt;/title&gt;&quot;;
+  contenido += &quot;&lt;style&gt;body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}&lt;/style&gt;&quot;;
+  contenido += &quot;&lt;/head&gt;&lt;body&gt;&quot;;
+  contenido += &quot;&lt;h1&gt;Respaldo Mis Finanzas&lt;/h1&gt;&quot;;
+  contenido += &quot;&lt;div class='card'&gt;&lt;b&gt;Fecha de respaldo:&lt;/b&gt; &quot; + new Date().toLocaleString(&quot;es-EC&quot;) + &quot;&lt;br&gt;&lt;b&gt;Total movimientos TC:&lt;/b&gt; &quot; + tc.length + &quot;&lt;br&gt;&lt;b&gt;Total movimientos Bancos:&lt;/b&gt; &quot; + bancos.length + &quot;&lt;/div&gt;&quot;;
+
+  contenido += &quot;&lt;h2&gt;Tarjetas de Crédito&lt;/h2&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Fecha&lt;/th&gt;&lt;th&gt;Tarjeta&lt;/th&gt;&lt;th&gt;Concepto&lt;/th&gt;&lt;th&gt;Detalle&lt;/th&gt;&lt;th&gt;Tipo&lt;/th&gt;&lt;th&gt;Valor&lt;/th&gt;&lt;th&gt;Pago&lt;/th&gt;&lt;th&gt;Estado&lt;/th&gt;&lt;/tr&gt;&quot;;
+  tc.forEach(function(m){ contenido += &quot;&lt;tr&gt;&lt;td&gt;&quot;+escapeHTML(m.Fecha)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Tarjeta)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Concepto)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Detalle)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Tipo)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Valor)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Pago)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Conciliado)+&quot;&lt;/td&gt;&lt;/tr&gt;&quot;; });
+  contenido += &quot;&lt;/table&gt;&quot;;
+
+  contenido += &quot;&lt;h2&gt;Bancos&lt;/h2&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Fecha&lt;/th&gt;&lt;th&gt;Banco&lt;/th&gt;&lt;th&gt;Tipo&lt;/th&gt;&lt;th&gt;Concepto&lt;/th&gt;&lt;th&gt;Detalle&lt;/th&gt;&lt;th&gt;Valor&lt;/th&gt;&lt;th&gt;Estado&lt;/th&gt;&lt;/tr&gt;&quot;;
+  bancos.forEach(function(m){ contenido += &quot;&lt;tr&gt;&lt;td&gt;&quot;+escapeHTML(m.Fecha)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Banco)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Tipo)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Concepto)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Detalle)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Valor)+&quot;&lt;/td&gt;&lt;td&gt;&quot;+escapeHTML(m.Conciliado)+&quot;&lt;/td&gt;&lt;/tr&gt;&quot;; });
+  contenido += &quot;&lt;/table&gt;&quot;;
+
+  contenido += &quot;&lt;h2&gt;Datos técnicos para reconstruir movimientos&lt;/h2&gt;&lt;pre&gt;&quot; + escapeHTML(JSON.stringify(datos,null,2)) + &quot;&lt;/pre&gt;&quot;;
+  contenido += &quot;&lt;h2&gt;Script completo de la app&lt;/h2&gt;&lt;pre&gt;&quot; + escapeHTML(appCompleta) + &quot;&lt;/pre&gt;&quot;;
+  contenido += &quot;&lt;/body&gt;&lt;/html&gt;&quot;;
+
+  let blob = new Blob([contenido], {type:&quot;text/html;charset=utf-8&quot;});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement(&quot;a&quot;);
+  a.href = url;
+  a.download = &quot;respaldo_mis_finanzas_&quot; + fecha + &quot;.html&quot;;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert(&quot;Respaldo HTML completo generado. Incluye movimientos y script.&quot;);
+}
+
+function calcularAmortizacion(){
+  let monto = Number(amoMonto.value || 0);
+  let tasaAnual = Number(amoTasa.value || 0) / 100;
+  let meses = Number(amoMeses.value || 0);
+  let tasaMensual = tasaAnual / 12;
+
+  if(monto&lt;=0 || meses&lt;=0){
+    alert(&quot;Ingrese monto y plazo válidos&quot;);
+    return;
+  }
+
+  let cuota = tasaMensual===0
+    ? monto/meses
+    : monto*(tasaMensual*Math.pow(1+tasaMensual,meses))/(Math.pow(1+tasaMensual,meses)-1);
+
+  let saldo = monto;
+  let totalInteres = 0;
+  amortizacion = [];
+
+  for(let i=1;i&lt;=meses;i++){
+    let interes = saldo*tasaMensual;
+    let capital = cuota-interes;
+
+    if(i===meses){
+      capital = saldo;
+      cuota = capital+interes;
     }
-    function rowToBI(row){
-      return {
-        category: normalizeCategory(pick(row,['Categoria','Categoría','Empresa','Grupo','Area','Área'])),
-        name: pick(row,['Nombre','Nombre BI','Descripcion','Descripción','Reporte','BI','Informe']),
-        owner: pick(row,['Preparado por','Prepara','Responsable','Owner','Usuario']),
-        desc: pick(row,['Detalle','Comentario','Observacion','Observación','Notas']),
-        url: cleanUrl(pick(row,['Link','URL','Enlace','Vinculo','Vínculo','Power BI']))
+
+    saldo -= capital;
+    if(saldo&lt;0.01) saldo=0;
+    totalInteres += interes;
+
+    amortizacion.push({
+      Mes:i,
+      Cuota:Number(cuota.toFixed(2)),
+      Interes:Number(interes.toFixed(2)),
+      Capital:Number(capital.toFixed(2)),
+      Saldo:Number(saldo.toFixed(2))
+    });
+  }
+
+  resumenAmo.innerHTML = `
+  &lt;p class=&quot;total&quot;&gt;Cuota mensual: $${formato(amortizacion[0].Cuota)}&lt;/p&gt;
+  &lt;p class=&quot;total&quot;&gt;Intereses totales: $${formato(totalInteres)}&lt;/p&gt;
+  &lt;p class=&quot;total&quot;&gt;Total pagado: $${formato(monto+totalInteres)}&lt;/p&gt;`;
+
+  tablaAmo.innerHTML = `
+  &lt;tr&gt;
+    &lt;th&gt;Mes&lt;/th&gt;
+    &lt;th&gt;Cuota&lt;/th&gt;
+    &lt;th&gt;Interés&lt;/th&gt;
+    &lt;th&gt;Capital&lt;/th&gt;
+    &lt;th&gt;Saldo&lt;/th&gt;
+  &lt;/tr&gt;`;
+
+  amortizacion.forEach(r=&gt;{
+    tablaAmo.innerHTML += `
+    &lt;tr&gt;
+      &lt;td&gt;${r.Mes}&lt;/td&gt;
+      &lt;td&gt;${formato(r.Cuota)}&lt;/td&gt;
+      &lt;td&gt;${formato(r.Interes)}&lt;/td&gt;
+      &lt;td&gt;${formato(r.Capital)}&lt;/td&gt;
+      &lt;td&gt;${formato(r.Saldo)}&lt;/td&gt;
+    &lt;/tr&gt;`;
+  });
+}
+
+function exportarAmortizacion(){
+  if(amortizacion.length===0){
+    alert(&quot;Primero calcule la amortización&quot;);
+    return;
+  }
+
+  let wb = XLSX.utils.book_new();
+  let resumen = [{
+    Monto:Number(amoMonto.value||0),
+    TasaAnual:Number(amoTasa.value||0),
+    Meses:Number(amoMeses.value||0),
+    CuotaMensual:amortizacion[0].Cuota,
+    InteresesTotales:Number(amortizacion.reduce((a,b)=&gt;a+b.Interes,0).toFixed(2)),
+    TotalPagado:Number(amortizacion.reduce((a,b)=&gt;a+b.Cuota,0).toFixed(2))
+  }];
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumen), &quot;Resumen&quot;);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(amortizacion), &quot;Tabla&quot;);
+  XLSX.writeFile(wb,&quot;Amortizacion.xlsx&quot;);
+}
+
+function cargarMesesResumen(){
+  if(!resMes) return;
+
+  const actual = resMes.value;
+  const meses = new Map();
+
+  [...tc.map(x=&gt;x.Fecha), ...bancos.map(x=&gt;x.Fecha)].forEach(f=&gt;{
+    if(f){
+      meses.set(mesClave(f), mesTexto(f));
+    }
+  });
+
+  resMes.innerHTML = `&lt;option value=&quot;todos&quot;&gt;Todos los meses&lt;/option&gt;`;
+
+  Array.from(meses.entries()).sort().reverse().forEach(([clave,texto])=&gt;{
+    resMes.innerHTML += `&lt;option value=&quot;${clave}&quot;&gt;${texto}&lt;/option&gt;`;
+  });
+
+  if(Array.from(meses.keys()).includes(actual)){
+    resMes.value = actual;
+  }
+}
+
+function cargarFiltroEntidad(){
+  if(!resEntidad) return;
+
+  const origen = resOrigen.value;
+  const actual = resEntidad.value;
+  let valores = [];
+
+  if(origen===&quot;todos&quot;){
+    valores = [
+      ...tc.map(x=&gt;&quot;TC: &quot; + x.Tarjeta),
+      ...bancos.map(x=&gt;&quot;Banco: &quot; + x.Banco)
+    ];
+    resEntidad.innerHTML = `&lt;option value=&quot;todos&quot;&gt;Todas las tarjetas y bancos&lt;/option&gt;`;
+  }
+
+  if(origen===&quot;tc&quot;){
+    valores = tc.map(x=&gt;x.Tarjeta);
+    resEntidad.innerHTML = `&lt;option value=&quot;todos&quot;&gt;Todas las tarjetas&lt;/option&gt;`;
+  }
+
+  if(origen===&quot;bancos&quot;){
+    valores = bancos.map(x=&gt;x.Banco);
+    resEntidad.innerHTML = `&lt;option value=&quot;todos&quot;&gt;Todos los bancos&lt;/option&gt;`;
+  }
+
+  [...new Set(valores.filter(Boolean))].sort().forEach(v=&gt;{
+    resEntidad.innerHTML += `&lt;option value=&quot;${v}&quot;&gt;${v}&lt;/option&gt;`;
+  });
+
+  if([...resEntidad.options].some(o=&gt;o.value===actual)){
+    resEntidad.value = actual;
+  }
+}
+
+function cargarFiltroConcepto(){
+  if(!resConcepto) return;
+
+  const actual = resConcepto.value;
+  const origen = resOrigen.value;
+  let conceptos = [];
+
+  if(origen===&quot;todos&quot; || origen===&quot;tc&quot;){
+    conceptos = conceptos.concat(tc.map(x=&gt;x.Concepto));
+  }
+
+  if(origen===&quot;todos&quot; || origen===&quot;bancos&quot;){
+    conceptos = conceptos.concat(bancos.map(x=&gt;x.Concepto));
+  }
+
+  resConcepto.innerHTML = `&lt;option value=&quot;todos&quot;&gt;Todos los conceptos&lt;/option&gt;`;
+
+  [...new Set(conceptos.filter(Boolean))].sort().forEach(c=&gt;{
+    resConcepto.innerHTML += `&lt;option value=&quot;${c}&quot;&gt;${c}&lt;/option&gt;`;
+  });
+
+  if([...resConcepto.options].some(o=&gt;o.value===actual)){
+    resConcepto.value = actual;
+  }
+}
+
+function generarResumen(){
+  if(!tablaResumen) return;
+
+  const mesFiltro = resMes.value;
+  const origenFiltro = resOrigen.value;
+  const entidadFiltro = resEntidad.value;
+  const estadoFiltro = resEstado.value;
+  const conceptoFiltro = resConcepto.value;
+
+  let datos = [];
+
+  if(origenFiltro===&quot;todos&quot; || origenFiltro===&quot;tc&quot;){
+    tc.forEach(m=&gt;{
+      datos.push({
+        Origen:&quot;TC&quot;,
+        Entidad:m.Tarjeta,
+        EntidadFiltro:&quot;TC: &quot; + m.Tarjeta,
+        MesClave:mesClave(m.Fecha),
+        Mes:mesTexto(m.Fecha),
+        Concepto:m.Concepto || &quot;Sin concepto&quot;,
+        Estado:m.Conciliado===&quot;Si&quot; ? &quot;Conciliado&quot; : &quot;No conciliado&quot;,
+        Valor:Number(m.Valor||0)
+      });
+    });
+  }
+
+  if(origenFiltro===&quot;todos&quot; || origenFiltro===&quot;bancos&quot;){
+    bancos.forEach(m=&gt;{
+      datos.push({
+        Origen:&quot;Bancos&quot;,
+        Entidad:m.Banco,
+        EntidadFiltro:&quot;Banco: &quot; + m.Banco,
+        MesClave:mesClave(m.Fecha),
+        Mes:mesTexto(m.Fecha),
+        Concepto:m.Concepto || &quot;Sin concepto&quot;,
+        Estado:m.Conciliado===&quot;Si&quot; ? &quot;Conciliado&quot; : &quot;No conciliado&quot;,
+        Valor:Number(m.Valor||0)
+      });
+    });
+  }
+
+  if(mesFiltro!==&quot;todos&quot;){
+    datos = datos.filter(d=&gt;d.MesClave===mesFiltro);
+  }
+
+  if(estadoFiltro===&quot;no&quot;){
+    datos = datos.filter(d=&gt;d.Estado===&quot;No conciliado&quot;);
+  }
+
+  if(estadoFiltro===&quot;si&quot;){
+    datos = datos.filter(d=&gt;d.Estado===&quot;Conciliado&quot;);
+  }
+
+  if(entidadFiltro!==&quot;todos&quot;){
+    if(origenFiltro===&quot;todos&quot;){
+      datos = datos.filter(d=&gt;d.EntidadFiltro===entidadFiltro);
+    }else{
+      datos = datos.filter(d=&gt;d.Entidad===entidadFiltro);
+    }
+  }
+
+  if(conceptoFiltro!==&quot;todos&quot;){
+    datos = datos.filter(d=&gt;d.Concepto===conceptoFiltro);
+  }
+
+  const mapa = {};
+  let totalGeneral = 0;
+
+  datos.forEach(d=&gt;{
+    const clave = d.Origen + &quot;|&quot; + d.Entidad + &quot;|&quot; + d.Mes + &quot;|&quot; + d.Concepto + &quot;|&quot; + d.Estado;
+
+    if(!mapa[clave]){
+      mapa[clave] = {
+        Origen:d.Origen,
+        TarjetaBanco:d.Entidad,
+        Mes:d.Mes,
+        Concepto:d.Concepto,
+        Estado:d.Estado,
+        Cantidad:0,
+        Total:0
       };
     }
-    function inferFromArrayRows(aoa){
-      const results=[];
-      let lastCategory='';
-      for(let r=0;r<aoa.length;r++){
-        const row=(aoa[r]||[]).map(cleanCell);
-        if(!row.some(Boolean)) continue;
-        const linkIndex=row.findIndex(looksLikePowerBI);
-        if(linkIndex<0) {
-          if(row[0] && !/empresa|categoria|informes bi/i.test(row[0]) && r>1) lastCategory=row[0];
-          continue;
-        }
-        const link=cleanUrl(row[linkIndex]);
-        const before=row.slice(0, linkIndex).filter(Boolean);
-        let category='', name='', owner='', desc='';
-        // Soporta tu formato real: Empresa | Descripcion | Prepara | Descripción extra | Link
-        category = row[0] || lastCategory || 'OTROS';
-        if(row[0]) lastCategory = row[0];
-        name = row[1] || before.find(v => !looksLikePowerBI(v)) || 'Sin nombre';
-        owner = row[2] || '';
-        desc = row[3] || '';
-        results.push({category:normalizeCategory(category), name:name || 'Sin nombre', owner, desc, url:link});
-      }
-      return results.filter(x=>x.url && x.name);
-    }
-    function inferFromJsonRows(rows){
-      const imported = rows.map(rowToBI).filter(x => x.url && x.name);
-      return imported;
-    }
-    async function importExcel(event){
-      const file = event.target.files && event.target.files[0];
-      event.target.value = '';
-      if(!file) return;
-      if(typeof XLSX === 'undefined'){
-        toast('No se pudo cargar el lector de Excel. Revisa internet o usa CSV.');
-        return;
-      }
-      try{
-        const buffer = await file.arrayBuffer();
-        const wb = XLSX.read(buffer, {type:'array'});
-        let imported=[];
-        for(const sheetName of wb.SheetNames){
-          const sheet = wb.Sheets[sheetName];
-          // 1) Intentar con todas las posibles filas de encabezado.
-          for(let headerRow=0; headerRow<8 && imported.length===0; headerRow++){
-            const rows = XLSX.utils.sheet_to_json(sheet, {defval:'', range:headerRow});
-            imported = inferFromJsonRows(rows);
-          }
-          // 2) Si el Excel tiene encabezados raros o filas vacías, escanear celda por celda buscando links.
-          if(imported.length===0){
-            const aoa = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''});
-            imported = inferFromArrayRows(aoa);
-          }
-          if(imported.length) break;
-        }
-        if(!imported.length){ toast('No encontré links de Power BI dentro del Excel.'); return; }
-        const merge = confirm('Encontré ' + imported.length + ' BI en el Excel.\n\nAceptar = actualizar/agregar sin borrar.\nCancelar = reemplazar toda la lista con el Excel.');
-        if(merge){
-          imported.forEach(x=>{
-            const i = data.findIndex(y => normHeader(y.name) === normHeader(x.name));
-            if(i >= 0) data[i] = {...data[i], ...x}; else data.push(x);
-          });
-        } else {
-          data = imported;
-        }
-        persist(); render(); toast('Excel importado: ' + imported.length + ' BI.');
-      }catch(e){
-        console.error(e);
-        toast('No pude leer el Excel. Intenta guardarlo como .xlsx o .csv.');
-      }
-    }
-    render();
-  </script>
-</body>
-</html>
 
+    mapa[clave].Cantidad += 1;
+    mapa[clave].Total += d.Valor;
+    totalGeneral += d.Valor;
+  });
+
+  resumenMensual = Object.values(mapa).sort((a,b)=&gt;{
+    if(a.Mes!==b.Mes) return a.Mes.localeCompare(b.Mes);
+    if(a.Origen!==b.Origen) return a.Origen.localeCompare(b.Origen);
+    if(a.TarjetaBanco!==b.TarjetaBanco) return a.TarjetaBanco.localeCompare(b.TarjetaBanco);
+    return a.Concepto.localeCompare(b.Concepto);
+  });
+
+  totalResumen.innerHTML = `Total seleccionado: $${formato(totalGeneral)}`;
+
+  tablaResumen.innerHTML = `
+  &lt;tr&gt;
+    &lt;th&gt;Origen&lt;/th&gt;
+    &lt;th&gt;Tarjeta/Banco&lt;/th&gt;
+    &lt;th&gt;Mes&lt;/th&gt;
+    &lt;th&gt;Concepto&lt;/th&gt;
+    &lt;th&gt;Estado&lt;/th&gt;
+    &lt;th&gt;Cant.&lt;/th&gt;
+    &lt;th&gt;Total&lt;/th&gt;
+  &lt;/tr&gt;`;
+
+  if(resumenMensual.length===0){
+    tablaResumen.innerHTML += `&lt;tr&gt;&lt;td colspan=&quot;7&quot;&gt;No hay datos para mostrar&lt;/td&gt;&lt;/tr&gt;`;
+    return;
+  }
+
+  resumenMensual.forEach(r=&gt;{
+    tablaResumen.innerHTML += `
+    &lt;tr&gt;
+      &lt;td&gt;${r.Origen}&lt;/td&gt;
+      &lt;td&gt;${r.TarjetaBanco}&lt;/td&gt;
+      &lt;td&gt;${r.Mes}&lt;/td&gt;
+      &lt;td&gt;${r.Concepto}&lt;/td&gt;
+      &lt;td&gt;${r.Estado}&lt;/td&gt;
+      &lt;td&gt;${r.Cantidad}&lt;/td&gt;
+      &lt;td&gt;$${formato(r.Total)}&lt;/td&gt;
+    &lt;/tr&gt;`;
+  });
+}
+
+function exportarResumen(){
+  generarResumen();
+
+  if(resumenMensual.length===0){
+    alert(&quot;No hay resumen para exportar&quot;);
+    return;
+  }
+
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(resumenMensual), &quot;Resumen&quot;);
+  XLSX.writeFile(wb,&quot;Resumen_mensual.xlsx&quot;);
+}
+
+controlCamposTC();
+cargarFiltroTarjetaTC();
+mostrarTC();
+mostrarBancos();
+cargarMesesResumen();
+cargarFiltroEntidad();
+cargarFiltroConcepto();
+generarResumen();
+&lt;/script&gt;
+
+
+
+&lt;/body&gt;&lt;/html&gt;</pre></body></html>
 
