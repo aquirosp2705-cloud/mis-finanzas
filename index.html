@@ -31,7 +31,6 @@ input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
 th:first-child,td:first-child{text-align:left}
-.oculto{display:none}
 
 /* Modal edición compatible iPad */
 .modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
@@ -94,20 +93,16 @@ th:first-child,td:first-child{text-align:left}
 <option>Diferido</option>
 </select>
 
-<div id="bloqueTcPagadas" class="oculto">
-<label>Cuotas pagadas</label>
-<input type="number" id="tcPagadas" value="0" disabled>
-</div>
-
-<div id="bloqueTcCuotas">
+<div id="bloqueCuotasTC" style="display:none">
 <label>Número de cuotas</label>
-<input type="number" id="tcPorPagar" value="1" min="1" disabled oninput="calcularCuotaTC()">
+<input type="number" id="tcPorPagar" value="1" min="1" oninput="calcularCuotaTC()">
 </div>
+<input type="hidden" id="tcPagadas" value="0">
 
 <label>Valor consumo</label>
 <input type="number" id="tcValor" step="0.01" oninput="calcularCuotaTC()">
 
-<label>Pago / cuota mensual calculada</label>
+<label id="lblTCPago">Pago</label>
 <input type="number" id="tcPago" step="0.01" value="0" readonly>
 
 <button class="btn" onclick="guardarTC()">Guardar TC</button>
@@ -484,9 +479,9 @@ th:first-child,td:first-child{text-align:left}
       </select>
 
       <div class="grid2">
-        <div id="bloqueEditPagadas" class="oculto">
+        <div>
           <label>Cuotas pagadas</label>
-          <input type="number" id="editCuotasPagadas" value="0">
+          <input type="number" id="editCuotasPagadas" value="0" readonly>
         </div>
         <div>
           <label>Número de cuotas</label>
@@ -500,7 +495,7 @@ th:first-child,td:first-child{text-align:left}
           <input type="number" id="editValorTC" step="0.01" oninput="calcularCuotaEditarTC()">
         </div>
         <div>
-          <label>Pago / cuota mensual calculada</label>
+          <label>Pago</label>
           <input type="number" id="editPagoTC" step="0.01" readonly>
         </div>
       </div>
@@ -613,8 +608,7 @@ function normalizarTC(m){
     CuotasPorPagar: Number(m.CuotasPorPagar ?? m.cuotasPorPagar ?? 0),
     Valor: Number(m.Valor ?? m.valor ?? 0),
     Pago: Number(m.Pago ?? m.pago ?? 0),
-    CuotaMensual: Number(m.CuotaMensual ?? m.cuotaMensual ?? m.Pago ?? m.pago ?? 0),
-    Acumulado: Number(m.Acumulado ?? m.acumulado ?? (m.Pago ?? m.pago ?? m.Valor ?? m.valor ?? 0)),
+    Acumulado: Number(m.Acumulado ?? m.acumulado ?? ((m.Valor ?? m.valor ?? 0) - (m.Pago ?? m.pago ?? 0))),
     SaldoDiferido: Number(m.SaldoDiferido ?? m.saldoDiferido ?? 0),
     Conciliado: m.Conciliado || m.conciliado || "No"
   };
@@ -716,26 +710,46 @@ function pasaFiltro(m,filtro){
   return true;
 }
 
+
 function calcularCuotaTC(){
-  const valor = Number(tcValor.value || 0);
   const tipo = tcTipo.value || "Corriente";
-  let cuotas = tipo === "Diferido" ? Number(tcPorPagar.value || 0) : 1;
-  if(tipo === "Diferido" && cuotas < 1) cuotas = 1;
-  const pagoCalculado = tipo === "Diferido" ? valor / cuotas : valor;
-  tcPago.value = isFinite(pagoCalculado) ? pagoCalculado.toFixed(2) : "0.00";
+  const valor = Number(tcValor.value || 0);
+  if(tipo === "Diferido"){
+    const cuotas = Math.max(1, Number(tcPorPagar.value || 1));
+    tcPorPagar.value = cuotas;
+    tcPago.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "0.00";
+  }else{
+    tcPago.value = valor ? valor.toFixed(2) : "0.00";
+  }
+}
+
+function valorTCParaResumen(m){
+  const tipo = m.Tipo || "Corriente";
+  const valor = Number(m.Valor || 0);
+  const pago = Number(m.Pago || 0);
+  if(tipo === "Diferido") return pago || valor;
+  return valor;
+}
+
+function calcularCuotaEditarTC(){
+  const tipo = editTipoTC.value || "Corriente";
+  const valor = Number(editValorTC.value || 0);
+  if(tipo === "Diferido"){
+    const cuotas = Math.max(1, Number(editCuotasPorPagar.value || 1));
+    editCuotasPorPagar.value = cuotas;
+    editPagoTC.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "0.00";
+  }else{
+    editPagoTC.value = valor ? valor.toFixed(2) : "0.00";
+    editCuotasPagadas.value = 0;
+    editCuotasPorPagar.value = 0;
+  }
 }
 
 function guardarTC(){
   let valor = Number(tcValor.value || 0);
   let tipoConsumo = tcTipo.value || "Corriente";
-  let cuotas = tipoConsumo === "Diferido" ? Number(tcPorPagar.value || 0) : 1;
-  if(tipoConsumo === "Diferido" && cuotas < 1){
-    alert("Para diferido debes ingresar el número de cuotas.");
-    return;
-  }
-
-  let pago = tipoConsumo === "Diferido" ? valor / cuotas : valor;
-  pago = Number(pago.toFixed(2));
+  let cuotasPorPagar = tipoConsumo === "Diferido" ? Math.max(1, Number(tcPorPagar.value || 1)) : 0;
+  let pago = tipoConsumo === "Diferido" ? Number((valor / cuotasPorPagar).toFixed(2)) : valor;
   let saldoDiferido = tipoConsumo === "Diferido" ? valor : 0;
 
   tc.push({
@@ -745,11 +759,10 @@ function guardarTC(){
     Detalle: tcDetalle.value,
     Tipo: tipoConsumo,
     CuotasPagadas: 0,
-    CuotasPorPagar: cuotas,
+    CuotasPorPagar: cuotasPorPagar,
     Valor: valor,
     Pago: pago,
-    CuotaMensual: pago,
-    Acumulado: pago,
+    Acumulado: tipoConsumo === "Diferido" ? pago : valor,
     SaldoDiferido: saldoDiferido,
     Conciliado: "No"
   });
@@ -758,9 +771,10 @@ function guardarTC(){
   cargarFiltroTarjetaTC();
   tcDetalle.value="";
   tcValor.value="";
+  tcPago.value=0;
   tcPagadas.value=0;
-  tcPorPagar.value=tipoConsumo === "Diferido" ? cuotas : 1;
-  calcularCuotaTC();
+  tcPorPagar.value=0;
+  controlCamposTC();
   mostrarTC();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -781,8 +795,9 @@ function mostrarTC(){
       <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
       <div>${m.Detalle || ""}</div>
       <div class="small">Tipo: <b>${m.Tipo}</b></div>
-      <div class="small">${m.Tipo === "Diferido" ? "Cuotas: <b>" + m.CuotasPorPagar + "</b> | Cuota mensual: <b>$" + formato(m.Pago) + "</b>" : "Pago corriente: <b>$" + formato(m.Pago || m.Valor) + "</b>"}</div>
-      <div class="small">Valor consumo: $${formato(m.Valor)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
+      <div class="small">${m.Tipo === "Diferido" ? "Número de cuotas: <b>" + m.CuotasPorPagar + "</b> | Cuota mensual: <b>$" + formato(m.Pago) + "</b>" : "Pago corriente: <b>$" + formato(m.Pago || m.Valor) + "</b>"}</div>
+      <div class="small">Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}</div>
+      <div class="small">Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
       <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
       <button class="btn btnEdit" onclick="editarTC(${idx})">Editar</button>
       <button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
@@ -906,13 +921,15 @@ function exportarPendientes(tipo){
 
 function controlCamposTC(){
   let esDiferido = tcTipo.value === "Diferido";
+  const bloque = document.getElementById("bloqueCuotasTC");
+  if(bloque) bloque.style.display = esDiferido ? "block" : "none";
   tcPagadas.value = 0;
-  tcPagadas.disabled = true;
-  tcPorPagar.disabled = !esDiferido;
   if(esDiferido){
-    if(Number(tcPorPagar.value || 0) < 1) tcPorPagar.value = 1;
+    if(!tcPorPagar.value || Number(tcPorPagar.value) <= 0) tcPorPagar.value = 1;
+    lblTCPago.innerText = "Pago mensual / cuota";
   }else{
-    tcPorPagar.value = 1;
+    tcPorPagar.value = 0;
+    lblTCPago.innerText = "Pago";
   }
   calcularCuotaTC();
 }
@@ -943,7 +960,7 @@ function abrirEditor(tipo, i){
     editDetalle.value = m.Detalle || "";
     setSelectValue("editTipoTC", m.Tipo || "Corriente");
     editCuotasPagadas.value = Number(m.CuotasPagadas || 0);
-    editCuotasPorPagar.value = Number(m.CuotasPorPagar || 1);
+    editCuotasPorPagar.value = Number(m.CuotasPorPagar || 0);
     editValorTC.value = Number(m.Valor || 0);
     editPagoTC.value = Number(m.Pago || 0);
     editConciliado.value = m.Conciliado === "Si" ? "Si" : "No";
@@ -970,24 +987,16 @@ function cerrarEditor(){
   modalEditar.classList.remove("active");
 }
 
-function calcularCuotaEditarTC(){
-  const valor = Number(editValorTC.value || 0);
-  const tipo = editTipoTC.value || "Corriente";
-  let cuotas = tipo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 1;
-  if(tipo === "Diferido" && cuotas < 1) cuotas = 1;
-  const pagoCalculado = tipo === "Diferido" ? valor / cuotas : valor;
-  editPagoTC.value = isFinite(pagoCalculado) ? pagoCalculado.toFixed(2) : "0.00";
-}
-
 function controlCamposEditarTC(){
   const esDiferido = editTipoTC.value === "Diferido";
-  editCuotasPagadas.value = 0;
-  editCuotasPagadas.disabled = true;
+  editCuotasPagadas.readOnly = true;
   editCuotasPorPagar.disabled = !esDiferido;
+  editPagoTC.readOnly = true;
   if(esDiferido){
-    if(Number(editCuotasPorPagar.value || 0) < 1) editCuotasPorPagar.value = 1;
+    if(!editCuotasPorPagar.value || Number(editCuotasPorPagar.value) <= 0) editCuotasPorPagar.value = 1;
   }else{
-    editCuotasPorPagar.value = 1;
+    editCuotasPagadas.value = 0;
+    editCuotasPorPagar.value = 0;
   }
   calcularCuotaEditarTC();
 }
@@ -1008,12 +1017,8 @@ function guardarEdicionMovimiento(){
     const valor = Number(editValorTC.value || 0);
     const tipoConsumo = editTipoTC.value || "Corriente";
     const cuotasPagadas = 0;
-    let cuotasPorPagar = tipoConsumo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 1;
-    if(tipoConsumo === "Diferido" && cuotasPorPagar < 1){
-      alert("Para diferido debes ingresar el número de cuotas.");
-      return;
-    }
-    const pago = Number((tipoConsumo === "Diferido" ? valor / cuotasPorPagar : valor).toFixed(2));
+    const cuotasPorPagar = tipoConsumo === "Diferido" ? Math.max(1, Number(editCuotasPorPagar.value || 1)) : 0;
+    const pago = tipoConsumo === "Diferido" ? Number((valor / cuotasPorPagar).toFixed(2)) : valor;
 
     tc[i] = {
       Fecha: editFecha.value,
@@ -1025,8 +1030,7 @@ function guardarEdicionMovimiento(){
       CuotasPorPagar: cuotasPorPagar,
       Valor: valor,
       Pago: pago,
-      CuotaMensual: pago,
-      Acumulado: pago,
+      Acumulado: tipoConsumo === "Diferido" ? pago : valor,
       SaldoDiferido: tipoConsumo === "Diferido" ? valor : 0,
       Conciliado: editConciliado.value
     };
@@ -1328,7 +1332,7 @@ function generarResumen(){
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Pago || m.Valor || 0)
+        Valor:valorTCParaResumen(m)
       });
     });
   }
@@ -1343,7 +1347,7 @@ function generarResumen(){
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Pago || m.Valor || 0)
+        Valor:Number(m.Valor||0)
       });
     });
   }
