@@ -31,6 +31,7 @@ input,select{width:100%;padding:12px;margin:6px 0 12px;border:1px solid #cbd5e1;
 table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{border-bottom:1px solid #e5e7eb;padding:8px;text-align:right}
 th:first-child,td:first-child{text-align:left}
+.oculto{display:none}
 
 /* Modal edición compatible iPad */
 .modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
@@ -93,17 +94,21 @@ th:first-child,td:first-child{text-align:left}
 <option>Diferido</option>
 </select>
 
+<div id="bloqueTcPagadas" class="oculto">
 <label>Cuotas pagadas</label>
-<input type="number" id="tcPagadas" value="0" disabled="">
+<input type="number" id="tcPagadas" value="0" disabled>
+</div>
 
-<label>Cuotas por pagar</label>
-<input type="number" id="tcPorPagar" value="0" disabled="">
+<div id="bloqueTcCuotas">
+<label>Número de cuotas</label>
+<input type="number" id="tcPorPagar" value="1" min="1" disabled oninput="calcularCuotaTC()">
+</div>
 
 <label>Valor consumo</label>
-<input type="number" id="tcValor" step="0.01">
+<input type="number" id="tcValor" step="0.01" oninput="calcularCuotaTC()">
 
-<label>Pago</label>
-<input type="number" id="tcPago" step="0.01" value="0">
+<label>Pago / cuota mensual calculada</label>
+<input type="number" id="tcPago" step="0.01" value="0" readonly>
 
 <button class="btn" onclick="guardarTC()">Guardar TC</button>
 <button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC a Excel según tarjeta</button>
@@ -256,12 +261,6 @@ th:first-child,td:first-child{text-align:left}
 
 <div class="card">
 <h3>Movimientos Bancos</h3>
-
-<label>Filtrar por banco</label>
-<select id="filtroBancoMov" onchange="mostrarBancos()">
-  <option value="todos">Todos los bancos</option>
-</select>
-
 <div class="filtros">
 <button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button>
 <button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button>
@@ -485,24 +484,24 @@ th:first-child,td:first-child{text-align:left}
       </select>
 
       <div class="grid2">
-        <div>
+        <div id="bloqueEditPagadas" class="oculto">
           <label>Cuotas pagadas</label>
           <input type="number" id="editCuotasPagadas" value="0">
         </div>
         <div>
-          <label>Cuotas por pagar</label>
-          <input type="number" id="editCuotasPorPagar" value="0">
+          <label>Número de cuotas</label>
+          <input type="number" id="editCuotasPorPagar" value="1" min="1" oninput="calcularCuotaEditarTC()">
         </div>
       </div>
 
       <div class="grid2">
         <div>
           <label>Valor consumo</label>
-          <input type="number" id="editValorTC" step="0.01">
+          <input type="number" id="editValorTC" step="0.01" oninput="calcularCuotaEditarTC()">
         </div>
         <div>
-          <label>Pago</label>
-          <input type="number" id="editPagoTC" step="0.01">
+          <label>Pago / cuota mensual calculada</label>
+          <input type="number" id="editPagoTC" step="0.01" readonly>
         </div>
       </div>
     </div>
@@ -614,7 +613,8 @@ function normalizarTC(m){
     CuotasPorPagar: Number(m.CuotasPorPagar ?? m.cuotasPorPagar ?? 0),
     Valor: Number(m.Valor ?? m.valor ?? 0),
     Pago: Number(m.Pago ?? m.pago ?? 0),
-    Acumulado: Number(m.Acumulado ?? m.acumulado ?? ((m.Valor ?? m.valor ?? 0) - (m.Pago ?? m.pago ?? 0))),
+    CuotaMensual: Number(m.CuotaMensual ?? m.cuotaMensual ?? m.Pago ?? m.pago ?? 0),
+    Acumulado: Number(m.Acumulado ?? m.acumulado ?? (m.Pago ?? m.pago ?? m.Valor ?? m.valor ?? 0)),
     SaldoDiferido: Number(m.SaldoDiferido ?? m.saldoDiferido ?? 0),
     Conciliado: m.Conciliado || m.conciliado || "No"
   };
@@ -696,24 +696,6 @@ function cargarFiltroTarjetaTC(){
   }
 }
 
-
-function cargarFiltroBancoMov(){
-  if(!document.getElementById("filtroBancoMov")) return;
-
-  const actual = filtroBancoMov.value;
-  const bancosLista = [...new Set(bancos.map(x=>x.Banco).filter(Boolean))].sort();
-
-  filtroBancoMov.innerHTML = `<option value="todos">Todos los bancos</option>`;
-
-  bancosLista.forEach(b=>{
-    filtroBancoMov.innerHTML += `<option value="${b}">${b}</option>`;
-  });
-
-  if(bancosLista.includes(actual)){
-    filtroBancoMov.value = actual;
-  }
-}
-
 function setFiltroTC(valor){
   filtroTC = valor;
   document.querySelectorAll("#tc .filtros button").forEach(b=>b.classList.remove("active"));
@@ -734,23 +716,40 @@ function pasaFiltro(m,filtro){
   return true;
 }
 
+function calcularCuotaTC(){
+  const valor = Number(tcValor.value || 0);
+  const tipo = tcTipo.value || "Corriente";
+  let cuotas = tipo === "Diferido" ? Number(tcPorPagar.value || 0) : 1;
+  if(tipo === "Diferido" && cuotas < 1) cuotas = 1;
+  const pagoCalculado = tipo === "Diferido" ? valor / cuotas : valor;
+  tcPago.value = isFinite(pagoCalculado) ? pagoCalculado.toFixed(2) : "0.00";
+}
+
 function guardarTC(){
   let valor = Number(tcValor.value || 0);
-  let pago = Number(tcPago.value || 0);
-  let cuotasPorPagar = Number(tcPorPagar.value || 0);
-  let saldoDiferido = tcTipo.value === "Diferido" ? valor * cuotasPorPagar : 0;
+  let tipoConsumo = tcTipo.value || "Corriente";
+  let cuotas = tipoConsumo === "Diferido" ? Number(tcPorPagar.value || 0) : 1;
+  if(tipoConsumo === "Diferido" && cuotas < 1){
+    alert("Para diferido debes ingresar el número de cuotas.");
+    return;
+  }
+
+  let pago = tipoConsumo === "Diferido" ? valor / cuotas : valor;
+  pago = Number(pago.toFixed(2));
+  let saldoDiferido = tipoConsumo === "Diferido" ? valor : 0;
 
   tc.push({
     Fecha: tcFecha.value,
     Tarjeta: tcTarjeta.value,
     Concepto: tcConcepto.value,
     Detalle: tcDetalle.value,
-    Tipo: tcTipo.value,
-    CuotasPagadas: Number(tcPagadas.value || 0),
-    CuotasPorPagar: cuotasPorPagar,
+    Tipo: tipoConsumo,
+    CuotasPagadas: 0,
+    CuotasPorPagar: cuotas,
     Valor: valor,
     Pago: pago,
-    Acumulado: valor - pago,
+    CuotaMensual: pago,
+    Acumulado: pago,
     SaldoDiferido: saldoDiferido,
     Conciliado: "No"
   });
@@ -759,9 +758,9 @@ function guardarTC(){
   cargarFiltroTarjetaTC();
   tcDetalle.value="";
   tcValor.value="";
-  tcPago.value=0;
   tcPagadas.value=0;
-  tcPorPagar.value=0;
+  tcPorPagar.value=tipoConsumo === "Diferido" ? cuotas : 1;
+  calcularCuotaTC();
   mostrarTC();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -782,9 +781,8 @@ function mostrarTC(){
       <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
       <div>${m.Detalle || ""}</div>
       <div class="small">Tipo: <b>${m.Tipo}</b></div>
-      <div class="small">Cuotas pagadas: <b>${m.CuotasPagadas}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar}</b></div>
-      <div class="small">Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}</div>
-      <div class="small">Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
+      <div class="small">${m.Tipo === "Diferido" ? "Cuotas: <b>" + m.CuotasPorPagar + "</b> | Cuota mensual: <b>$" + formato(m.Pago) + "</b>" : "Pago corriente: <b>$" + formato(m.Pago || m.Valor) + "</b>"}</div>
+      <div class="small">Valor consumo: $${formato(m.Valor)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
       <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
       <button class="btn btnEdit" onclick="editarTC(${idx})">Editar</button>
       <button class="btn btnDanger" onclick="eliminarTC(${idx})">Eliminar</button>
@@ -816,7 +814,6 @@ function guardarBanco(){
   localStorage.setItem("bancos",JSON.stringify(bancos));
   bDetalle.value="";
   bValor.value="";
-  cargarFiltroBancoMov();
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -827,10 +824,6 @@ function mostrarBancos(){
   listaBancos.innerHTML="";
   bancos.slice().reverse().forEach((m,i)=>{
     if(!pasaFiltro(m,filtroBanco)) return;
-
-    let bancoFiltro = document.getElementById("filtroBancoMov") ? filtroBancoMov.value : "todos";
-    if(bancoFiltro !== "todos" && m.Banco !== bancoFiltro) return;
-
     let idx = bancos.length-1-i;
     listaBancos.innerHTML += `
     <div class="mov">
@@ -847,7 +840,6 @@ function mostrarBancos(){
 function eliminarBanco(i){
   bancos.splice(i,1);
   localStorage.setItem("bancos",JSON.stringify(bancos));
-  cargarFiltroBancoMov();
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -913,13 +905,16 @@ function exportarPendientes(tipo){
 
 
 function controlCamposTC(){
-  let esCorriente = tcTipo.value === "Corriente";
-  tcPagadas.disabled = esCorriente;
-  tcPorPagar.disabled = esCorriente;
-  if(esCorriente){
-    tcPagadas.value = 0;
-    tcPorPagar.value = 0;
+  let esDiferido = tcTipo.value === "Diferido";
+  tcPagadas.value = 0;
+  tcPagadas.disabled = true;
+  tcPorPagar.disabled = !esDiferido;
+  if(esDiferido){
+    if(Number(tcPorPagar.value || 0) < 1) tcPorPagar.value = 1;
+  }else{
+    tcPorPagar.value = 1;
   }
+  calcularCuotaTC();
 }
 
 function setSelectValue(selectId, valor){
@@ -948,7 +943,7 @@ function abrirEditor(tipo, i){
     editDetalle.value = m.Detalle || "";
     setSelectValue("editTipoTC", m.Tipo || "Corriente");
     editCuotasPagadas.value = Number(m.CuotasPagadas || 0);
-    editCuotasPorPagar.value = Number(m.CuotasPorPagar || 0);
+    editCuotasPorPagar.value = Number(m.CuotasPorPagar || 1);
     editValorTC.value = Number(m.Valor || 0);
     editPagoTC.value = Number(m.Pago || 0);
     editConciliado.value = m.Conciliado === "Si" ? "Si" : "No";
@@ -975,14 +970,26 @@ function cerrarEditor(){
   modalEditar.classList.remove("active");
 }
 
+function calcularCuotaEditarTC(){
+  const valor = Number(editValorTC.value || 0);
+  const tipo = editTipoTC.value || "Corriente";
+  let cuotas = tipo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 1;
+  if(tipo === "Diferido" && cuotas < 1) cuotas = 1;
+  const pagoCalculado = tipo === "Diferido" ? valor / cuotas : valor;
+  editPagoTC.value = isFinite(pagoCalculado) ? pagoCalculado.toFixed(2) : "0.00";
+}
+
 function controlCamposEditarTC(){
-  const esCorriente = editTipoTC.value === "Corriente";
-  editCuotasPagadas.disabled = esCorriente;
-  editCuotasPorPagar.disabled = esCorriente;
-  if(esCorriente){
-    editCuotasPagadas.value = 0;
-    editCuotasPorPagar.value = 0;
+  const esDiferido = editTipoTC.value === "Diferido";
+  editCuotasPagadas.value = 0;
+  editCuotasPagadas.disabled = true;
+  editCuotasPorPagar.disabled = !esDiferido;
+  if(esDiferido){
+    if(Number(editCuotasPorPagar.value || 0) < 1) editCuotasPorPagar.value = 1;
+  }else{
+    editCuotasPorPagar.value = 1;
   }
+  calcularCuotaEditarTC();
 }
 
 function editarTC(i){
@@ -999,10 +1006,14 @@ function guardarEdicionMovimiento(){
 
   if(tipo === "tc"){
     const valor = Number(editValorTC.value || 0);
-    const pago = Number(editPagoTC.value || 0);
     const tipoConsumo = editTipoTC.value || "Corriente";
-    const cuotasPagadas = tipoConsumo === "Diferido" ? Number(editCuotasPagadas.value || 0) : 0;
-    const cuotasPorPagar = tipoConsumo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 0;
+    const cuotasPagadas = 0;
+    let cuotasPorPagar = tipoConsumo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 1;
+    if(tipoConsumo === "Diferido" && cuotasPorPagar < 1){
+      alert("Para diferido debes ingresar el número de cuotas.");
+      return;
+    }
+    const pago = Number((tipoConsumo === "Diferido" ? valor / cuotasPorPagar : valor).toFixed(2));
 
     tc[i] = {
       Fecha: editFecha.value,
@@ -1014,8 +1025,9 @@ function guardarEdicionMovimiento(){
       CuotasPorPagar: cuotasPorPagar,
       Valor: valor,
       Pago: pago,
-      Acumulado: valor - pago,
-      SaldoDiferido: tipoConsumo === "Diferido" ? valor * cuotasPorPagar : 0,
+      CuotaMensual: pago,
+      Acumulado: pago,
+      SaldoDiferido: tipoConsumo === "Diferido" ? valor : 0,
       Conciliado: editConciliado.value
     };
 
@@ -1084,7 +1096,18 @@ function respaldarHTMLCompleto(){
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += `<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>`;
+  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}
+/* Modal edición compatible iPad */
+.modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
+.modalFondo.active{display:block}
+.modalCard{background:white;border-radius:18px;padding:16px;max-width:620px;margin:24px auto;box-shadow:0 18px 45px rgba(0,0,0,.28)}
+.modalHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.modalHeader h2{margin:0;font-size:20px;color:#0f172a}
+.btnSmall{width:auto;padding:10px 14px;border:0;border-radius:10px;background:#64748b;color:white;font-weight:800}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.grid2{grid-template-columns:1fr}.modalCard{margin:6px auto}}
+
+</style>";
   contenido += "</head><body>";
   contenido += "<h1>Respaldo Mis Finanzas</h1>";
   contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
@@ -1305,7 +1328,7 @@ function generarResumen(){
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Valor||0)
+        Valor:Number(m.Pago || m.Valor || 0)
       });
     });
   }
@@ -1320,7 +1343,7 @@ function generarResumen(){
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:Number(m.Valor||0)
+        Valor:Number(m.Pago || m.Valor || 0)
       });
     });
   }
@@ -1426,7 +1449,6 @@ function exportarResumen(){
 
 controlCamposTC();
 cargarFiltroTarjetaTC();
-cargarFiltroBancoMov();
 mostrarTC();
 mostrarBancos();
 cargarMesesResumen();
