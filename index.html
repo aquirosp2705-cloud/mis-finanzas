@@ -50,13 +50,13 @@ th:first-child,td:first-child{text-align:left}
 <header>Mis Finanzas</header>
 
 <nav>
-<button class="" onclick="showTab('tc',this)">TC</button>
+<button class="active" onclick="showTab('tc',this)">TC</button>
 <button onclick="showTab('bancos',this)" class="">Bancos</button>
 <button onclick="showTab('amortizacion',this)" class="">Amort.</button>
-<button onclick="showTab('resumen',this);cargarMesesResumen();cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()" class="active">Resumen</button>
+<button onclick="showTab('resumen',this);cargarMesesResumen();cargarFiltroEntidad();cargarFiltroConcepto();generarResumen()" class="">Resumen</button>
 </nav>
 
-<section id="tc" class="">
+<section id="tc" class="active">
 <div class="card">
 <h2>Consumos Tarjeta</h2>
 
@@ -93,17 +93,17 @@ th:first-child,td:first-child{text-align:left}
 <option>Diferido</option>
 </select>
 
-<div id="bloqueCuotasTC" style="display:none">
+<label>Cuotas pagadas</label>
+<input type="number" id="tcPagadas" value="0" disabled="">
+
 <label>Número de cuotas</label>
-<input type="number" id="tcPorPagar" value="1" min="1" oninput="calcularCuotaTC()">
-</div>
-<input type="hidden" id="tcPagadas" value="0">
+<input type="number" id="tcPorPagar" value="0" disabled="" oninput="calcularPagoTCFormulario()">
 
 <label>Valor consumo</label>
-<input type="number" id="tcValor" step="0.01" oninput="calcularCuotaTC()">
+<input type="number" id="tcValor" step="0.01" oninput="calcularPagoTCFormulario()">
 
-<label id="lblTCPago">Pago</label>
-<input type="number" id="tcPago" step="0.01" value="0" readonly>
+<label>Pago / cuota mensual automática</label>
+<input type="number" id="tcPago" step="0.01" value="0" disabled="">
 
 <button class="btn" onclick="guardarTC()">Guardar TC</button>
 <button class="btn btn2" onclick="exportarPendientes('tc')">Exportar TC a Excel según tarjeta</button>
@@ -322,7 +322,7 @@ th:first-child,td:first-child{text-align:left}
 </div>
 </section>
 
-<section id="resumen" class="active">
+<section id="resumen" class="">
 <div class="card">
 <h2>Resumen mensual</h2>
 
@@ -481,22 +481,22 @@ th:first-child,td:first-child{text-align:left}
       <div class="grid2">
         <div>
           <label>Cuotas pagadas</label>
-          <input type="number" id="editCuotasPagadas" value="0" readonly>
+          <input type="number" id="editCuotasPagadas" value="0">
         </div>
         <div>
-          <label>Número de cuotas</label>
-          <input type="number" id="editCuotasPorPagar" value="1" min="1" oninput="calcularCuotaEditarTC()">
+          <label>Cuotas por pagar</label>
+          <input type="number" id="editCuotasPorPagar" value="0" oninput="calcularPagoEditarTC()">
         </div>
       </div>
 
       <div class="grid2">
         <div>
           <label>Valor consumo</label>
-          <input type="number" id="editValorTC" step="0.01" oninput="calcularCuotaEditarTC()">
+          <input type="number" id="editValorTC" step="0.01" oninput="calcularPagoEditarTC()">
         </div>
         <div>
           <label>Pago</label>
-          <input type="number" id="editPagoTC" step="0.01" readonly>
+          <input type="number" id="editPagoTC" step="0.01" disabled="">
         </div>
       </div>
     </div>
@@ -710,47 +710,20 @@ function pasaFiltro(m,filtro){
   return true;
 }
 
-
-function calcularCuotaTC(){
-  const tipo = tcTipo.value || "Corriente";
-  const valor = Number(tcValor.value || 0);
-  if(tipo === "Diferido"){
-    const cuotas = Math.max(1, Number(tcPorPagar.value || 1));
-    tcPorPagar.value = cuotas;
-    tcPago.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "0.00";
-  }else{
-    tcPago.value = valor ? valor.toFixed(2) : "0.00";
-  }
-}
-
-function valorTCParaResumen(m){
-  const tipo = m.Tipo || "Corriente";
-  const valor = Number(m.Valor || 0);
-  const pago = Number(m.Pago || 0);
-  if(tipo === "Diferido") return pago || valor;
-  return valor;
-}
-
-function calcularCuotaEditarTC(){
-  const tipo = editTipoTC.value || "Corriente";
-  const valor = Number(editValorTC.value || 0);
-  if(tipo === "Diferido"){
-    const cuotas = Math.max(1, Number(editCuotasPorPagar.value || 1));
-    editCuotasPorPagar.value = cuotas;
-    editPagoTC.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "0.00";
-  }else{
-    editPagoTC.value = valor ? valor.toFixed(2) : "0.00";
-    editCuotasPagadas.value = 0;
-    editCuotasPorPagar.value = 0;
-  }
-}
-
 function guardarTC(){
   let valor = Number(tcValor.value || 0);
   let tipoConsumo = tcTipo.value || "Corriente";
-  let cuotasPorPagar = tipoConsumo === "Diferido" ? Math.max(1, Number(tcPorPagar.value || 1)) : 0;
-  let pago = tipoConsumo === "Diferido" ? Number((valor / cuotasPorPagar).toFixed(2)) : valor;
-  let saldoDiferido = tipoConsumo === "Diferido" ? valor : 0;
+  let cuotasPorPagar = tipoConsumo === "Diferido" ? Number(tcPorPagar.value || 0) : 0;
+
+  if(tipoConsumo === "Diferido" && cuotasPorPagar <= 0){
+    alert("Para diferido debes ingresar el número de cuotas.");
+    return;
+  }
+
+  // Corriente: el pago es el mismo consumo.
+  // Diferido: el pago es la cuota mensual automática. Ej: 240 / 12 = 20.
+  let pago = tipoConsumo === "Diferido" ? (valor / cuotasPorPagar) : valor;
+  let saldoDiferido = tipoConsumo === "Diferido" ? Math.max(valor - pago, 0) : 0;
 
   tc.push({
     Fecha: tcFecha.value,
@@ -762,7 +735,7 @@ function guardarTC(){
     CuotasPorPagar: cuotasPorPagar,
     Valor: valor,
     Pago: pago,
-    Acumulado: tipoConsumo === "Diferido" ? pago : valor,
+    Acumulado: pago,
     SaldoDiferido: saldoDiferido,
     Conciliado: "No"
   });
@@ -774,7 +747,6 @@ function guardarTC(){
   tcPago.value=0;
   tcPagadas.value=0;
   tcPorPagar.value=0;
-  controlCamposTC();
   mostrarTC();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -795,7 +767,7 @@ function mostrarTC(){
       <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
       <div>${m.Detalle || ""}</div>
       <div class="small">Tipo: <b>${m.Tipo}</b></div>
-      <div class="small">${m.Tipo === "Diferido" ? "Número de cuotas: <b>" + m.CuotasPorPagar + "</b> | Cuota mensual: <b>$" + formato(m.Pago) + "</b>" : "Pago corriente: <b>$" + formato(m.Pago || m.Valor) + "</b>"}</div>
+      <div class="small">Cuotas pagadas: <b>${m.CuotasPagadas}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar}</b></div>
       <div class="small">Valor consumo: $${formato(m.Valor)} | Pago: $${formato(m.Pago)}</div>
       <div class="small">Acumulado: $${formato(m.Acumulado)} | Saldo diferido: $${formato(m.SaldoDiferido)}</div>
       <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
@@ -919,19 +891,26 @@ function exportarPendientes(tipo){
 }
 
 
+function calcularPagoTCFormulario(){
+  let valor = Number(tcValor.value || 0);
+  let cuotas = Number(tcPorPagar.value || 0);
+  if(tcTipo.value === "Diferido"){
+    tcPago.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "";
+  }else{
+    tcPago.value = valor ? valor.toFixed(2) : "";
+  }
+}
+
 function controlCamposTC(){
   let esDiferido = tcTipo.value === "Diferido";
-  const bloque = document.getElementById("bloqueCuotasTC");
-  if(bloque) bloque.style.display = esDiferido ? "block" : "none";
+  tcPagadas.disabled = true;
+  tcPago.disabled = true;
+  tcPorPagar.disabled = !esDiferido;
   tcPagadas.value = 0;
-  if(esDiferido){
-    if(!tcPorPagar.value || Number(tcPorPagar.value) <= 0) tcPorPagar.value = 1;
-    lblTCPago.innerText = "Pago mensual / cuota";
-  }else{
+  if(!esDiferido){
     tcPorPagar.value = 0;
-    lblTCPago.innerText = "Pago";
   }
-  calcularCuotaTC();
+  calcularPagoTCFormulario();
 }
 
 function setSelectValue(selectId, valor){
@@ -987,18 +966,26 @@ function cerrarEditor(){
   modalEditar.classList.remove("active");
 }
 
+function calcularPagoEditarTC(){
+  const valor = Number(editValorTC.value || 0);
+  const cuotas = Number(editCuotasPorPagar.value || 0);
+  if(editTipoTC.value === "Diferido"){
+    editPagoTC.value = cuotas > 0 ? (valor / cuotas).toFixed(2) : "";
+  }else{
+    editPagoTC.value = valor ? valor.toFixed(2) : "";
+  }
+}
+
 function controlCamposEditarTC(){
   const esDiferido = editTipoTC.value === "Diferido";
-  editCuotasPagadas.readOnly = true;
+  editCuotasPagadas.disabled = true;
+  editPagoTC.disabled = true;
   editCuotasPorPagar.disabled = !esDiferido;
-  editPagoTC.readOnly = true;
-  if(esDiferido){
-    if(!editCuotasPorPagar.value || Number(editCuotasPorPagar.value) <= 0) editCuotasPorPagar.value = 1;
-  }else{
-    editCuotasPagadas.value = 0;
+  editCuotasPagadas.value = 0;
+  if(!esDiferido){
     editCuotasPorPagar.value = 0;
   }
-  calcularCuotaEditarTC();
+  calcularPagoEditarTC();
 }
 
 function editarTC(i){
@@ -1017,8 +1004,12 @@ function guardarEdicionMovimiento(){
     const valor = Number(editValorTC.value || 0);
     const tipoConsumo = editTipoTC.value || "Corriente";
     const cuotasPagadas = 0;
-    const cuotasPorPagar = tipoConsumo === "Diferido" ? Math.max(1, Number(editCuotasPorPagar.value || 1)) : 0;
-    const pago = tipoConsumo === "Diferido" ? Number((valor / cuotasPorPagar).toFixed(2)) : valor;
+    const cuotasPorPagar = tipoConsumo === "Diferido" ? Number(editCuotasPorPagar.value || 0) : 0;
+    if(tipoConsumo === "Diferido" && cuotasPorPagar <= 0){
+      alert("Para diferido debes ingresar el número de cuotas.");
+      return;
+    }
+    const pago = tipoConsumo === "Diferido" ? (valor / cuotasPorPagar) : valor;
 
     tc[i] = {
       Fecha: editFecha.value,
@@ -1030,8 +1021,8 @@ function guardarEdicionMovimiento(){
       CuotasPorPagar: cuotasPorPagar,
       Valor: valor,
       Pago: pago,
-      Acumulado: tipoConsumo === "Diferido" ? pago : valor,
-      SaldoDiferido: tipoConsumo === "Diferido" ? valor : 0,
+      Acumulado: pago,
+      SaldoDiferido: tipoConsumo === "Diferido" ? Math.max(valor - pago, 0) : 0,
       Conciliado: editConciliado.value
     };
 
@@ -1100,18 +1091,7 @@ function respaldarHTMLCompleto(){
   let contenido = "";
   contenido += "<!DOCTYPE html><html lang='es'><head><meta charset='UTF-8'>";
   contenido += "<title>Respaldo Mis Finanzas " + fecha + "</title>";
-  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}
-/* Modal edición compatible iPad */
-.modalFondo{display:none;position:fixed;inset:0;background:rgba(15,23,42,.62);z-index:999;padding:14px;overflow:auto}
-.modalFondo.active{display:block}
-.modalCard{background:white;border-radius:18px;padding:16px;max-width:620px;margin:24px auto;box-shadow:0 18px 45px rgba(0,0,0,.28)}
-.modalHeader{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
-.modalHeader h2{margin:0;font-size:20px;color:#0f172a}
-.btnSmall{width:auto;padding:10px 14px;border:0;border-radius:10px;background:#64748b;color:white;font-weight:800}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media(max-width:600px){.grid2{grid-template-columns:1fr}.modalCard{margin:6px auto}}
-
-</style>";
+  contenido += "<style>body{font-family:Arial,sans-serif;padding:20px;background:#f8fafc;color:#0f172a}.card{background:white;border-radius:14px;padding:16px;margin-bottom:16px;border:1px solid #e5e7eb}pre{white-space:pre-wrap;word-break:break-word;background:#f1f5f9;padding:12px;border-radius:10px;font-size:12px}table{width:100%;border-collapse:collapse;background:white;margin-bottom:20px}th,td{border:1px solid #e5e7eb;padding:8px;text-align:left;font-size:13px}th{background:#0f172a;color:white}</style>";
   contenido += "</head><body>";
   contenido += "<h1>Respaldo Mis Finanzas</h1>";
   contenido += "<div class='card'><b>Fecha de respaldo:</b> " + new Date().toLocaleString("es-EC") + "<br><b>Total movimientos TC:</b> " + tc.length + "<br><b>Total movimientos Bancos:</b> " + bancos.length + "</div>";
@@ -1332,7 +1312,7 @@ function generarResumen(){
         Mes:mesTexto(m.Fecha),
         Concepto:m.Concepto || "Sin concepto",
         Estado:m.Conciliado==="Si" ? "Conciliado" : "No conciliado",
-        Valor:valorTCParaResumen(m)
+        Valor:Number(m.Pago || m.Valor || 0)
       });
     });
   }
