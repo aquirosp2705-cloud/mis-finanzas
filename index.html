@@ -1,3 +1,4 @@
+
 <html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -334,6 +335,8 @@ th:first-child,td:first-child{text-align:left}
   <button class="btn btn2" onclick="exportarRespaldoDatos()">1. Descargar respaldo REAL de movimientos</button>
   <button class="btn btn2" onclick="document.getElementById('archivoImportarDatos').click()">2. Cargar respaldo en esta app</button>
   <button class="btn" onclick="verificarDatosGuardados()">3. Ver cuántos movimientos tengo guardados</button>
+  <button class="btn" style="background:#7c3aed" onclick="reconstruirOrdenYNumeracionMovimientos(true)">4. Reconstruir orden y numeración</button>
+  <button class="btn" style="background:#16a34a" onclick="cargarRespaldoRecibido20260510(true)">5. Restaurar movimientos del respaldo recibido</button>
   <div id="estadoRespaldoSeguro" class="small" style="margin-top:10px;color:#334155"></div>
 </div>
 
@@ -563,20 +566,280 @@ th:first-child,td:first-child{text-align:left}
 <script>
 
 const TC_CONFIRMADOS = [
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Colibri",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:15.95,Pago:0,Acumulado:15.95,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Peluquería",Detalle:"Cepillado",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:13.00,Pago:0,Acumulado:13.00,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Hogar",Detalle:"Liwy",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:2.33,Pago:0,Acumulado:2.33,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-03",Tarjeta:"Pichincha",Concepto:"Supermercado",Detalle:"Megamaxi",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:38.58,Pago:0,Acumulado:38.58,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Veterinaria",Detalle:"Suero Molly",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:40.00,Pago:0,Acumulado:40.00,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-05-02",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"La guayaca",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:47.15,Pago:0,Acumulado:47.15,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Otros",Detalle:"Cine",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:33.78,Pago:0,Acumulado:33.78,SaldoDiferido:0,Conciliado:"No"},
-  {Fecha:"2026-04-30",Tarjeta:"Pichincha",Concepto:"Restaurante",Detalle:"Tinta Cafe",Tipo:"Corriente",CuotasPagadas:0,CuotasPorPagar:0,Valor:35.16,Pago:0,Acumulado:35.16,SaldoDiferido:0,Conciliado:"No"}
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Restaurante",
+    "Detalle": "Colibri",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 15.95,
+    "Pago": 0,
+    "Acumulado": 15.95,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Peluquería",
+    "Detalle": "Cepillado",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 13,
+    "Pago": 0,
+    "Acumulado": 13,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Hogar",
+    "Detalle": "Kiwy",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 2.33,
+    "Pago": 2.33,
+    "Acumulado": 2.33,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Supermercado",
+    "Detalle": "Megamaxi",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 38.58,
+    "Pago": 0,
+    "Acumulado": 38.58,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-02",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Veterinaria",
+    "Detalle": "Suero Molly",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 40,
+    "Pago": 0,
+    "Acumulado": 40,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-02",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Restaurante",
+    "Detalle": "La guayaca",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 47.15,
+    "Pago": 0,
+    "Acumulado": 47.15,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-04-30",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Otros",
+    "Detalle": "Cine",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 33.78,
+    "Pago": 0,
+    "Acumulado": 33.78,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-04-30",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Restaurante",
+    "Detalle": "Tinta Cafe",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 35.16,
+    "Pago": 0,
+    "Acumulado": 35.16,
+    "SaldoDiferido": 0,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-06",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Peluquería",
+    "Detalle": "Olianna",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 13,
+    "Pago": 0,
+    "Acumulado": 13,
+    "SaldoDiferido": 0,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-07",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Gasolina/Carro",
+    "Detalle": "Citroen",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 48.23,
+    "Pago": 48.23,
+    "Acumulado": 48.23,
+    "SaldoDiferido": 0,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-08",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Veterinaria",
+    "Detalle": "Suero y examenes",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 55,
+    "Pago": 0,
+    "Acumulado": 55,
+    "SaldoDiferido": 0,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Peluquería",
+    "Detalle": "",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 13,
+    "Pago": 13,
+    "Acumulado": 13,
+    "SaldoDiferido": 0,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Tarjeta": "Pichincha",
+    "Concepto": "Restaurante",
+    "Detalle": "",
+    "Tipo": "Corriente",
+    "CuotasPagadas": 0,
+    "CuotasPorPagar": 0,
+    "Valor": 15.95,
+    "Pago": 15.95,
+    "Acumulado": 15.95,
+    "SaldoDiferido": 0,
+    "Conciliado": "No"
+  }
 ];
 const BANCOS_CONFIRMADOS = [
-  {Fecha:"2026-05-04",Banco:"Bolivariano",Tipo:"Egreso",Concepto:"Pago",Detalle:"Alicuota May26",Valor:185.91,Conciliado:"Si"},
-  {Fecha:"2026-05-04",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Jardin",Valor:20.41,Conciliado:"Si"},
-  {Fecha:"2026-05-03",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Pago",Detalle:"Lavada",Valor:5.00,Conciliado:"Si"},
-  {Fecha:"2026-05-02",Banco:"Guayaquil",Tipo:"Egreso",Concepto:"Retiro",Detalle:"Efectivo",Valor:200.00,Conciliado:"Si"}
+  {
+    "Fecha": "2026-05-04",
+    "Banco": "Bolivariano",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Alicuota May26",
+    "Valor": 185.91,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-04",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Jardin",
+    "Valor": 20.41,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-03",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Lavada",
+    "Valor": 5,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-02",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Retiro",
+    "Detalle": "Efectivo",
+    "Valor": 200,
+    "Conciliado": "Si"
+  },
+  {
+    "Fecha": "2026-05-06",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Coronel",
+    "Valor": 178.46,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-07",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Flores",
+    "Valor": 180,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-08",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Flores",
+    "Valor": 180,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-08",
+    "Banco": "Guayaquil",
+    "Tipo": "Egreso",
+    "Concepto": "Pago",
+    "Detalle": "Chocolates Roberto",
+    "Valor": 100,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-05",
+    "Banco": "Bolivariano",
+    "Tipo": "Egreso",
+    "Concepto": "Otros",
+    "Detalle": "Alicuota pacifica",
+    "Valor": 185.91,
+    "Conciliado": "No"
+  },
+  {
+    "Fecha": "2026-05-04",
+    "Banco": "Guayaquil",
+    "Tipo": "Ingreso",
+    "Concepto": "Servicios",
+    "Detalle": "Honorarios",
+    "Valor": 14000,
+    "Conciliado": "No"
+  }
 ];
 let tc = JSON.parse(localStorage.getItem("tc")) || [];
 let bancos = JSON.parse(localStorage.getItem("bancos")) || [];
@@ -644,11 +907,12 @@ function normalizarBanco(m){
 
 tc = tc.map(normalizarTC);
 bancos = bancos.map(normalizarBanco);
-localStorage.setItem("tc", JSON.stringify(tc));
-localStorage.setItem("bancos", JSON.stringify(bancos));
 
-if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=>normalizarTC(x)); localStorage.setItem("tc", JSON.stringify(tc)); }
-if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=>normalizarBanco(x)); localStorage.setItem("bancos", JSON.stringify(bancos)); }
+if(tc.length === 0){ tc = TC_CONFIRMADOS.map(x=>normalizarTC(x)); }
+if(bancos.length === 0){ bancos = BANCOS_CONFIRMADOS.map(x=>normalizarBanco(x)); }
+
+// Al abrir la app, también reconstruye orden y número con lo que ya exista guardado.
+reconstruirOrdenYNumeracionMovimientos(false);
 
 function cargarMovimientosFotosTC(forzar){
   if(forzar && !confirm("Esto cargará/actualizará los movimientos TC de las fotos como NO conciliados. No tocará Bancos. ¿Continuar?")) return;
@@ -672,8 +936,8 @@ function cargarMovimientosFotosTC(forzar){
     }
   });
 
-  localStorage.setItem("tc", JSON.stringify(tc));
   localStorage.setItem("tc_fotos_cargadas_v3", "Si");
+  reconstruirOrdenYNumeracionMovimientos(false);
   mostrarTC();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -726,6 +990,53 @@ function pasaFiltro(m,filtro){
   return true;
 }
 
+
+function fechaOrdenMovimiento(fecha){
+  if(!fecha) return 0;
+  const d = new Date(fecha + "T00:00:00");
+  const t = d.getTime();
+  return isNaN(t) ? 0 : t;
+}
+
+function ordenarListaConIndicePorFechaDesc(lista){
+  return lista.sort((a,b)=>{
+    const difFecha = fechaOrdenMovimiento(b.mov.Fecha) - fechaOrdenMovimiento(a.mov.Fecha);
+    if(difFecha !== 0) return difFecha;
+    // Si tienen la misma fecha, queda primero el movimiento ingresado/editado más recientemente.
+    return b.idx - a.idx;
+  });
+}
+
+function reconstruirOrdenYNumeracionMovimientos(mostrarAviso){
+  // Ordena físicamente los arreglos principales para que localStorage, respaldo, resumen y pantalla queden iguales.
+  tc = ordenarListaConIndicePorFechaDesc(tc.map((mov, idx)=>({mov, idx}))).map((item, pos)=>{
+    item.mov.Numero = pos + 1;
+    return item.mov;
+  });
+
+  bancos = ordenarListaConIndicePorFechaDesc(bancos.map((mov, idx)=>({mov, idx}))).map((item, pos)=>{
+    item.mov.Numero = pos + 1;
+    return item.mov;
+  });
+
+  localStorage.setItem("tc", JSON.stringify(tc));
+  localStorage.setItem("bancos", JSON.stringify(bancos));
+
+  if(typeof guardarCopiaAutomaticaDatos === "function") guardarCopiaAutomaticaDatos();
+  if(typeof cargarFiltroTarjetaTC === "function") cargarFiltroTarjetaTC();
+  if(typeof mostrarTC === "function") mostrarTC();
+  if(typeof mostrarBancos === "function") mostrarBancos();
+  if(typeof cargarMesesResumen === "function") cargarMesesResumen();
+  if(typeof cargarFiltroEntidad === "function") cargarFiltroEntidad();
+  if(typeof cargarFiltroConcepto === "function") cargarFiltroConcepto();
+  if(typeof generarResumen === "function") generarResumen();
+  if(typeof actualizarEstadoRespaldoSeguro === "function") actualizarEstadoRespaldoSeguro();
+
+  if(mostrarAviso){
+    alert("Orden y numeración reconstruidos. TC: " + tc.length + " | Bancos: " + bancos.length + ".");
+  }
+}
+
 function guardarTC(){
   let valor = Number(tcValor.value || 0);
   let tipoConsumo = tcTipo.value || "Corriente";
@@ -756,8 +1067,7 @@ function guardarTC(){
     Conciliado: "No"
   });
 
-  localStorage.setItem("tc",JSON.stringify(tc));
-  guardarCopiaAutomaticaDatos();
+  reconstruirOrdenYNumeracionMovimientos(false);
   cargarFiltroTarjetaTC();
   tcDetalle.value="";
   tcValor.value="";
@@ -770,22 +1080,6 @@ function guardarTC(){
   cargarFiltroConcepto();
 }
 
-function fechaOrdenMovimiento(fecha){
-  if(!fecha) return 0;
-  const d = new Date(fecha + "T00:00:00");
-  const t = d.getTime();
-  return isNaN(t) ? 0 : t;
-}
-
-function ordenarMovimientosPorFechaDesc(lista){
-  return lista.sort((a,b)=>{
-    const difFecha = fechaOrdenMovimiento(b.mov.Fecha) - fechaOrdenMovimiento(a.mov.Fecha);
-    if(difFecha !== 0) return difFecha;
-    // Si tienen la misma fecha, deja primero el último que ingresaste.
-    return b.idx - a.idx;
-  });
-}
-
 function mostrarTC(){
   listaTC.innerHTML="";
 
@@ -796,7 +1090,7 @@ function mostrarTC(){
     .filter(item => pasaFiltro(item.mov, filtroTC))
     .filter(item => tarjetaFiltro === "todas" || item.mov.Tarjeta === tarjetaFiltro);
 
-  ordenarMovimientosPorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
+  ordenarListaConIndicePorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
     const m = item.mov;
     const idx = item.idx;
     const numero = posicion + 1;
@@ -818,8 +1112,7 @@ function mostrarTC(){
 
 function eliminarTC(i){
   tc.splice(i,1);
-  localStorage.setItem("tc",JSON.stringify(tc));
-  guardarCopiaAutomaticaDatos();
+  reconstruirOrdenYNumeracionMovimientos(false);
   cargarFiltroTarjetaTC();
   mostrarTC();
   cargarMesesResumen();
@@ -838,8 +1131,7 @@ function guardarBanco(){
     Conciliado:"No"
   });
 
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  guardarCopiaAutomaticaDatos();
+  reconstruirOrdenYNumeracionMovimientos(false);
   bDetalle.value="";
   bValor.value="";
   mostrarBancos();
@@ -855,7 +1147,7 @@ function mostrarBancos(){
     .map((mov, idx)=>({mov, idx}))
     .filter(item => pasaFiltro(item.mov, filtroBanco));
 
-  ordenarMovimientosPorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
+  ordenarListaConIndicePorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
     const m = item.mov;
     const idx = item.idx;
     const numero = posicion + 1;
@@ -874,8 +1166,7 @@ function mostrarBancos(){
 
 function eliminarBanco(i){
   bancos.splice(i,1);
-  localStorage.setItem("bancos",JSON.stringify(bancos));
-  guardarCopiaAutomaticaDatos();
+  reconstruirOrdenYNumeracionMovimientos(false);
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -1075,8 +1366,7 @@ function guardarEdicionMovimiento(){
       Conciliado: editConciliado.value
     };
 
-    localStorage.setItem("tc", JSON.stringify(tc));
-    guardarCopiaAutomaticaDatos();
+    reconstruirOrdenYNumeracionMovimientos(false);
     cargarFiltroTarjetaTC();
     mostrarTC();
   }else{
@@ -1090,8 +1380,7 @@ function guardarEdicionMovimiento(){
       Conciliado: editConciliado.value
     };
 
-    localStorage.setItem("bancos", JSON.stringify(bancos));
-    guardarCopiaAutomaticaDatos();
+    reconstruirOrdenYNumeracionMovimientos(false);
     mostrarBancos();
   }
 
@@ -1551,10 +1840,8 @@ function importarRespaldoDatos(event){
 
       tc = nuevosTC;
       bancos = nuevosBancos;
-      localStorage.setItem("tc", JSON.stringify(tc));
-      localStorage.setItem("bancos", JSON.stringify(bancos));
       localStorage.setItem("tc_fotos_cargadas_v3", "Si");
-      guardarCopiaAutomaticaDatos();
+      reconstruirOrdenYNumeracionMovimientos(false);
 
       cargarFiltroTarjetaTC();
       mostrarTC();
@@ -1581,6 +1868,29 @@ function verificarDatosGuardados(){
   alert("Datos guardados en este navegador/app:\nTC: " + (tc ? tc.length : 0) + " movimientos\nBancos: " + (bancos ? bancos.length : 0) + " movimientos\n\nÚltima copia automática: " + fecha + "\n\nPara llevarlos a otra versión, usa: Descargar respaldo REAL de movimientos.");
 }
 
+
+function cargarRespaldoRecibido20260510(confirmar){
+  if(confirmar && !confirm("Voy a cargar el respaldo recibido: 13 movimientos TC y 10 movimientos Bancos. Esto reemplazará los movimientos actuales de esta app. ¿Continuar?")) return;
+
+  tc = TC_CONFIRMADOS.map(normalizarTC);
+  bancos = BANCOS_CONFIRMADOS.map(normalizarBanco);
+
+  localStorage.setItem("tc_fotos_cargadas_v3", "Si");
+  localStorage.setItem("respaldo_movimientos_20260510_aplicado", "Si");
+
+  reconstruirOrdenYNumeracionMovimientos(false);
+  cargarFiltroTarjetaTC();
+  mostrarTC();
+  mostrarBancos();
+  cargarMesesResumen();
+  cargarFiltroEntidad();
+  cargarFiltroConcepto();
+  generarResumen();
+  actualizarEstadoRespaldoSeguro();
+
+  if(confirmar) alert("Respaldo cargado correctamente. TC: " + tc.length + " | Bancos: " + bancos.length);
+}
+
 function exportarResumen(){
   generarResumen();
 
@@ -1594,6 +1904,14 @@ function exportarResumen(){
   XLSX.writeFile(wb,"Resumen_mensual.xlsx");
 }
 
+
+// Carga automática una sola vez del respaldo que enviaste, para que no tengas que volver a tipearlo.
+try{
+  if(localStorage.getItem("respaldo_movimientos_20260510_aplicado") !== "Si"){
+    cargarRespaldoRecibido20260510(false);
+  }
+}catch(e){ console.log("No se pudo aplicar respaldo inicial", e); }
+
 try{
   if(document.getElementById("tcValor")) tcValor.addEventListener("input", calcularPagoTCFormulario);
   if(document.getElementById("tcPorPagar")) tcPorPagar.addEventListener("input", calcularPagoTCFormulario);
@@ -1601,6 +1919,7 @@ try{
   if(document.getElementById("editCuotasPorPagar")) editCuotasPorPagar.addEventListener("input", calcularPagoTCEditor);
 }catch(e){}
 controlCamposTC();
+reconstruirOrdenYNumeracionMovimientos(false);
 cargarFiltroTarjetaTC();
 mostrarTC();
 mostrarBancos();
