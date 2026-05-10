@@ -47,7 +47,7 @@ table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1p
 <label>Valor consumo</label><input type="number" id="tcValor" step="0.01">
 <label>Pago / cuota automática</label><input type="number" id="tcPago" step="0.01" value="0" disabled>
 <button class="btn" id="btnGuardarTC">Guardar TC</button>
-<label>Qué exportar a Excel</label><select id="exportEstadoTC"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('tc')">Exportar TC a Excel</button>
+<div class="exportBox"><h4>Exportar TC a Excel</h4><label>Qué deseas bajar</label><select id="exportEstadoTC"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('tc')">Exportar TC según selección</button><div class="btnRow"><button class="btn btnGreen" onclick="exportarMovimientosEstado('tc','no')">Bajar NO conciliados y marcarlos conciliados</button><button class="btn btn2" onclick="exportarMovimientosEstado('tc','si')">Bajar conciliados</button><button class="btn btn2" onclick="exportarMovimientosEstado('tc','todos')">Bajar todos</button></div></div>
 </div>
 <div class="card"><h3>Movimientos TC</h3><label>Filtrar por tarjeta</label><select id="filtroTarjetaTC"></select><div class="filtros"><button id="fTCtodos" class="active" onclick="setFiltroTC('todos')">Todos</button><button id="fTCno" onclick="setFiltroTC('no')">No conciliados</button><button id="fTCsi" onclick="setFiltroTC('si')">Conciliados</button></div><div id="listaTC"></div></div>
 </section>
@@ -57,7 +57,7 @@ table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1p
 <label>Fecha</label><input type="date" id="bFecha"><label>Banco</label><select id="bBanco"><option>Pichincha</option><option>Produbanco</option><option>Guayaquil</option><option>Bolivariano</option><option>Otro</option></select>
 <label>Tipo</label><select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
 <label>Concepto</label><select id="bConcepto"><option>Transferencia</option><option>Pago</option><option>Retiro</option><option>Depósito</option><option>Servicios</option><option>Otros</option></select>
-<label>Detalle</label><input id="bDetalle" placeholder="Detalle"><label>Valor</label><input type="number" id="bValor" step="0.01"><button class="btn" id="btnGuardarBanco">Guardar Banco</button><label>Qué exportar a Excel</label><select id="exportEstadoBancos"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('bancos')">Exportar Bancos a Excel</button></div>
+<label>Detalle</label><input id="bDetalle" placeholder="Detalle"><label>Valor</label><input type="number" id="bValor" step="0.01"><button class="btn" id="btnGuardarBanco">Guardar Banco</button><div class="exportBox"><h4>Exportar Bancos a Excel</h4><label>Qué deseas bajar</label><select id="exportEstadoBancos"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('bancos')">Exportar Bancos según selección</button><div class="btnRow"><button class="btn btnGreen" onclick="exportarMovimientosEstado('bancos','no')">Bajar NO conciliados y marcarlos conciliados</button><button class="btn btn2" onclick="exportarMovimientosEstado('bancos','si')">Bajar conciliados</button><button class="btn btn2" onclick="exportarMovimientosEstado('bancos','todos')">Bajar todos</button></div></div></div>
 <div class="card"><h3>Movimientos Bancos</h3><div class="filtros"><button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button><button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button><button id="fBsi" onclick="setFiltroBanco('si')">Conciliados</button></div><div id="listaBancos"></div></div>
 </section>
 
@@ -482,6 +482,15 @@ btnGuardarTC.addEventListener('click',()=>{ const tipo=tcTipo.value; const valor
 btnGuardarBanco.addEventListener('click',()=>{ const valor=Number(bValor.value||0); if(!bFecha.value||!valor){alert('Falta fecha o valor');return;} bancos.push(normalizarBanco({_id:nuevoId('b'),Fecha:bFecha.value,Banco:bBanco.value,Tipo:bTipo.value,Concepto:bConcepto.value,Detalle:bDetalle.value,Valor:valor,Conciliado:'No'})); bDetalle.value=''; bValor.value=''; reconstruirTodo(); });
 function eliminarTC(id){ if(!confirm('¿Eliminar este movimiento TC?'))return; tc=tc.filter(m=>m._id!==id); reconstruirTodo(); }
 function eliminarBanco(id){ if(!confirm('¿Eliminar este movimiento Banco?'))return; bancos=bancos.filter(m=>m._id!==id); reconstruirTodo(); }
+
+function cambiarEstadoTC(id){
+  tc = tc.map(m => m._id === id ? {...m, Conciliado: (m.Conciliado === 'Si' ? 'No' : 'Si')} : m);
+  reconstruirTodo();
+}
+function cambiarEstadoBanco(id){
+  bancos = bancos.map(m => m._id === id ? {...m, Conciliado: (m.Conciliado === 'Si' ? 'No' : 'Si')} : m);
+  reconstruirTodo();
+}
 function setSelect(id,v){ const s=document.getElementById(id); if(v && ![...s.options].some(o=>o.value===v)) s.innerHTML+=`<option value="${esc(v)}">${esc(v)}</option>`; s.value=v||''; }
 function editarTC(id){ const m=tc.find(x=>x._id===id); if(!m)return; editOrigen.value='tc'; editId.value=id; modalTitulo.textContent='Editar consumo TC'; editTCBox.style.display='block'; editBancoBox.style.display='none'; editFecha.value=m.Fecha; setSelect('editTarjeta',m.Tarjeta); setSelect('editConceptoTC',m.Concepto); editTipoTC.value=m.Tipo; editCuotas.value=m.CuotasPorPagar||0; editValorTC.value=m.Valor||0; editDetalle.value=m.Detalle||''; editConciliado.value=m.Conciliado||'No'; calcularPagoEdit(); modalEditar.classList.add('active'); }
 function editarBanco(id){ const m=bancos.find(x=>x._id===id); if(!m)return; editOrigen.value='bancos'; editId.value=id; modalTitulo.textContent='Editar Banco'; editTCBox.style.display='none'; editBancoBox.style.display='block'; editFecha.value=m.Fecha; setSelect('editBanco',m.Banco); editTipoBanco.value=m.Tipo; setSelect('editConceptoBanco',m.Concepto); editValorBanco.value=m.Valor||0; editDetalle.value=m.Detalle||''; editConciliado.value=m.Conciliado||'No'; modalEditar.classList.add('active'); }
@@ -497,6 +506,11 @@ function importarRespaldo(ev){ const file=ev.target.files[0]; if(!file)return; c
 function restaurarMovimientosBase(){ if(!confirm('Esto reemplazará los movimientos actuales por los del respaldo que me enviaste. ¿Continuar?'))return; tc=MOVIMIENTOS_BASE.tc.map(normalizarTC); bancos=MOVIMIENTOS_BASE.bancos.map(normalizarBanco); reconstruirTodo(); alert('Restaurado: TC '+tc.length+' | Bancos '+bancos.length); }
 function respaldarHTMLCompleto(){ reconstruirTodo(); let fecha=new Date().toISOString().slice(0,10); let datos={fechaRespaldo:new Date().toISOString(),tc,bancos}; let contenido='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Respaldo Mis Finanzas '+fecha+'</title><style>body{font-family:Arial;padding:20px;background:#f8fafc}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}th{background:#0f172a;color:white}pre{white-space:pre-wrap;background:#f1f5f9;padding:12px}</style></head><body><h1>Respaldo Mis Finanzas</h1><p>TC: '+tc.length+' | Bancos: '+bancos.length+'</p><h2>Datos técnicos para reconstruir movimientos</h2><pre>'+esc(JSON.stringify(datos,null,2))+'</pre></body></html>'; descargarBlob(new Blob([contenido],{type:'text/html;charset=utf-8'}),'Movimientos_'+fecha+'.html'); }
 function descargarBlob(blob,nombre){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=nombre; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
+function exportarMovimientosEstado(tipo, estado){
+  const selector = tipo==='tc' ? document.getElementById('exportEstadoTC') : document.getElementById('exportEstadoBancos');
+  if(selector) selector.value = estado;
+  exportarMovimientos(tipo);
+}
 function exportarMovimientos(tipo){
   const selector = tipo==='tc' ? document.getElementById('exportEstadoTC') : document.getElementById('exportEstadoBancos');
   const estadoElegido = selector ? selector.value : 'no';
