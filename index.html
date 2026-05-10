@@ -47,7 +47,7 @@ table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1p
 <label>Valor consumo</label><input type="number" id="tcValor" step="0.01">
 <label>Pago / cuota automática</label><input type="number" id="tcPago" step="0.01" value="0" disabled>
 <button class="btn" id="btnGuardarTC">Guardar TC</button>
-<button class="btn btn2" onclick="exportarMovimientos('tc')">Exportar TC a Excel</button>
+<label>Qué exportar a Excel</label><select id="exportEstadoTC"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('tc')">Exportar TC a Excel</button>
 </div>
 <div class="card"><h3>Movimientos TC</h3><label>Filtrar por tarjeta</label><select id="filtroTarjetaTC"></select><div class="filtros"><button id="fTCtodos" class="active" onclick="setFiltroTC('todos')">Todos</button><button id="fTCno" onclick="setFiltroTC('no')">No conciliados</button><button id="fTCsi" onclick="setFiltroTC('si')">Conciliados</button></div><div id="listaTC"></div></div>
 </section>
@@ -57,7 +57,7 @@ table{width:100%;border-collapse:collapse;font-size:13px} th,td{border-bottom:1p
 <label>Fecha</label><input type="date" id="bFecha"><label>Banco</label><select id="bBanco"><option>Pichincha</option><option>Produbanco</option><option>Guayaquil</option><option>Bolivariano</option><option>Otro</option></select>
 <label>Tipo</label><select id="bTipo"><option>Ingreso</option><option>Egreso</option></select>
 <label>Concepto</label><select id="bConcepto"><option>Transferencia</option><option>Pago</option><option>Retiro</option><option>Depósito</option><option>Servicios</option><option>Otros</option></select>
-<label>Detalle</label><input id="bDetalle" placeholder="Detalle"><label>Valor</label><input type="number" id="bValor" step="0.01"><button class="btn" id="btnGuardarBanco">Guardar Banco</button><button class="btn btn2" onclick="exportarMovimientos('bancos')">Exportar Bancos a Excel</button></div>
+<label>Detalle</label><input id="bDetalle" placeholder="Detalle"><label>Valor</label><input type="number" id="bValor" step="0.01"><button class="btn" id="btnGuardarBanco">Guardar Banco</button><label>Qué exportar a Excel</label><select id="exportEstadoBancos"><option value="no">No conciliados</option><option value="si">Conciliados</option><option value="todos">Todos</option></select><button class="btn btn2" onclick="exportarMovimientos('bancos')">Exportar Bancos a Excel</button></div>
 <div class="card"><h3>Movimientos Bancos</h3><div class="filtros"><button id="fBtodos" class="active" onclick="setFiltroBanco('todos')">Todos</button><button id="fBno" onclick="setFiltroBanco('no')">No conciliados</button><button id="fBsi" onclick="setFiltroBanco('si')">Conciliados</button></div><div id="listaBancos"></div></div>
 </section>
 
@@ -475,8 +475,8 @@ filtroTarjetaTC.addEventListener('change', mostrarTC);
 function setFiltroTC(v){ filtroTC=v; document.querySelectorAll('#tc .filtros button').forEach(b=>b.classList.remove('active')); document.getElementById('fTC'+v).classList.add('active'); mostrarTC(); }
 function setFiltroBanco(v){ filtroBanco=v; document.querySelectorAll('#bancos .filtros button').forEach(b=>b.classList.remove('active')); document.getElementById('fB'+v).classList.add('active'); mostrarBancos(); }
 
-function mostrarTC(){ listaTC.innerHTML=''; let lista=ordenarPorFecha(tc).filter(m=>pasaFiltro(m,filtroTC)).filter(m=>filtroTarjetaTC.value==='todas'||m.Tarjeta===filtroTarjetaTC.value); lista.forEach((m,i)=>{ listaTC.innerHTML += `<div class="mov"><strong><span class="num">#${i+1}</span>${esc(m.Fecha)} | ${esc(m.Tarjeta)} | ${esc(m.Concepto)}</strong><div>${esc(m.Detalle)}</div><div class="small">Tipo: <b>${esc(m.Tipo)}</b> | Cuotas: <b>${m.CuotasPorPagar||0}</b></div><div class="small">Valor consumo: $${formato(m.Valor)} | Pago/Cuota: $${formato(m.Pago)}</div><div class="small">Saldo diferido: $${formato(m.SaldoDiferido)}</div><div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div><button class="btn btnEdit" onclick="editarTC('${m._id}')">Editar</button><button class="btn btnDanger" onclick="eliminarTC('${m._id}')">Eliminar</button></div>`; }); }
-function mostrarBancos(){ listaBancos.innerHTML=''; let lista=ordenarPorFecha(bancos).filter(m=>pasaFiltro(m,filtroBanco)); lista.forEach((m,i)=>{ listaBancos.innerHTML += `<div class="mov"><strong><span class="num">#${i+1}</span>${esc(m.Fecha)} | ${esc(m.Banco)} | ${esc(m.Tipo)}</strong><div>${esc(m.Concepto)}${m.Detalle?' - '+esc(m.Detalle):''}</div><div class="small">Valor: $${formato(m.Valor)}</div><div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div><button class="btn btnEdit" onclick="editarBanco('${m._id}')">Editar</button><button class="btn btnDanger" onclick="eliminarBanco('${m._id}')">Eliminar</button></div>`; }); }
+function mostrarTC(){ listaTC.innerHTML=''; let lista=ordenarPorFecha(tc).filter(m=>pasaFiltro(m,filtroTC)).filter(m=>filtroTarjetaTC.value==='todas'||m.Tarjeta===filtroTarjetaTC.value); lista.forEach((m,i)=>{ listaTC.innerHTML += `<div class="mov"><strong><span class="num">#${i+1}</span>${esc(m.Fecha)} | ${esc(m.Tarjeta)} | ${esc(m.Concepto)}</strong><div>${esc(m.Detalle)}</div><div class="small">Tipo: <b>${esc(m.Tipo)}</b> | Cuotas: <b>${m.CuotasPorPagar||0}</b></div><div class="small">Valor consumo: $${formato(m.Valor)} | Pago/Cuota: $${formato(m.Pago)}</div><div class="small">Saldo diferido: $${formato(m.SaldoDiferido)}</div><div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div><button class="btn btnGreen" onclick="cambiarEstadoTC('${m._id}')">${m.Conciliado==='Si'?'Marcar NO conciliado':'Marcar conciliado'}</button><button class="btn btnEdit" onclick="editarTC('${m._id}')">Editar</button><button class="btn btnDanger" onclick="eliminarTC('${m._id}')">Eliminar</button></div>`; }); }
+function mostrarBancos(){ listaBancos.innerHTML=''; let lista=ordenarPorFecha(bancos).filter(m=>pasaFiltro(m,filtroBanco)); lista.forEach((m,i)=>{ listaBancos.innerHTML += `<div class="mov"><strong><span class="num">#${i+1}</span>${esc(m.Fecha)} | ${esc(m.Banco)} | ${esc(m.Tipo)}</strong><div>${esc(m.Concepto)}${m.Detalle?' - '+esc(m.Detalle):''}</div><div class="small">Valor: $${formato(m.Valor)}</div><div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div><button class="btn btnGreen" onclick="cambiarEstadoBanco('${m._id}')">${m.Conciliado==='Si'?'Marcar NO conciliado':'Marcar conciliado'}</button><button class="btn btnEdit" onclick="editarBanco('${m._id}')">Editar</button><button class="btn btnDanger" onclick="eliminarBanco('${m._id}')">Eliminar</button></div>`; }); }
 
 btnGuardarTC.addEventListener('click',()=>{ const tipo=tcTipo.value; const valor=Number(tcValor.value||0); const cuotas=tipo==='Diferido'?Number(tcCuotas.value||0):0; const pago=calcularPago(valor,tipo,cuotas); if(!tcFecha.value||!valor){alert('Falta fecha o valor');return;} tc.push(normalizarTC({_id:nuevoId('tc'),Fecha:tcFecha.value,Tarjeta:tcTarjeta.value,Concepto:tcConcepto.value,Detalle:tcDetalle.value,Tipo:tipo,CuotasPorPagar:cuotas,Valor:valor,Pago:pago,Acumulado:pago,SaldoDiferido:tipo==='Diferido'?Math.max(valor-pago,0):0,Conciliado:'No'})); tcDetalle.value=''; tcValor.value=''; tcCuotas.value=0; calcularPagoTCFormulario(); reconstruirTodo(); });
 btnGuardarBanco.addEventListener('click',()=>{ const valor=Number(bValor.value||0); if(!bFecha.value||!valor){alert('Falta fecha o valor');return;} bancos.push(normalizarBanco({_id:nuevoId('b'),Fecha:bFecha.value,Banco:bBanco.value,Tipo:bTipo.value,Concepto:bConcepto.value,Detalle:bDetalle.value,Valor:valor,Conciliado:'No'})); bDetalle.value=''; bValor.value=''; reconstruirTodo(); });
@@ -498,28 +498,56 @@ function restaurarMovimientosBase(){ if(!confirm('Esto reemplazará los movimien
 function respaldarHTMLCompleto(){ reconstruirTodo(); let fecha=new Date().toISOString().slice(0,10); let datos={fechaRespaldo:new Date().toISOString(),tc,bancos}; let contenido='<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Respaldo Mis Finanzas '+fecha+'</title><style>body{font-family:Arial;padding:20px;background:#f8fafc}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ddd;padding:8px}th{background:#0f172a;color:white}pre{white-space:pre-wrap;background:#f1f5f9;padding:12px}</style></head><body><h1>Respaldo Mis Finanzas</h1><p>TC: '+tc.length+' | Bancos: '+bancos.length+'</p><h2>Datos técnicos para reconstruir movimientos</h2><pre>'+esc(JSON.stringify(datos,null,2))+'</pre></body></html>'; descargarBlob(new Blob([contenido],{type:'text/html;charset=utf-8'}),'Movimientos_'+fecha+'.html'); }
 function descargarBlob(blob,nombre){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=nombre; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); }
 function exportarMovimientos(tipo){
-  let data = tipo==='tc' ? tc : bancos;
-  if(!data.length){ alert('No hay datos'); return; }
+  const selector = tipo==='tc' ? document.getElementById('exportEstadoTC') : document.getElementById('exportEstadoBancos');
+  const estadoElegido = selector ? selector.value : 'no';
+  const origen = tipo==='tc' ? tc : bancos;
+
+  let data = origen.filter(m=>{
+    if(estadoElegido==='no') return m.Conciliado !== 'Si';
+    if(estadoElegido==='si') return m.Conciliado === 'Si';
+    return true;
+  });
+
+  if(!data.length){
+    const texto = estadoElegido==='no' ? 'no conciliados' : (estadoElegido==='si' ? 'conciliados' : 'guardados');
+    alert('No hay movimientos '+texto+' para exportar.');
+    return;
+  }
 
   const dataExportar = ordenarPorFecha(data).map((m,i)=>({
     Numero: i + 1,
-    ...m,
-    Conciliado: 'Si',
-    Estado: 'Conciliado'
+    Fecha: m.Fecha,
+    TipoMovimiento: tipo==='tc' ? 'TC' : 'Banco',
+    TarjetaBanco: tipo==='tc' ? m.Tarjeta : m.Banco,
+    Tipo: m.Tipo || '',
+    Concepto: m.Concepto || '',
+    Detalle: m.Detalle || '',
+    Valor: Number(m.Valor || 0),
+    Pago: tipo==='tc' ? Number(m.Pago || 0) : Number(m.Valor || 0),
+    Cuotas: tipo==='tc' ? Number(m.CuotasPorPagar || 0) : '',
+    SaldoDiferido: tipo==='tc' ? Number(m.SaldoDiferido || 0) : '',
+    EstadoAntesExportar: m.Conciliado==='Si' ? 'Conciliado' : 'No conciliado'
   }));
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(dataExportar);
   XLSX.utils.book_append_sheet(wb, ws, tipo==='tc' ? 'TC' : 'Bancos');
-  XLSX.writeFile(wb, (tipo==='tc'?'TC_':'Bancos_') + new Date().toISOString().slice(0,10) + '.xlsx');
+  const etiqueta = estadoElegido==='no' ? 'No_Conciliados' : (estadoElegido==='si' ? 'Conciliados' : 'Todos');
+  XLSX.writeFile(wb, (tipo==='tc'?'TC_':'Bancos_') + etiqueta + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
 
-  if(tipo==='tc'){
-    tc = tc.map(m => ({...m, Conciliado:'Si'}));
+  if(estadoElegido==='no'){
+    const idsExportados = new Set(data.map(m=>m._id));
+    if(tipo==='tc'){
+      tc = tc.map(m => idsExportados.has(m._id) ? {...m, Conciliado:'Si'} : m);
+    }else{
+      bancos = bancos.map(m => idsExportados.has(m._id) ? {...m, Conciliado:'Si'} : m);
+    }
+    reconstruirTodo();
+    alert((tipo==='tc'?'TC':'Bancos') + ' no conciliados exportados y marcados como conciliados.');
   }else{
-    bancos = bancos.map(m => ({...m, Conciliado:'Si'}));
+    reconstruirTodo();
+    alert((tipo==='tc'?'TC':'Bancos') + ' exportados. No cambié el estado porque no exportaste solo no conciliados.');
   }
-  reconstruirTodo();
-  alert((tipo==='tc'?'TC':'Bancos') + ' exportado a Excel y marcado como conciliado.');
 }
 function exportarResumen(){ const wb=XLSX.utils.book_new(); const ws=XLSX.utils.table_to_sheet(tablaResumen); XLSX.utils.book_append_sheet(wb,ws,'Resumen'); XLSX.writeFile(wb,'Resumen_'+new Date().toISOString().slice(0,10)+'.xlsx'); }
 function calcularAmortizacion(){ const monto=Number(amoMonto.value||0), tasa=Number(amoTasa.value||0)/100/12, meses=Number(amoMeses.value||0); if(!monto||!meses){alert('Falta monto o plazo');return;} const cuota=tasa?monto*(tasa*Math.pow(1+tasa,meses))/(Math.pow(1+tasa,meses)-1):monto/meses; let saldo=monto,totalInteres=0; amortizacion=[]; for(let i=1;i<=meses;i++){ let interes=saldo*tasa; let capital=cuota-interes; saldo=Math.max(saldo-capital,0); totalInteres+=interes; amortizacion.push({Cuota:i,Pago:cuota,Capital:capital,Interes:interes,Saldo:saldo}); } resumenAmo.innerHTML='<b>Cuota mensual:</b> $'+formato(cuota)+'<br><b>Total intereses:</b> $'+formato(totalInteres); tablaAmo.innerHTML='<tr><th>#</th><th>Pago</th><th>Capital</th><th>Interés</th><th>Saldo</th></tr>'+amortizacion.map(r=>`<tr><td>${r.Cuota}</td><td>$${formato(r.Pago)}</td><td>$${formato(r.Capital)}</td><td>$${formato(r.Interes)}</td><td>$${formato(r.Saldo)}</td></tr>`).join(''); }
