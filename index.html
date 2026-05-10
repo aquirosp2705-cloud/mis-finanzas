@@ -326,6 +326,17 @@ th:first-child,td:first-child{text-align:left}
 <div class="card">
 <h2>Resumen mensual</h2>
 
+<div class="card" style="background:#eef6ff;border:1px solid #bfdbfe;box-shadow:none;margin:10px 0 16px;padding:14px">
+  <div style="font-weight:800;color:#0f172a;margin-bottom:6px">🔒 Seguro de movimientos</div>
+  <div class="small" style="margin-bottom:10px;color:#334155">
+    Para no perder tus TC/Bancos cuando actualices la app: primero descarga el respaldo JSON y luego, en la nueva app, cárgalo con el botón importar.
+  </div>
+  <button class="btn btn2" onclick="exportarRespaldoDatos()">1. Descargar respaldo REAL de movimientos</button>
+  <button class="btn btn2" onclick="document.getElementById('archivoImportarDatos').click()">2. Cargar respaldo en esta app</button>
+  <button class="btn" onclick="verificarDatosGuardados()">3. Ver cuántos movimientos tengo guardados</button>
+  <div id="estadoRespaldoSeguro" class="small" style="margin-top:10px;color:#334155"></div>
+</div>
+
 <label>Mes</label>
 <select id="resMes" onchange="generarResumen()"><option value="todos">Todos los meses</option><option value="2026-05">May-26</option><option value="2026-04">Abr-26</option></select>
 
@@ -350,6 +361,10 @@ th:first-child,td:first-child{text-align:left}
 <select id="resConcepto" onchange="generarResumen()"><option value="todos">Todos los conceptos</option><option value="Hogar">Hogar</option><option value="Otros">Otros</option><option value="Peluquería">Peluquería</option><option value="Restaurante">Restaurante</option><option value="Supermercado">Supermercado</option><option value="Veterinaria">Veterinaria</option></select>
 
 <button class="btn btn2" onclick="exportarResumen()">Exportar Resumen a Excel</button>
+<button class="btn btn2" onclick="exportarRespaldoDatos()">Exportar respaldo de datos JSON</button>
+<button class="btn btn2" onclick="document.getElementById('archivoImportarDatos').click()">Importar respaldo de datos JSON</button>
+<input type="file" id="archivoImportarDatos" accept=".json,.html" style="display:none" onchange="importarRespaldoDatos(event)">
+<button class="btn" onclick="verificarDatosGuardados()">Verificar datos guardados</button>
 <button class="btn btn2" onclick="respaldarAppGitHub()">Respaldar APP para GitHub</button>
 <button class="btn btn2" onclick="respaldarHTMLCompleto()">Respaldar reporte HTML de datos</button>
 <button class="btn btn2" onclick="cargarMovimientosFotosTC(true)">Cargar/actualizar TC fotos como no conciliado</button>
@@ -577,8 +592,9 @@ document.getElementById("bFecha").valueAsDate = new Date();
 function showTab(id,btn){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  btn.classList.add("active");
+  const seccion = document.getElementById(id);
+  if(seccion) seccion.classList.add("active");
+  if(btn) btn.classList.add("active");
 }
 
 function formato(n){
@@ -741,6 +757,7 @@ function guardarTC(){
   });
 
   localStorage.setItem("tc",JSON.stringify(tc));
+  guardarCopiaAutomaticaDatos();
   cargarFiltroTarjetaTC();
   tcDetalle.value="";
   tcValor.value="";
@@ -753,18 +770,40 @@ function guardarTC(){
   cargarFiltroConcepto();
 }
 
+function fechaOrdenMovimiento(fecha){
+  if(!fecha) return 0;
+  const d = new Date(fecha + "T00:00:00");
+  const t = d.getTime();
+  return isNaN(t) ? 0 : t;
+}
+
+function ordenarMovimientosPorFechaDesc(lista){
+  return lista.sort((a,b)=>{
+    const difFecha = fechaOrdenMovimiento(b.mov.Fecha) - fechaOrdenMovimiento(a.mov.Fecha);
+    if(difFecha !== 0) return difFecha;
+    // Si tienen la misma fecha, deja primero el último que ingresaste.
+    return b.idx - a.idx;
+  });
+}
+
 function mostrarTC(){
   listaTC.innerHTML="";
-  tc.slice().reverse().forEach((m,i)=>{
-    if(!pasaFiltro(m,filtroTC)) return;
 
-    let tarjetaFiltro = document.getElementById("filtroTarjetaTC") ? filtroTarjetaTC.value : "todas";
-    if(tarjetaFiltro !== "todas" && m.Tarjeta !== tarjetaFiltro) return;
+  let tarjetaFiltro = document.getElementById("filtroTarjetaTC") ? filtroTarjetaTC.value : "todas";
 
-    let idx = tc.length-1-i;
+  let movimientosFiltrados = tc
+    .map((mov, idx)=>({mov, idx}))
+    .filter(item => pasaFiltro(item.mov, filtroTC))
+    .filter(item => tarjetaFiltro === "todas" || item.mov.Tarjeta === tarjetaFiltro);
+
+  ordenarMovimientosPorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
+    const m = item.mov;
+    const idx = item.idx;
+    const numero = posicion + 1;
+
     listaTC.innerHTML += `
     <div class="mov">
-      <strong>${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
+      <strong>#${numero} | ${m.Fecha} | ${m.Tarjeta} | ${m.Concepto}</strong>
       <div>${m.Detalle || ""}</div>
       <div class="small">Tipo: <b>${m.Tipo}</b></div>
       <div class="small">Cuotas pagadas: <b>${m.CuotasPagadas}</b> | Cuotas por pagar: <b>${m.CuotasPorPagar}</b></div>
@@ -780,6 +819,7 @@ function mostrarTC(){
 function eliminarTC(i){
   tc.splice(i,1);
   localStorage.setItem("tc",JSON.stringify(tc));
+  guardarCopiaAutomaticaDatos();
   cargarFiltroTarjetaTC();
   mostrarTC();
   cargarMesesResumen();
@@ -799,6 +839,7 @@ function guardarBanco(){
   });
 
   localStorage.setItem("bancos",JSON.stringify(bancos));
+  guardarCopiaAutomaticaDatos();
   bDetalle.value="";
   bValor.value="";
   mostrarBancos();
@@ -809,12 +850,19 @@ function guardarBanco(){
 
 function mostrarBancos(){
   listaBancos.innerHTML="";
-  bancos.slice().reverse().forEach((m,i)=>{
-    if(!pasaFiltro(m,filtroBanco)) return;
-    let idx = bancos.length-1-i;
+
+  let movimientosFiltrados = bancos
+    .map((mov, idx)=>({mov, idx}))
+    .filter(item => pasaFiltro(item.mov, filtroBanco));
+
+  ordenarMovimientosPorFechaDesc(movimientosFiltrados).forEach((item, posicion)=>{
+    const m = item.mov;
+    const idx = item.idx;
+    const numero = posicion + 1;
+
     listaBancos.innerHTML += `
     <div class="mov">
-      <strong>${m.Fecha} | ${m.Banco} | ${m.Tipo}</strong>
+      <strong>#${numero} | ${m.Fecha} | ${m.Banco} | ${m.Tipo}</strong>
       <div>${m.Concepto || ""} ${m.Detalle ? "- " + m.Detalle : ""}</div>
       <div class="small">Valor: $${formato(m.Valor)}</div>
       <div class="${m.Conciliado==='Si'?'ok':'no'}">Estado: ${m.Conciliado==='Si'?'Conciliado':'No conciliado'}</div>
@@ -827,6 +875,7 @@ function mostrarBancos(){
 function eliminarBanco(i){
   bancos.splice(i,1);
   localStorage.setItem("bancos",JSON.stringify(bancos));
+  guardarCopiaAutomaticaDatos();
   mostrarBancos();
   cargarMesesResumen();
   cargarFiltroEntidad();
@@ -1027,6 +1076,7 @@ function guardarEdicionMovimiento(){
     };
 
     localStorage.setItem("tc", JSON.stringify(tc));
+    guardarCopiaAutomaticaDatos();
     cargarFiltroTarjetaTC();
     mostrarTC();
   }else{
@@ -1041,6 +1091,7 @@ function guardarEdicionMovimiento(){
     };
 
     localStorage.setItem("bancos", JSON.stringify(bancos));
+    guardarCopiaAutomaticaDatos();
     mostrarBancos();
   }
 
@@ -1418,6 +1469,118 @@ function generarResumen(){
   });
 }
 
+
+function obtenerDatosRespaldo(){
+  return {
+    version: "Mis Finanzas Datos v1",
+    fechaRespaldo: new Date().toISOString(),
+    tc: (tc || []).map(normalizarTC),
+    bancos: (bancos || []).map(normalizarBanco)
+  };
+}
+
+function guardarCopiaAutomaticaDatos(){
+  try{
+    const datos = obtenerDatosRespaldo();
+    localStorage.setItem("ultimo_respaldo_automatico_mis_finanzas", JSON.stringify(datos));
+    localStorage.setItem("ultimo_respaldo_automatico_fecha", new Date().toLocaleString("es-EC"));
+    actualizarEstadoRespaldoSeguro();
+  }catch(e){ console.log("No se pudo crear copia automática", e); }
+}
+
+function actualizarEstadoRespaldoSeguro(){
+  const el = document.getElementById("estadoRespaldoSeguro");
+  if(!el) return;
+  const fecha = localStorage.getItem("ultimo_respaldo_automatico_fecha") || "pendiente";
+  el.innerHTML = "Última copia automática en este navegador: <b>" + fecha + "</b> | TC: <b>" + (tc ? tc.length : 0) + "</b> | Bancos: <b>" + (bancos ? bancos.length : 0) + "</b>";
+}
+
+function descargarArchivoTexto(nombre, contenido, tipo){
+  let blob = new Blob([contenido], {type: tipo || "application/json;charset=utf-8"});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement("a");
+  a.href = url;
+  a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportarRespaldoDatos(){
+  guardarCopiaAutomaticaDatos();
+  let fecha = new Date().toISOString().slice(0,10);
+  let datos = obtenerDatosRespaldo();
+  descargarArchivoTexto("respaldo_datos_mis_finanzas_" + fecha + ".json", JSON.stringify(datos,null,2), "application/json;charset=utf-8");
+  alert("Respaldo JSON generado. Ese archivo es el que debes guardar para cargar tus movimientos en cualquier versión corregida de la app.");
+}
+
+function extraerJSONDesdeTexto(texto){
+  try { return JSON.parse(texto); } catch(e) {}
+
+  // Si el usuario selecciona un respaldo HTML, busca el bloque JSON técnico dentro del HTML.
+  let limpio = texto.replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+  let inicio = limpio.indexOf('{\n  "fechaRespaldo"');
+  if(inicio < 0) inicio = limpio.indexOf('{\n  "version"');
+  if(inicio >= 0){
+    let fin = limpio.indexOf('</pre>', inicio);
+    let bloque = fin >= 0 ? limpio.substring(inicio, fin) : limpio.substring(inicio);
+    try { return JSON.parse(bloque); } catch(e) {}
+  }
+
+  throw new Error("No pude leer el respaldo. Usa el archivo JSON generado con el botón 'Exportar respaldo de datos JSON'.");
+}
+
+function importarRespaldoDatos(event){
+  const archivo = event.target.files && event.target.files[0];
+  if(!archivo) return;
+
+  const lector = new FileReader();
+  lector.onload = function(e){
+    try{
+      const datos = extraerJSONDesdeTexto(e.target.result || "");
+      const nuevosTC = Array.isArray(datos.tc) ? datos.tc.map(normalizarTC) : [];
+      const nuevosBancos = Array.isArray(datos.bancos) ? datos.bancos.map(normalizarBanco) : [];
+
+      if(nuevosTC.length === 0 && nuevosBancos.length === 0){
+        alert("El archivo no tiene movimientos TC ni Bancos para importar.");
+        return;
+      }
+
+      if(!confirm("Se cargarán " + nuevosTC.length + " movimientos TC y " + nuevosBancos.length + " movimientos Bancos. Esto reemplazará los datos actuales de esta app. ¿Continuar?")) return;
+
+      tc = nuevosTC;
+      bancos = nuevosBancos;
+      localStorage.setItem("tc", JSON.stringify(tc));
+      localStorage.setItem("bancos", JSON.stringify(bancos));
+      localStorage.setItem("tc_fotos_cargadas_v3", "Si");
+      guardarCopiaAutomaticaDatos();
+
+      cargarFiltroTarjetaTC();
+      mostrarTC();
+      mostrarBancos();
+      cargarMesesResumen();
+      cargarFiltroEntidad();
+      cargarFiltroConcepto();
+      generarResumen();
+      showTab("tc", document.querySelector('nav button[onclick^="showTab(\\'tc\\'"]') || document.querySelector('nav button'));
+
+      alert("Datos importados correctamente. TC: " + tc.length + " | Bancos: " + bancos.length);
+    }catch(err){
+      alert("No se pudo importar el respaldo: " + err.message);
+    }finally{
+      event.target.value = "";
+    }
+  };
+  lector.readAsText(archivo);
+}
+
+function verificarDatosGuardados(){
+  actualizarEstadoRespaldoSeguro();
+  const fecha = localStorage.getItem("ultimo_respaldo_automatico_fecha") || "Sin copia automática aún";
+  alert("Datos guardados en este navegador/app:\nTC: " + (tc ? tc.length : 0) + " movimientos\nBancos: " + (bancos ? bancos.length : 0) + " movimientos\n\nÚltima copia automática: " + fecha + "\n\nPara llevarlos a otra versión, usa: Descargar respaldo REAL de movimientos.");
+}
+
 function exportarResumen(){
   generarResumen();
 
@@ -1431,6 +1594,12 @@ function exportarResumen(){
   XLSX.writeFile(wb,"Resumen_mensual.xlsx");
 }
 
+try{
+  if(document.getElementById("tcValor")) tcValor.addEventListener("input", calcularPagoTCFormulario);
+  if(document.getElementById("tcPorPagar")) tcPorPagar.addEventListener("input", calcularPagoTCFormulario);
+  if(document.getElementById("editValorTC")) editValorTC.addEventListener("input", calcularPagoTCEditor);
+  if(document.getElementById("editCuotasPorPagar")) editCuotasPorPagar.addEventListener("input", calcularPagoTCEditor);
+}catch(e){}
 controlCamposTC();
 cargarFiltroTarjetaTC();
 mostrarTC();
@@ -1439,6 +1608,9 @@ cargarMesesResumen();
 cargarFiltroEntidad();
 cargarFiltroConcepto();
 generarResumen();
+guardarCopiaAutomaticaDatos();
+actualizarEstadoRespaldoSeguro();
+showTab("tc", document.querySelector('nav button'));
 </script>
 
 
